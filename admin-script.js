@@ -124,7 +124,17 @@ class AdminEventManager {
       if (stored) {
         this.submissions = JSON.parse(stored);
       } else {
-        const response = await fetch('submissions.json');
+        // Try to fetch from GitHub admin repo
+        let response = await fetch('https://raw.githubusercontent.com/Cryptovaultiq/My-Ticketmaster-admin/main/submissions.json');
+        if (response.ok) {
+          const data = await response.json();
+          this.submissions = data.submissions || [];
+          this.saveSubmissionsLocally();
+          return;
+        }
+        
+        // Also check customer repo for submissions
+        response = await fetch('https://raw.githubusercontent.com/Cryptovaultiq/My-Own-ticketmaster-Customer/main/submissions.json');
         if (response.ok) {
           const data = await response.json();
           this.submissions = data.submissions || [];
