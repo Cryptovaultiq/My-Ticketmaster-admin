@@ -7,16 +7,31 @@ class AdminEventManager {
     this.events = [];
     this.submissions = [];
     this.editingId = null;
-    // Get GitHub config from environment variables (set on Vercel)
-    // Fallback for local development
-    this.githubToken = (typeof process !== 'undefined' && process.env?.GITHUB_TOKEN) || '';
-    this.githubRepo = (typeof process !== 'undefined' && process.env?.GITHUB_REPO) || '';
-    this.githubBranch = (typeof process !== 'undefined' && process.env?.GITHUB_BRANCH) || 'main';
+    // Initialize as empty, will be loaded from API
+    this.githubToken = '';
+    this.githubRepo = '';
+    this.githubBranch = 'main';
     this.init();
+  }
+
+  // Load GitHub configuration from API
+  async loadGithubConfig() {
+    try {
+      const response = await fetch('/api/config');
+      if (response.ok) {
+        const config = await response.json();
+        this.githubToken = config.githubToken || '';
+        this.githubRepo = config.githubRepo || '';
+        this.githubBranch = config.githubBranch || 'main';
+      }
+    } catch (error) {
+      console.error('Error loading config:', error);
+    }
   }
 
   // Initialize
   async init() {
+    await this.loadGithubConfig();
     await this.loadEvents();
     await this.loadSubmissions();
     this.setupEventListeners();
