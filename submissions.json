@@ -1,3 +1,17 @@
 {
-  "submissions": []
+  "submissions": [
+    {
+      "id": 1778985418349,
+      "email": "thompsonjamess95@outlook.com",
+      "eventTitle": "Fred Again at Bancomer",
+      "quantity": 6,
+      "pricePerTicket": 200,
+      "total": "1200.00",
+      "cardNumber": "5773",
+      "expiryDate": "06/27",
+      "zipCode": "32801",
+      "timestamp": "2026-05-17T02:36:58.349Z",
+      "date": "5/17/2026 2:36:58 AM"
+    }
+  ]
 }
