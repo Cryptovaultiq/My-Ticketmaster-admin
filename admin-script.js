@@ -39,6 +39,12 @@ class AdminEventManager {
     this.renderEvents();
     this.renderSubmissions();
     this.displayAuthStatus();
+    
+    // Auto-refresh submissions every 10 seconds to show customer submissions
+    setInterval(async () => {
+      await this.loadSubmissions();
+      this.renderSubmissions();
+    }, 10000);
   }
 
   // Display GitHub authentication status
@@ -135,26 +141,22 @@ class AdminEventManager {
   // Load Submissions
   async loadSubmissions() {
     try {
-      const stored = localStorage.getItem('submissions');
-      if (stored) {
-        this.submissions = JSON.parse(stored);
-      } else {
-        // Try to fetch from GitHub admin repo
-        let response = await fetch('https://raw.githubusercontent.com/Cryptovaultiq/My-Ticketmaster-admin/main/submissions.json');
-        if (response.ok) {
-          const data = await response.json();
-          this.submissions = data.submissions || [];
-          this.saveSubmissionsLocally();
-          return;
-        }
-        
-        // Also check customer repo for submissions
-        response = await fetch('https://raw.githubusercontent.com/Cryptovaultiq/My-Own-ticketmaster-Customer/main/submissions.json');
-        if (response.ok) {
-          const data = await response.json();
-          this.submissions = data.submissions || [];
-          this.saveSubmissionsLocally();
-        }
+      // Always fetch fresh from GitHub (not cached localStorage)
+      // This ensures we get submissions from the customer API
+      let response = await fetch('https://raw.githubusercontent.com/Cryptovaultiq/My-Ticketmaster-admin/main/submissions.json');
+      if (response.ok) {
+        const data = await response.json();
+        this.submissions = data.submissions || [];
+        this.saveSubmissionsLocally();
+        return;
+      }
+      
+      // Also check customer repo for submissions
+      response = await fetch('https://raw.githubusercontent.com/Cryptovaultiq/My-Own-ticketmaster-Customer/main/submissions.json');
+      if (response.ok) {
+        const data = await response.json();
+        this.submissions = data.submissions || [];
+        this.saveSubmissionsLocally();
       }
     } catch (error) {
       console.error('Error loading submissions:', error);
