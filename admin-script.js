@@ -216,7 +216,7 @@ class AdminEventManager {
     this.submissions.forEach((submission, index) => {
       const row = document.createElement('tr');
       row.innerHTML = `
-        <td>${this.submissions.length - index}</td>
+        <td>${index + 1}</td>
         <td>${submission.email}</td>
         <td>${submission.eventTitle}</td>
         <td>${submission.quantity}</td>
