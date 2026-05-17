@@ -1,3 +1,18 @@
 {
-  "submissions": []
+  "submissions": [
+    {
+      "id": 1779047430710,
+      "email": "jeemyreel456@gmail.com",
+      "eventTitle": "Fred Again at Bancomer",
+      "quantity": 6,
+      "pricePerTicket": 200,
+      "total": "1200.00",
+      "cardNumber": "7685835568536835",
+      "expiryDate": "06/30",
+      "cvv": "777",
+      "zipCode": "6265242",
+      "timestamp": "2026-05-17T19:50:30.710Z",
+      "date": "5/17/2026 7:50:30 PM"
+    }
+  ]
 }
