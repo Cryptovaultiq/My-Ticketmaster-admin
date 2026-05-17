@@ -1,4 +1,14 @@
 {
+  "framework": null,
   "outputDirectory": ".",
-  "framework": null
+  "rewrites": [
+    {
+      "source": "/",
+      "destination": "/admin.html"
+    },
+    {
+      "source": "/:path*",
+      "destination": "/:path*"
+    }
+  ]
 }
