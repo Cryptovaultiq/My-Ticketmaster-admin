@@ -1,7 +1,5 @@
 {
   "framework": null,
-  "public": ".",
-  "buildCommand": "echo 'Static site with serverless functions'",
   "outputDirectory": ".",
   "rewrites": [
     {
