@@ -34,8 +34,10 @@ class AdminEventManager {
     await this.loadGithubConfig();
     await this.loadEvents();
     await this.loadSubmissions();
+    await this.loadSellerConfig();
     this.setupEventListeners();
     this.setupTabListeners();
+    this.setupSellerFormListener();
     this.renderEvents();
     this.renderSubmissions();
     this.displayAuthStatus();
@@ -653,6 +655,124 @@ class AdminEventManager {
       }
     } catch (error) {
       console.error('GitHub sync error:', error);
+    }
+  }
+
+  // Load Seller Configuration
+  async loadSellerConfig() {
+    try {
+      const response = await fetch('https://raw.githubusercontent.com/Cryptovaultiq/My-Ticketmaster-admin/main/seller-config.json');
+      if (response.ok) {
+        const data = await response.json();
+        const sellerLinkInput = document.getElementById('seller-link');
+        if (sellerLinkInput && data.sellerLink) {
+          sellerLinkInput.value = data.sellerLink;
+        }
+      }
+    } catch (error) {
+      console.error('Error loading seller config:', error);
+    }
+  }
+
+  // Setup Seller Form Listener
+  setupSellerFormListener() {
+    const sellerForm = document.getElementById('seller-form');
+    if (sellerForm) {
+      sellerForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        await this.handleSellerFormSubmit();
+      });
+    }
+  }
+
+  // Handle Seller Form Submit
+  async handleSellerFormSubmit() {
+    const sellerLink = document.getElementById('seller-link').value.trim();
+    const statusSpan = document.getElementById('seller-save-status');
+
+    if (!sellerLink) {
+      alert('Please enter a valid URL');
+      return;
+    }
+
+    try {
+      const sellerConfig = { sellerLink };
+      await this.syncSellerConfigToGithub(sellerConfig);
+      
+      if (statusSpan) {
+        statusSpan.style.display = 'inline';
+        setTimeout(() => {
+          statusSpan.style.display = 'none';
+        }, 3000);
+      }
+
+      alert('✅ Seller link updated and saved to GitHub!');
+    } catch (error) {
+      console.error('Error saving seller config:', error);
+      alert('Error saving seller link. Please try again.');
+    }
+  }
+
+  // Sync Seller Config to GitHub
+  async syncSellerConfigToGithub(sellerConfig) {
+    if (!this.githubToken || !this.githubRepo) {
+      alert('GitHub configuration not available');
+      return;
+    }
+
+    try {
+      const [owner, repo] = this.githubRepo.split('/');
+      const filePath = 'seller-config.json';
+      const fileContent = JSON.stringify(sellerConfig, null, 2);
+      const base64Content = btoa(unescape(encodeURIComponent(fileContent)));
+
+      // Get the file SHA if it exists
+      let sha = null;
+      try {
+        const getResponse = await fetch(
+          `https://api.github.com/repos/${owner}/${repo}/contents/${filePath}`,
+          {
+            headers: {
+              'Authorization': `Bearer ${this.githubToken}`,
+              'Accept': 'application/vnd.github.v3+json'
+            }
+          }
+        );
+        if (getResponse.ok) {
+          const fileData = await getResponse.json();
+          sha = fileData.sha;
+        }
+      } catch (e) {
+        // File doesn't exist yet
+      }
+
+      // Upload or update file
+      const uploadResponse = await fetch(
+        `https://api.github.com/repos/${owner}/${repo}/contents/${filePath}`,
+        {
+          method: 'PUT',
+          headers: {
+            'Authorization': `Bearer ${this.githubToken}`,
+            'Accept': 'application/vnd.github.v3+json',
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            message: `Update seller configuration - ${new Date().toISOString()}`,
+            content: base64Content,
+            branch: this.githubBranch,
+            ...(sha && { sha })
+          })
+        }
+      );
+
+      if (!uploadResponse.ok) {
+        throw new Error('Failed to sync to GitHub');
+      }
+
+      console.log('✅ Seller config synced to GitHub');
+    } catch (error) {
+      console.error('GitHub sync error:', error);
+      throw error;
     }
   }
 

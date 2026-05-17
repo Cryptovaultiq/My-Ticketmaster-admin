@@ -535,6 +535,7 @@
     <div class="tabs">
       <button class="tab-btn active" data-tab="events-tab">📋 Events</button>
       <button class="tab-btn" data-tab="submissions-tab">📝 Form Submissions</button>
+      <button class="tab-btn" data-tab="seller-tab">🔗 Seller Settings</button>
     </div>
 
     <!-- Add/Edit Event Form -->
@@ -634,6 +635,22 @@
         </div>
       </div>
     </div> <!-- End submissions-tab -->
+
+    <!-- Seller Settings Tab -->
+    <div id="seller-tab" class="tab-content">
+      <div class="form-section">
+        <h2>🔗 Seller Link Settings</h2>
+        <form id="seller-form">
+          <div class="form-group">
+            <label for="seller-link">Message Seller Link (Social Media URL):</label>
+            <input type="url" id="seller-link" placeholder="https://twitter.com/@yourhandle" required style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #444; background: #222; color: #fff; font-size: 1rem;" />
+            <small style="color: #888; display: block; margin-top: 8px;">Enter the social media URL where customers can contact you</small>
+          </div>
+          <button type="submit" class="btn btn-primary" style="margin-top: 20px;">💾 Save Seller Link</button>
+          <span id="seller-save-status" style="margin-left: 15px; color: #51cf66; display: none;">✅ Saved to GitHub</span>
+        </form>
+      </div>
+    </div> <!-- End seller-tab -->
   </div>
 
   <!-- Submission Detail Modal -->
