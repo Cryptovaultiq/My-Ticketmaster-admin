@@ -1,0 +1,59 @@
+{
+  "events": [
+    {
+      "id": 1,
+      "title": "Fred Again at Bancomer",
+      "location": "México, CDMX, Expo Santa Fe",
+      "dateTime": "Fri • Dec 12, 2025 • 8:00 PM",
+      "price": 200,
+      "ticketsAvailable": 4,
+      "imageUrl": "Fred.jpg",
+      "imageAlt": "Fred Again at Bancomer",
+      "category": "Music"
+    },
+    {
+      "id": 2,
+      "title": "BAD OMENS: DO YOU FEEL LOVE NORTH AMERICAN TOUR",
+      "location": "Delta Center, Salt Lake City, UT",
+      "dateTime": "Sun • Feb 22, 2026 • 7:00 PM",
+      "price": 100,
+      "ticketsAvailable": 8,
+      "imageUrl": "bad-omen.jpg",
+      "imageAlt": "BAD OMENS",
+      "category": "Music"
+    },
+    {
+      "id": 3,
+      "title": "Chelsea Fc vs Everton Fc",
+      "location": "Stamford Bridge, London, SW6 1HS",
+      "dateTime": "Sat • Dec 13, 2025 • 3:00 PM",
+      "price": 100,
+      "ticketsAvailable": 6,
+      "imageUrl": "Chelsea.jpg",
+      "imageAlt": "Chelsea Fc vs Everton Fc",
+      "category": "Football"
+    },
+    {
+      "id": 4,
+      "title": "R&B/Urban Soul: Mariah the Scientist Tickets",
+      "location": "Manchester Academy, Manchester",
+      "dateTime": "Wed • Jan 14, 2026 • 7:00 PM",
+      "price": 70,
+      "ticketsAvailable": 5,
+      "imageUrl": "mariah.jpg",
+      "imageAlt": "Mariah the Scientist",
+      "category": "Music"
+    },
+    {
+      "id": 5,
+      "title": "Beyoncé - Renaissance World Tour",
+      "location": "Madison Square Garden • New York, NY",
+      "dateTime": "Sat • Dec 20 • 7:30 PM",
+      "price": 50,
+      "ticketsAvailable": 4,
+      "imageUrl": "assets/hero-1.png",
+      "imageAlt": "Beyoncé",
+      "category": "Music"
+    }
+  ]
+}

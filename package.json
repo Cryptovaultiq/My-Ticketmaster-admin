@@ -1,0 +1,17 @@
+{
+  "name": "ticketmaster-dapp",
+  "version": "1.0.0",
+  "description": "Web3 ticket dApp using NOWPayments (BNB / BSC)",
+  "author": "Your Name <you@example.com>",
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "dev": "vercel dev",
+    "build": "echo \"No build step: static site + serverless functions\"",
+    "start": "vercel start"
+  },
+  "engines": {
+    "node": "24.x"
+  },
+  "dependencies": {}
+}

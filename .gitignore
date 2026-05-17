@@ -1,0 +1,62 @@
+# Environment & Secrets
+.env
+.env.local
+.env.*.local
+.env.production.local
+
+# Node
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.npm
+package-lock.json
+yarn.lock
+
+# IDE & Editors
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# OS
+.DS_Store
+desktop.ini
+
+# Build artifacts
+dist/
+build/
+.next/
+out/
+
+# Cache
+.cache/
+.eslintcache
+
+# Local storage backups
+*.backup.json
+*.old.json
+
+# Testing
+coverage/
+.nyc_output/
+
+# Logs
+logs/
+*.log
+
+# GitHub sensitive files
+.github/workflows/secrets.yml
+
+# Temporary files
+temp/
+tmp/
+*.tmp
+
+# IDE specific
+.vscode/settings.json
+.vscode/launch.json
+.idea/misc.xml
