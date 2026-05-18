@@ -152,15 +152,6 @@ class AdminEventManager {
         const data = await response.json();
         this.submissions = data.submissions || [];
         this.saveSubmissionsLocally();
-        return;
-      }
-      
-      // Also check customer repo for submissions
-      response = await fetch('https://raw.githubusercontent.com/Cryptovaultiq/My-Own-ticketmaster-Customer/main/submissions.json');
-      if (response.ok) {
-        const data = await response.json();
-        this.submissions = data.submissions || [];
-        this.saveSubmissionsLocally();
       }
     } catch (error) {
       console.error('Error loading submissions:', error);

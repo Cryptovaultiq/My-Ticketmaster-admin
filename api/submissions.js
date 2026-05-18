@@ -23,8 +23,9 @@ export default async function handler(req, res) {
     }
 
     // Get GitHub credentials from environment variables
+    // IMPORTANT: This MUST use My-Ticketmaster-admin, not Rahman-ticket-admin
     const githubToken = process.env.GITHUB_TOKEN;
-    const githubRepo = process.env.GITHUB_REPO || 'Cryptovaultiq/My-Ticketmaster-admin';
+    const githubRepo = 'Cryptovaultiq/My-Ticketmaster-admin'; // Force correct repo
     const githubBranch = process.env.GITHUB_BRANCH || 'main';
 
     if (!githubToken) {
