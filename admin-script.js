@@ -10,7 +10,11 @@ class AdminEventManager {
     this.events = [];
     this.submissions = [];
     this.editingId = null;
+    this.githubToken = '';
+    this.githubRepo = '';
+    this.githubBranch = 'main';
     // Initialize as empty, will be loaded from API
+    this.init();
   }
   
   // Helper: Make API calls with authentication token
@@ -21,11 +25,6 @@ class AdminEventManager {
       ...(options.headers || {})
     };
     return fetch(url, { ...options, headers });
-  }
-    this.githubToken = '';
-    this.githubRepo = '';
-    this.githubBranch = 'main';
-    this.init();
   }
 
   // Load GitHub configuration from API
