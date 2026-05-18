@@ -39,6 +39,10 @@ export default async function handler(req, res) {
   // HANDLE GET - Return submissions
   if (req.method === 'GET') {
     try {
+      if (!githubToken) {
+        return res.status(200).json({ submissions: [] });
+      }
+
       const getResponse = await fetch(
         `https://api.github.com/repos/${githubRepo}/contents/submissions.json`,
         {
@@ -51,15 +55,24 @@ export default async function handler(req, res) {
 
       if (getResponse.ok) {
         const fileData = await getResponse.json();
-        const content = Buffer.from(fileData.content, 'base64').toString('utf-8');
-        const jsonData = JSON.parse(content);
-        return res.status(200).json({ submissions: jsonData.submissions || [] });
-      } else {
-        return res.status(200).json({ submissions: [] });
+        if (fileData.content) {
+          try {
+            const content = Buffer.from(fileData.content, 'base64').toString('utf-8');
+            const jsonData = JSON.parse(content);
+            return res.status(200).json({ submissions: jsonData.submissions || [] });
+          } catch (parseError) {
+            console.error('Error parsing submissions:', parseError);
+            return res.status(200).json({ submissions: [] });
+          }
+        }
       }
+      
+      // File doesn't exist or not found - return empty submissions
+      return res.status(200).json({ submissions: [] });
     } catch (error) {
       console.error('Error fetching submissions:', error);
-      return res.status(500).json({ error: 'Failed to fetch submissions' });
+      // Return empty submissions instead of 500 error
+      return res.status(200).json({ submissions: [] });
     }
   }
 
@@ -88,11 +101,19 @@ export default async function handler(req, res) {
       let sha = null;
 
       if (getResponse.ok) {
-        const fileData = await getResponse.json();
-        const content = Buffer.from(fileData.content, 'base64').toString('utf-8');
-        const jsonData = JSON.parse(content);
-        submissions = jsonData.submissions || [];
-        sha = fileData.sha;
+        try {
+          const fileData = await getResponse.json();
+          if (fileData.content) {
+            const content = Buffer.from(fileData.content, 'base64').toString('utf-8');
+            const jsonData = JSON.parse(content);
+            submissions = jsonData.submissions || [];
+            sha = fileData.sha;
+          }
+        } catch (parseError) {
+          console.error('Error parsing existing submissions:', parseError);
+          submissions = [];
+          sha = getResponse.headers.get('x-github-sha') || null;
+        }
       }
 
       // Add new submission with timestamp
