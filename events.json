@@ -48,9 +48,9 @@
       "id": 5,
       "title": "Beyoncé - Renaissance World Tour",
       "location": "Madison Square Garden • New York, NY",
-      "dateTime": "Sat • Dec 20 • 7:30 PM",
-      "price": 500,
-      "ticketsAvailable": 4,
+      "dateTime": "Sat • Dec 30 • 7:35 PM",
+      "price": 250,
+      "ticketsAvailable": 8,
       "imageUrl": "assets/hero-1.png",
       "imageAlt": "Beyoncé",
       "category": "Music"
