@@ -27,8 +27,8 @@
       "title": "Chelsea Fc vs Everton Fc",
       "location": "Stamford Bridge, London, SW6 1HS",
       "dateTime": "Sat • Dec 13, 2025 • 3:00 PM",
-      "price": 100,
-      "ticketsAvailable": 6,
+      "price": 130,
+      "ticketsAvailable": 8,
       "imageUrl": "Chelsea.jpg",
       "imageAlt": "Chelsea Fc vs Everton Fc",
       "category": "Football"
@@ -71,8 +71,8 @@
       "title": "BBC Radio 1s Big Weekend (Olivia Dean, Niall Horan, Myles Smith)",
       "location": "Herrington Country Park Chester Rd, Penshaw, DH47EL, GB",
       "dateTime": "Sun, May 24 - 11:00am",
-      "price": 375,
-      "ticketsAvailable": 7,
+      "price": 330,
+      "ticketsAvailable": 5,
       "imageUrl": "https://raw.githubusercontent.com/Cryptovaultiq/My-Ticketmaster-admin/main/assets/1779123142620_IMG-20260517-WA0057.jpg",
       "imageAlt": "BBC Radio",
       "category": "Music"
