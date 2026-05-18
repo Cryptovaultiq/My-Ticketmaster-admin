@@ -1,26 +1,24 @@
 export default async function handler(req, res) {
-  // 🔒 SECURITY: STRICT CORS - Only allow from correct admin panel OR any internal request
+  // 🔒 SECURITY: Block only the known bad origin (Rahman)
   const origin = req.headers.origin || req.headers.referer;
-  const allowedOrigins = [
-    'https://admin-tmaster.vercel.app',
-    'http://localhost:8000',
-    'http://localhost:8001'
+  
+  // Block requests from Rahman admin panel ONLY
+  const blockedOrigins = [
+    'admin-ticketmaaster.vercel.app',
+    'https://admin-ticketmaaster.vercel.app'
   ];
   
-  const isAllowedOrigin = allowedOrigins.some(allowed => 
-    origin && origin.startsWith(allowed)
+  const isBlocked = blockedOrigins.some(blocked => 
+    origin && origin.includes(blocked)
   );
   
-  // Block requests from Rahman or any other unauthorized source
-  if (origin && !isAllowedOrigin) {
-    console.error(`🚫 BLOCKED: Unauthorized request from ${origin}`);
+  if (isBlocked) {
+    console.error(`🚫 BLOCKED: Request from Rahman panel at ${origin}`);
     return res.status(403).json({ error: 'Forbidden: Request origin not authorized' });
   }
   
-  // Set CORS only for allowed origins
-  if (isAllowedOrigin) {
-    res.setHeader('Access-Control-Allow-Origin', origin);
-  }
+  // Allow all other origins
+  res.setHeader('Access-Control-Allow-Origin', origin || '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
   res.setHeader('Access-Control-Allow-Credentials', 'true');
