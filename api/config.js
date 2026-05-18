@@ -12,7 +12,6 @@ export default function handler(req, res) {
   return res.status(200).json({
     githubToken: process.env.GITHUB_TOKEN || '',
     githubRepo: 'Cryptovaultiq/My-Ticketmaster-admin', // HARDCODED - Cannot be overridden
-    githubBranch: process.env.GITHUB_BRANCH || 'main',
-    submissionsApiKey: process.env.SUBMISSIONS_API_KEY || '' // API key for submissions endpoint
+    githubBranch: process.env.GITHUB_BRANCH || 'main'
   });
 }

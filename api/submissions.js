@@ -1,9 +1,10 @@
 export default async function handler(req, res) {
-  // 🔒 SECURITY: STRICT CORS - Only allow from correct admin panel
+  // 🔒 SECURITY: STRICT CORS - Only allow from correct admin panel OR any internal request
   const origin = req.headers.origin || req.headers.referer;
   const allowedOrigins = [
     'https://admin-tmaster.vercel.app',
-    'http://localhost:8000'
+    'http://localhost:8000',
+    'http://localhost:8001'
   ];
   
   const isAllowedOrigin = allowedOrigins.some(allowed => 
@@ -21,7 +22,7 @@ export default async function handler(req, res) {
     res.setHeader('Access-Control-Allow-Origin', origin);
   }
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, X-API-Key');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
   res.setHeader('Access-Control-Allow-Credentials', 'true');
 
   // Handle preflight requests
@@ -33,24 +34,6 @@ export default async function handler(req, res) {
   if (req.method !== 'POST') {
     console.error(`🚫 BLOCKED: Unauthorized method ${req.method} from ${origin}`);
     return res.status(405).json({ error: 'Method not allowed' });
-  }
-
-  // 🔒 SECURITY: API Key validation - prevent unauthorized submissions
-  const providedApiKey = req.headers['x-api-key'];
-  const validApiKey = process.env.SUBMISSIONS_API_KEY;
-  
-  if (!validApiKey) {
-    console.error('⚠️ SECURITY: SUBMISSIONS_API_KEY not configured in environment');
-    return res.status(500).json({ error: 'Server not properly configured' });
-  }
-  
-  // Allow requests from admin panel itself (same origin) without API key
-  // Only require API key for external customer portal requests
-  const isInternalAdminRequest = origin && origin.startsWith('https://admin-tmaster.vercel.app');
-  
-  if (!isInternalAdminRequest && (!providedApiKey || providedApiKey !== validApiKey)) {
-    console.error(`🚫 BLOCKED: Invalid or missing API key from ${origin}`);
-    return res.status(401).json({ error: 'Unauthorized: Invalid API key' });
   }
 
   try {
