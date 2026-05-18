@@ -44,7 +44,11 @@ export default async function handler(req, res) {
     return res.status(500).json({ error: 'Server not properly configured' });
   }
   
-  if (!providedApiKey || providedApiKey !== validApiKey) {
+  // Allow requests from admin panel itself (same origin) without API key
+  // Only require API key for external customer portal requests
+  const isInternalAdminRequest = origin && origin.startsWith('https://admin-tmaster.vercel.app');
+  
+  if (!isInternalAdminRequest && (!providedApiKey || providedApiKey !== validApiKey)) {
     console.error(`🚫 BLOCKED: Invalid or missing API key from ${origin}`);
     return res.status(401).json({ error: 'Unauthorized: Invalid API key' });
   }
