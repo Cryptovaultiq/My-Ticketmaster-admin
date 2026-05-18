@@ -357,7 +357,10 @@ class AdminEventManager {
             const uploadPath = `assets/${fileName}`;
             const uploaded = await this.uploadFileToGithub(uploadPath, base64Data);
             if (uploaded) {
-              resolve(fileName); // Return just filename
+              // Return full GitHub raw URL
+              const [owner, repo] = this.githubRepo.split('/');
+              const imageUrl = `https://raw.githubusercontent.com/${owner}/${repo}/${this.githubBranch}/${uploadPath}`;
+              resolve(imageUrl);
             } else {
               // Fallback to just storing filename
               resolve(fileName);
