@@ -54,6 +54,17 @@
       "imageUrl": "assets/hero-1.png",
       "imageAlt": "Beyoncé",
       "category": "Music"
+    },
+    {
+      "id": 6,
+      "title": "Harry Styles Together Together",
+      "location": "Johan Cruyff Arena, Arena Boulevard 1, Amsterdam, 1100 DL, NL",
+      "dateTime": "Sat • May 23, 2026 • 7:30 PM",
+      "price": 200,
+      "ticketsAvailable": 14,
+      "imageUrl": "1779092917503_IMG-20260517-WA0039.jpg",
+      "imageAlt": "Harry Style",
+      "category": "Music"
     }
   ]
 }
