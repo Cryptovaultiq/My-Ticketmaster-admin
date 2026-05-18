@@ -23,10 +23,16 @@ export default async function handler(req, res) {
     }
 
     // Get GitHub credentials from environment variables
-    // IMPORTANT: This MUST use My-Ticketmaster-admin, not Rahman-ticket-admin
+    // SECURITY: Force ONLY My-Ticketmaster-admin repo - NO fallback allowed
     const githubToken = process.env.GITHUB_TOKEN;
-    const githubRepo = 'Cryptovaultiq/My-Ticketmaster-admin'; // Force correct repo
+    const githubRepo = 'Cryptovaultiq/My-Ticketmaster-admin'; // HARDCODED - Cannot be overridden
     const githubBranch = process.env.GITHUB_BRANCH || 'main';
+    
+    // Prevent any accidental override via environment variable
+    if (process.env.GITHUB_REPO && process.env.GITHUB_REPO !== githubRepo) {
+      console.error(`⚠️ SECURITY: Attempted to use wrong repo: ${process.env.GITHUB_REPO}`);
+      console.error(`✅ Using correct repo instead: ${githubRepo}`);
+    }
 
     if (!githubToken) {
       return res.status(500).json({ error: 'GitHub not configured' });
