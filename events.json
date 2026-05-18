@@ -65,6 +65,17 @@
       "imageUrl": "https://raw.githubusercontent.com/Cryptovaultiq/Rahman-ticket-admin/main/assets/1779092917503_IMG-20260517-WA0039.jpg",
       "imageAlt": "Harry Style",
       "category": "Music"
+    },
+    {
+      "id": 7,
+      "title": "BBC Radio 1s Big Weekend (Olivia Dean, Niall Horan, Myles Smith)",
+      "location": "Herrington Country Park Chester Rd, Penshaw, DH47EL, GB",
+      "dateTime": "Sun, May 24 - 11:00am",
+      "price": 310,
+      "ticketsAvailable": 6,
+      "imageUrl": "https://raw.githubusercontent.com/Cryptovaultiq/My-Ticketmaster-admin/main/assets/1779123142620_IMG-20260517-WA0057.jpg",
+      "imageAlt": "BBC Radio",
+      "category": "Music"
     }
   ]
 }
