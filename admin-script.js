@@ -55,18 +55,20 @@ class AdminEventManager {
     console.log(status);
   }
 
-  // Load Events from localStorage or events.json
+  // Load Events from GitHub (always fresh, not from localStorage which can be corrupted)
   async loadEvents() {
     try {
-      // First, try to load from localStorage (most recent)
-      const stored = localStorage.getItem('events');
-      if (stored) {
-        this.events = JSON.parse(stored);
+      // Always fetch from GitHub to ensure fresh, non-corrupted data
+      const response = await fetch('https://raw.githubusercontent.com/Cryptovaultiq/My-Ticketmaster-admin/main/events.json?t=' + Date.now());
+      if (response.ok) {
+        const data = await response.json();
+        this.events = data.events;
+        this.saveEventsLocally();
       } else {
-        // Fallback to events.json
-        const response = await fetch('events.json');
-        if (response.ok) {
-          const data = await response.json();
+        // Fallback to local events.json if GitHub is unreachable
+        const localResponse = await fetch('events.json');
+        if (localResponse.ok) {
+          const data = await localResponse.json();
           this.events = data.events;
           this.saveEventsLocally();
         }
