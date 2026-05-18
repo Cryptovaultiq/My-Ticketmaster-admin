@@ -1,38 +1,32 @@
 export default function handler(req, res) {
-  // 🔒 SECURITY: Block Rahman from reading seller config
+  // 🔒 SECURITY: Whitelist only YOUR origins - STRICT MODE
   const origin = req.headers.origin || req.headers.referer;
   
-  // Block ALL requests from Rahman
-  const blockedOrigins = [
-    'admin-ticketmaaster.vercel.app',
-    'https://admin-ticketmaaster.vercel.app',
-    'ticketmaaster-events.vercel.app',
-    'https://ticketmaaster-events.vercel.app'
-  ];
-  
-  const isBlocked = blockedOrigins.some(blocked => 
-    origin && origin.includes(blocked)
-  );
-  
-  if (isBlocked) {
-    console.error(`🚫 BLOCKED: Unauthorized seller-config request from ${origin}`);
-    return res.status(403).json({ error: 'Forbidden' });
-  }
-  
-  // Allow only YOUR deployments
+  // ONLY allow YOUR deployments (everything else denied)
   const allowedOrigins = [
     'admin-tmaster.vercel.app',
     'https://admin-tmaster.vercel.app',
     'tickettmaster-events.vercel.app',
     'https://tickettmaster-events.vercel.app',
-    'localhost'
+    'localhost',
+    'http://localhost'
   ];
   
   const isAllowed = allowedOrigins.some(allowed => 
     origin && origin.includes(allowed)
   );
   
-  res.setHeader('Access-Control-Allow-Origin', isAllowed ? origin : 'null');
+  // STRICT: Block anything not explicitly allowed
+  if (!isAllowed) {
+    console.error(`🚫 BLOCKED: Seller-config request from unauthorized origin: ${origin || 'NO_ORIGIN'}`);
+    res.setHeader('Access-Control-Allow-Origin', 'null');
+    return res.status(403).json({ error: 'Forbidden' });
+  }
+  
+  console.log(`✅ Seller-config API: Request allowed from ${origin}`);
+  
+  // Set CORS only for allowed origins
+  res.setHeader('Access-Control-Allow-Origin', origin);
   res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
   
