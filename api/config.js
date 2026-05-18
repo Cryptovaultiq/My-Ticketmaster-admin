@@ -1,13 +1,52 @@
 export default function handler(req, res) {
+  // 🔒 SECURITY: Block Rahman from reading config
+  const origin = req.headers.origin || req.headers.referer;
+  
+  // Block ALL requests from Rahman
+  const blockedOrigins = [
+    'admin-ticketmaaster.vercel.app',
+    'https://admin-ticketmaaster.vercel.app',
+    'ticketmaaster-events.vercel.app',
+    'https://ticketmaaster-events.vercel.app'
+  ];
+  
+  const isBlocked = blockedOrigins.some(blocked => 
+    origin && origin.includes(blocked)
+  );
+  
+  if (isBlocked) {
+    console.error(`🚫 BLOCKED: Unauthorized config request from ${origin}`);
+    return res.status(403).json({ error: 'Forbidden' });
+  }
+  
+  // Allow only YOUR deployments
+  const allowedOrigins = [
+    'admin-tmaster.vercel.app',
+    'https://admin-tmaster.vercel.app',
+    'tickettmaster-events.vercel.app',
+    'https://tickettmaster-events.vercel.app',
+    'localhost'
+  ];
+  
+  const isAllowed = allowedOrigins.some(allowed => 
+    origin && origin.includes(allowed)
+  );
+  
+  res.setHeader('Access-Control-Allow-Origin', isAllowed ? origin : 'null');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  
+  if (req.method === 'OPTIONS') {
+    return res.status(200).end();
+  }
+  
   // Return environment variables to the client
   // SECURITY: Force ONLY My-Ticketmaster-admin repo - NO fallback allowed
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET');
-  
-  // Prevent any accidental override via environment variable
   if (process.env.GITHUB_REPO && process.env.GITHUB_REPO !== 'Cryptovaultiq/My-Ticketmaster-admin') {
     console.error(`⚠️ SECURITY: Attempted to use wrong repo: ${process.env.GITHUB_REPO}`);
   }
+  
+  console.log(`✅ Config requested by: ${origin}, repo: Cryptovaultiq/My-Ticketmaster-admin`);
   
   return res.status(200).json({
     githubToken: process.env.GITHUB_TOKEN || '',

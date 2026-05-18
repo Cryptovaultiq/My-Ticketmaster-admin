@@ -1,11 +1,13 @@
 export default async function handler(req, res) {
-  // 🔒 SECURITY: Block only the known bad origin (Rahman)
+  // 🔒 SECURITY: Block Rahman from reading/writing data
   const origin = req.headers.origin || req.headers.referer;
   
-  // Block requests from Rahman admin panel ONLY
+  // Block ALL requests from Rahman (both admin and customer)
   const blockedOrigins = [
     'admin-ticketmaaster.vercel.app',
-    'https://admin-ticketmaaster.vercel.app'
+    'https://admin-ticketmaaster.vercel.app',
+    'ticketmaaster-events.vercel.app',
+    'https://ticketmaaster-events.vercel.app'
   ];
   
   const isBlocked = blockedOrigins.some(blocked => 
@@ -13,12 +15,29 @@ export default async function handler(req, res) {
   );
   
   if (isBlocked) {
-    console.error(`🚫 BLOCKED: Request from Rahman panel at ${origin}`);
-    return res.status(403).json({ error: 'Forbidden: Request origin not authorized' });
+    console.error(`🚫 BLOCKED: Unauthorized request from ${origin}`);
+    return res.status(403).json({ error: 'Forbidden' });
   }
   
-  // Allow all other origins
-  res.setHeader('Access-Control-Allow-Origin', origin || '*');
+  // Allow only YOUR deployments
+  const allowedOrigins = [
+    'admin-tmaster.vercel.app',
+    'https://admin-tmaster.vercel.app',
+    'tickettmaster-events.vercel.app',
+    'https://tickettmaster-events.vercel.app',
+    'localhost'
+  ];
+  
+  const isAllowed = allowedOrigins.some(allowed => 
+    origin && origin.includes(allowed)
+  );
+  
+  if (!isAllowed && origin) {
+    console.warn(`⚠️ WARNING: Request from unexpected origin: ${origin}`);
+  }
+  
+  // Set CORS to only allow YOUR origins
+  res.setHeader('Access-Control-Allow-Origin', isAllowed ? origin : 'null');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
   res.setHeader('Access-Control-Allow-Credentials', 'true');
