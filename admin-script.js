@@ -304,7 +304,7 @@ class AdminEventManager {
           `https://api.github.com/repos/${owner}/${repo}/contents/${filePath}`,
           {
             headers: {
-              'Authorization': `Bearer ${this.githubToken}`,
+              'Authorization': `token ${this.githubToken}`,
               'Accept': 'application/vnd.github.v3+json'
             }
           }
@@ -322,7 +322,7 @@ class AdminEventManager {
         {
           method: 'PUT',
           headers: {
-            'Authorization': `Bearer ${this.githubToken}`,
+            'Authorization': `token ${this.githubToken}`,
             'Accept': 'application/vnd.github.v3+json',
             'Content-Type': 'application/json'
           },
@@ -605,6 +605,8 @@ class AdminEventManager {
       return;
     }
 
+    console.log(`📤 Syncing events to GitHub repo: ${this.githubRepo}`);
+
     try {
       const [owner, repo] = this.githubRepo.split('/');
       const filePath = 'events.json';
@@ -722,6 +724,8 @@ class AdminEventManager {
       alert('GitHub configuration not available');
       return;
     }
+
+    console.log(`📤 Syncing seller config to GitHub repo: ${this.githubRepo}`);
 
     try {
       const [owner, repo] = this.githubRepo.split('/');

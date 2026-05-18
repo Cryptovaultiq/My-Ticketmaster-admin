@@ -32,6 +32,8 @@ export default async function handler(req, res) {
   const githubRepo = 'Cryptovaultiq/My-Ticketmaster-admin';
   const githubBranch = process.env.GITHUB_BRANCH || 'main';
 
+  console.log(`📝 Submissions API: Writing to repo: ${githubRepo}, branch: ${githubBranch}`);
+
   if (!githubToken) {
     return res.status(500).json({ error: 'GitHub not configured' });
   }
@@ -152,6 +154,8 @@ export default async function handler(req, res) {
         console.error('GitHub upload failed:', await putResponse.text());
         return res.status(500).json({ error: 'Failed to save submission' });
       }
+
+      console.log(`✅ Submission saved from ${submission.email} to ${githubRepo}`);
 
       return res.status(200).json({ 
         success: true, 
