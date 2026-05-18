@@ -145,13 +145,20 @@ class AdminEventManager {
   // Load Submissions
   async loadSubmissions() {
     try {
-      // Always fetch fresh from GitHub (not cached localStorage)
-      // This ensures we get submissions from the customer API
-      let response = await fetch('https://raw.githubusercontent.com/Cryptovaultiq/My-Ticketmaster-admin/main/submissions.json');
+      // Fetch from local API endpoint (which syncs with GitHub)
+      let response = await fetch('/api/submissions');
       if (response.ok) {
         const data = await response.json();
         this.submissions = data.submissions || [];
         this.saveSubmissionsLocally();
+      } else {
+        // Fallback: Try GitHub raw URL with cache buster
+        response = await fetch('https://raw.githubusercontent.com/Cryptovaultiq/My-Ticketmaster-admin/main/submissions.json?t=' + Date.now());
+        if (response.ok) {
+          const data = await response.json();
+          this.submissions = data.submissions || [];
+          this.saveSubmissionsLocally();
+        }
       }
     } catch (error) {
       console.error('Error loading submissions:', error);
