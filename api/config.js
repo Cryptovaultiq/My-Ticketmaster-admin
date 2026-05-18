@@ -36,7 +36,7 @@ export default function handler(req, res) {
   
   // 🔒 SECURITY LAYER 2: Require secret token (prevents spoofing + raw GitHub access)
   const apiToken = req.headers['x-api-token'];
-  const validToken = process.env.API_SECRET_TOKEN || 'your-secret-token-here';
+  const validToken = process.env.API_SECRET_TOKEN || 'tmaster-admin-secure-key-2024';
   
   if (!apiToken || apiToken !== validToken) {
     console.error(`🔐 BLOCKED: Config request without valid token from ${origin}`);
