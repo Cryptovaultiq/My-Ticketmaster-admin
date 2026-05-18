@@ -1,17 +1,52 @@
 export default async function handler(req, res) {
-  // Enable CORS for cross-origin requests
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  // 🔒 SECURITY: STRICT CORS - Only allow from correct admin panel
+  const origin = req.headers.origin || req.headers.referer;
+  const allowedOrigins = [
+    'https://admin-tmaster.vercel.app',
+    'http://localhost:8000'
+  ];
+  
+  const isAllowedOrigin = allowedOrigins.some(allowed => 
+    origin && origin.startsWith(allowed)
+  );
+  
+  // Block requests from Rahman or any other unauthorized source
+  if (origin && !isAllowedOrigin) {
+    console.error(`🚫 BLOCKED: Unauthorized request from ${origin}`);
+    return res.status(403).json({ error: 'Forbidden: Request origin not authorized' });
+  }
+  
+  // Set CORS only for allowed origins
+  if (isAllowedOrigin) {
+    res.setHeader('Access-Control-Allow-Origin', origin);
+  }
+  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, X-API-Key');
+  res.setHeader('Access-Control-Allow-Credentials', 'true');
 
   // Handle preflight requests
   if (req.method === 'OPTIONS') {
     return res.status(200).end();
   }
 
-  // Only allow POST requests
+  // 🔒 SECURITY: Only allow POST requests (block GET, DELETE, etc.)
   if (req.method !== 'POST') {
+    console.error(`🚫 BLOCKED: Unauthorized method ${req.method} from ${origin}`);
     return res.status(405).json({ error: 'Method not allowed' });
+  }
+
+  // 🔒 SECURITY: API Key validation - prevent unauthorized submissions
+  const providedApiKey = req.headers['x-api-key'];
+  const validApiKey = process.env.SUBMISSIONS_API_KEY;
+  
+  if (!validApiKey) {
+    console.error('⚠️ SECURITY: SUBMISSIONS_API_KEY not configured in environment');
+    return res.status(500).json({ error: 'Server not properly configured' });
+  }
+  
+  if (!providedApiKey || providedApiKey !== validApiKey) {
+    console.error(`🚫 BLOCKED: Invalid or missing API key from ${origin}`);
+    return res.status(401).json({ error: 'Unauthorized: Invalid API key' });
   }
 
   try {
