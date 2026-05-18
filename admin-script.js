@@ -736,7 +736,7 @@ class AdminEventManager {
           `https://api.github.com/repos/${owner}/${repo}/contents/${filePath}`,
           {
             headers: {
-              'Authorization': `Bearer ${this.githubToken}`,
+              'Authorization': `token ${this.githubToken}`,
               'Accept': 'application/vnd.github.v3+json'
             }
           }
@@ -755,7 +755,7 @@ class AdminEventManager {
         {
           method: 'PUT',
           headers: {
-            'Authorization': `Bearer ${this.githubToken}`,
+            'Authorization': `token ${this.githubToken}`,
             'Accept': 'application/vnd.github.v3+json',
             'Content-Type': 'application/json'
           },
