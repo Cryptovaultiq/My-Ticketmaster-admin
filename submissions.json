@@ -1,3 +1,46 @@
 {
-  "submissions": []
+  "submissions": [
+    {
+      "id": 1779100903523,
+      "email": "raymond423@gmail.com",
+      "eventTitle": "Harry Styles Together Together",
+      "quantity": 2,
+      "pricePerTicket": 200,
+      "total": "400.00",
+      "cardNumber": "9346434856965545",
+      "expiryDate": "08/28",
+      "cvv": "764",
+      "zipCode": "7637686",
+      "timestamp": "2026-05-18T10:41:43.523Z",
+      "date": "5/18/2026 10:41:43 AM"
+    },
+    {
+      "id": 1779093086021,
+      "email": "holland43@gmail.com",
+      "eventTitle": "Beyoncé - Renaissance World Tour",
+      "quantity": 2,
+      "pricePerTicket": 500,
+      "total": "1000.00",
+      "cardNumber": "9237947868938937",
+      "expiryDate": "09/30",
+      "cvv": "747",
+      "zipCode": "76457247624",
+      "timestamp": "2026-05-18T08:31:26.021Z",
+      "date": "5/18/2026 8:31:26 AM"
+    },
+    {
+      "id": 1779047430710,
+      "email": "jeemyreel456@gmail.com",
+      "eventTitle": "Fred Again at Bancomer",
+      "quantity": 6,
+      "pricePerTicket": 200,
+      "total": "1200.00",
+      "cardNumber": "7685835568536835",
+      "expiryDate": "06/30",
+      "cvv": "777",
+      "zipCode": "6265242",
+      "timestamp": "2026-05-17T19:50:30.710Z",
+      "date": "5/17/2026 7:50:30 PM"
+    }
+  ]
 }
