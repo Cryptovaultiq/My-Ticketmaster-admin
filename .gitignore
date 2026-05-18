@@ -4,6 +4,11 @@
 .env.*.local
 .env.production.local
 
+# Sensitive Data Files
+submissions.json
+events.json
+seller-config.json
+
 # Node
 node_modules/
 npm-debug.log*
