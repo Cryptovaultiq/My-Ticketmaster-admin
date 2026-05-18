@@ -1,0 +1,81 @@
+{
+  "events": [
+    {
+      "id": 1,
+      "title": "Fred Again at Bancomer",
+      "location": "México, CDMX, Expo Santa Fe",
+      "dateTime": "Fri • Dec 12, 2026 • 4:00 PM",
+      "price": 270,
+      "ticketsAvailable": 4,
+      "imageUrl": "Fred.jpg",
+      "imageAlt": "Fred Again at Bancomer",
+      "category": "Music"
+    },
+    {
+      "id": 2,
+      "title": "BAD OMENS: DO YOU FEEL LOVE NORTH AMERICAN TOUR",
+      "location": "Delta Center, Salt Lake City, UT",
+      "dateTime": "Sun • Feb 22, 2026 • 7:00 PM",
+      "price": 100,
+      "ticketsAvailable": 8,
+      "imageUrl": "bad-omen.jpg",
+      "imageAlt": "BAD OMENS",
+      "category": "Music"
+    },
+    {
+      "id": 3,
+      "title": "Chelsea Fc vs Everton Fc",
+      "location": "Stamford Bridge, London, SW6 1HS",
+      "dateTime": "Sat • Dec 13, 2025 • 3:00 PM",
+      "price": 130,
+      "ticketsAvailable": 8,
+      "imageUrl": "Chelsea.jpg",
+      "imageAlt": "Chelsea Fc vs Everton Fc",
+      "category": "Football"
+    },
+    {
+      "id": 4,
+      "title": "R&B/Urban Soul: Mariah the Scientist Tickets",
+      "location": "Manchester Academy, Manchester",
+      "dateTime": "Wed • Jan 14, 2026 • 7:00 PM",
+      "price": 125,
+      "ticketsAvailable": 1,
+      "imageUrl": "mariah.jpg",
+      "imageAlt": "Mariah the Scientist",
+      "category": "Music"
+    },
+    {
+      "id": 5,
+      "title": "Beyoncé - Renaissance World Tour",
+      "location": "Madison Square Garden • New York, NY",
+      "dateTime": "Sat • Dec 29 • 8:55 PM",
+      "price": 237,
+      "ticketsAvailable": 8,
+      "imageUrl": "assets/hero-1.png",
+      "imageAlt": "Beyoncé",
+      "category": "Music"
+    },
+    {
+      "id": 6,
+      "title": "Harry Styles Together Together",
+      "location": "Johan Cruyff Arena, Arena Boulevard 1, Amsterdam, 1100 DL, NL",
+      "dateTime": "Sat • May 23, 2026 • 7:30 PM",
+      "price": 200,
+      "ticketsAvailable": 14,
+      "imageUrl": "https://raw.githubusercontent.com/Cryptovaultiq/Rahman-ticket-admin/main/assets/1779092917503_IMG-20260517-WA0039.jpg",
+      "imageAlt": "Harry Style",
+      "category": "Music"
+    },
+    {
+      "id": 7,
+      "title": "BBC Radio 1s Big Weekend (Olivia Dean, Niall Horan, Myles Smith)",
+      "location": "Herrington Country Park Chester Rd, Penshaw, DH47EL, GB",
+      "dateTime": "Sun, May 24 - 11:00am",
+      "price": 470,
+      "ticketsAvailable": 8,
+      "imageUrl": "https://raw.githubusercontent.com/Cryptovaultiq/My-Ticketmaster-admin/main/assets/1779123142620_IMG-20260517-WA0057.jpg",
+      "imageAlt": "BBC Radio",
+      "category": "Music"
+    }
+  ]
+}
