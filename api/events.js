@@ -31,10 +31,19 @@ export default function handler(req, res) {
   // Set CORS only for allowed origins
   res.setHeader('Access-Control-Allow-Origin', origin);
   res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, X-API-Token');
   
   if (req.method === 'OPTIONS') {
     return res.status(200).end();
+  }
+  
+  // 🔒 SECURITY LAYER 2: Require secret token (prevents spoofing + raw GitHub access)
+  const apiToken = req.headers['x-api-token'];
+  const validToken = process.env.API_SECRET_TOKEN || 'your-secret-token-here';
+  
+  if (!apiToken || apiToken !== validToken) {
+    console.error(`🔐 BLOCKED: Events request without valid token from ${origin}`);
+    return res.status(401).json({ error: 'Unauthorized: Invalid or missing token' });
   }
   
   if (req.method === 'GET') {

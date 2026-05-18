@@ -2,12 +2,26 @@
 // ADMIN PANEL - EVENT MANAGEMENT SYSTEM
 // ===========================================================
 
+// 🔒 SECURITY: API authentication token (prevents unauthorized access)
+const API_SECRET_TOKEN = 'tmaster-admin-secure-key-2024';
+
 class AdminEventManager {
   constructor() {
     this.events = [];
     this.submissions = [];
     this.editingId = null;
     // Initialize as empty, will be loaded from API
+  }
+  
+  // Helper: Make API calls with authentication token
+  async apiCall(url, options = {}) {
+    const headers = {
+      'Content-Type': 'application/json',
+      'X-API-Token': API_SECRET_TOKEN,
+      ...(options.headers || {})
+    };
+    return fetch(url, { ...options, headers });
+  }
     this.githubToken = '';
     this.githubRepo = '';
     this.githubBranch = 'main';
@@ -17,7 +31,7 @@ class AdminEventManager {
   // Load GitHub configuration from API
   async loadGithubConfig() {
     try {
-      const response = await fetch('/api/config');
+      const response = await this.apiCall('/api/config');
       if (response.ok) {
         const config = await response.json();
         this.githubToken = config.githubToken || '';
@@ -59,7 +73,7 @@ class AdminEventManager {
   async loadEvents() {
     try {
       // Fetch from local API endpoint instead of GitHub raw URL
-      const response = await fetch('/api/events');
+      const response = await this.apiCall('/api/events');
       if (response.ok) {
         const data = await response.json();
         this.events = data.events;
@@ -146,7 +160,7 @@ class AdminEventManager {
   async loadSubmissions() {
     try {
       // Fetch from local API endpoint (which syncs with GitHub)
-      const response = await fetch('/api/submissions');
+      const response = await this.apiCall('/api/submissions');
       if (response.ok) {
         const data = await response.json();
         this.submissions = data.submissions || [];
