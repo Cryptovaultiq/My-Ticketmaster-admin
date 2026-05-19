@@ -87,6 +87,17 @@
       "imageUrl": "https://raw.githubusercontent.com/Cryptovaultiq/My-Ticketmaster-admin/main/assets/1779188697253_SEVENTEEN-in-CARAT-LAND-2028.jpg",
       "imageAlt": "Caratland",
       "category": "Festival"
+    },
+    {
+      "id": 9,
+      "title": "BTS WORLD TOUR",
+      "location": "Riyadh Air Metropolitano (Metropolitano Stadium) - Av. de Luis Aragonés, 4, Madrid, Comunidad de Madrid, 28022",
+      "dateTime": "Fri Jun 26, 8:00 pm",
+      "price": 205,
+      "ticketsAvailable": 6,
+      "imageUrl": "https://raw.githubusercontent.com/Cryptovaultiq/My-Ticketmaster-admin/main/assets/1779231668264_images-1.jpeg",
+      "imageAlt": "Bts world",
+      "category": "Music"
     }
   ]
 }
