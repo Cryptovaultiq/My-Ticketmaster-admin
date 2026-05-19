@@ -54,6 +54,17 @@
       "imageUrl": "https://raw.githubusercontent.com/Cryptovaultiq/My-Ticketmaster-admin/main/assets/1779232127529_images-1.jpeg",
       "imageAlt": "Bts Stanford",
       "category": "Music"
+    },
+    {
+      "id": 11,
+      "title": "2026 Kathleen Senior Graduation Ceremony",
+      "location": "R.P. Funding Center (Jenkins Arena) in Lakeland, Florida",
+      "dateTime": "May 20, 2026 - 3:00 pm",
+      "price": 75,
+      "ticketsAvailable": 4,
+      "imageUrl": "https://raw.githubusercontent.com/Cryptovaultiq/My-Ticketmaster-admin/main/assets/1779232642637_images-2.jpeg",
+      "imageAlt": "Kathleen",
+      "category": "Sports"
     }
   ]
 }
