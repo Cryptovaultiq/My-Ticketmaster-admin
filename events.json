@@ -1,17 +1,6 @@
 {
   "events": [
     {
-      "id": 5,
-      "title": "Beyoncé - Renaissance World Tour",
-      "location": "Madison Square Garden • New York, NY",
-      "dateTime": "Sat • Dec 29 • 8:55 PM",
-      "price": 237,
-      "ticketsAvailable": 8,
-      "imageUrl": "assets/hero-1.png",
-      "imageAlt": "Beyoncé",
-      "category": "Music"
-    },
-    {
       "id": 6,
       "title": "Harry Styles Together Together",
       "location": "Johan Cruyff Arena, Arena Boulevard 1, Amsterdam, 1100 DL, NL",
