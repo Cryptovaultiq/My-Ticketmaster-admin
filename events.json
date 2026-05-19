@@ -1,17 +1,6 @@
 {
   "events": [
     {
-      "id": 4,
-      "title": "R&B/Urban Soul: Mariah the Scientist Tickets",
-      "location": "Manchester Academy, Manchester",
-      "dateTime": "Wed • Jan 14, 2026 • 7:00 PM",
-      "price": 125,
-      "ticketsAvailable": 1,
-      "imageUrl": "mariah.jpg",
-      "imageAlt": "Mariah the Scientist",
-      "category": "Music"
-    },
-    {
       "id": 5,
       "title": "Beyoncé - Renaissance World Tour",
       "location": "Madison Square Garden • New York, NY",
