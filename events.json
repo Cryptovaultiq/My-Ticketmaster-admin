@@ -1,17 +1,6 @@
 {
   "events": [
     {
-      "id": 2,
-      "title": "BAD OMENS: DO YOU FEEL LOVE NORTH AMERICAN TOUR",
-      "location": "Delta Center, Salt Lake City, UT",
-      "dateTime": "Sun • Feb 22, 2026 • 7:00 PM",
-      "price": 280,
-      "ticketsAvailable": 6,
-      "imageUrl": "bad-omen.jpg",
-      "imageAlt": "BAD OMENS",
-      "category": "Music"
-    },
-    {
       "id": 3,
       "title": "Chelsea Fc vs Everton Fc",
       "location": "Stamford Bridge, London, SW6 1HS",
