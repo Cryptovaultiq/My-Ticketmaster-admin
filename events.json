@@ -76,6 +76,17 @@
       "imageUrl": "https://raw.githubusercontent.com/Cryptovaultiq/My-Ticketmaster-admin/main/assets/1779123142620_IMG-20260517-WA0057.jpg",
       "imageAlt": "BBC Radio",
       "category": "Music"
+    },
+    {
+      "id": 8,
+      "title": "2026 SEVENTEEN in CARAT LAND",
+      "location": "Incheon Asiad Main Stadium",
+      "dateTime": "Sat • June 20, 2026 • 6:00 PM (KWT)",
+      "price": 45.27,
+      "ticketsAvailable": 7,
+      "imageUrl": "https://raw.githubusercontent.com/Cryptovaultiq/My-Ticketmaster-admin/main/assets/1779188697253_SEVENTEEN-in-CARAT-LAND-2028.jpg",
+      "imageAlt": "Caratland",
+      "category": "Festival"
     }
   ]
 }
