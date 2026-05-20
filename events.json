@@ -54,6 +54,17 @@
       "imageUrl": "https://raw.githubusercontent.com/Cryptovaultiq/My-Ticketmaster-admin/main/assets/1779270622676_images-3.jpeg",
       "imageAlt": "The Weeknd",
       "category": "Music"
+    },
+    {
+      "id": 13,
+      "title": "The Weeknd - Denmark",
+      "location": "Parken, København",
+      "dateTime": "Fri June 19 2026 - 8:00 pm",
+      "price": 175.7,
+      "ticketsAvailable": 6,
+      "imageUrl": "https://raw.githubusercontent.com/Cryptovaultiq/My-Ticketmaster-admin/main/assets/1779271435941_images-3.jpeg",
+      "imageAlt": "The Weeknd",
+      "category": "Music"
     }
   ]
 }
