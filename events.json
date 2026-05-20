@@ -65,6 +65,17 @@
       "imageUrl": "https://raw.githubusercontent.com/Cryptovaultiq/My-Ticketmaster-admin/main/assets/1779271435941_images-3.jpeg",
       "imageAlt": "The Weeknd",
       "category": "Music"
+    },
+    {
+      "id": 14,
+      "title": "The Weeknd - Germany",
+      "location": "Allianz Arena, Munich",
+      "dateTime": "Thu June 25, 2026 - 6:30 pm",
+      "price": 183.18,
+      "ticketsAvailable": 7,
+      "imageUrl": "https://raw.githubusercontent.com/Cryptovaultiq/My-Ticketmaster-admin/main/assets/1779271777583_images-3.jpeg",
+      "imageAlt": "The Weeknd",
+      "category": "Music"
     }
   ]
 }
