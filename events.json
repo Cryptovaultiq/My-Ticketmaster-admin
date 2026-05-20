@@ -125,6 +125,20 @@
       "row": "B",
       "section": "209",
       "block": "1"
+    },
+    {
+      "id": 15,
+      "title": "EXO CONCERT",
+      "location": "National Hockey Stadium, Jalan Merah CagaKuala Lumpur 57000 Malaysia",
+      "dateTime": "Jun 20, 2026 - 8:00 pm",
+      "price": 176.7,
+      "ticketsAvailable": 4,
+      "imageUrl": "https://raw.githubusercontent.com/Cryptovaultiq/My-Ticketmaster-admin/main/assets/1779282323846_f10152d6-9887-440f-91b5-69b2593b7a9a_RETINA_PORTRAIT_3_2.jpg",
+      "imageAlt": "Exo concert",
+      "category": "Music",
+      "row": "E",
+      "section": "299",
+      "block": "3"
     }
   ]
 }
