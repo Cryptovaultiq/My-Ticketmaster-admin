@@ -551,6 +551,7 @@
     <div class="tabs">
       <button class="tab-btn active" data-tab="events-tab">📋 Events</button>
       <button class="tab-btn" data-tab="submissions-tab">📝 Form Submissions</button>
+      <button class="tab-btn" data-tab="visitors-tab">👥 Visitor Alerts</button>
       <button class="tab-btn" data-tab="seller-tab">🔗 Seller Settings</button>
     </div>
 
@@ -666,6 +667,34 @@
         </div>
       </div>
     </div> <!-- End submissions-tab -->
+
+    <!-- Visitor Alerts Tab -->
+    <div id="visitors-tab" class="tab-content">
+      <div class="form-section">
+        <h2>👥 Visitor Alerts</h2>
+        <div class="submissions-actions">
+          <button class="btn btn-secondary clear-visitors-btn" id="clear-visitors-btn">🗑️ Clear All Alerts</button>
+        </div>
+        <div id="visitors-message" class="status-message"></div>
+        <table class="submissions-table" id="visitors-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Device Type</th>
+              <th>Device & OS</th>
+              <th>Browser Info</th>
+              <th>Visitor ID</th>
+              <th>Time</th>
+            </tr>
+          </thead>
+          <tbody id="visitors-tbody">
+          </tbody>
+        </table>
+        <div id="no-visitors-message" style="text-align: center; color: #888; padding: 40px;">
+          No visitor alerts yet
+        </div>
+      </div>
+    </div> <!-- End visitors-tab -->
 
     <!-- Seller Settings Tab -->
     <div id="seller-tab" class="tab-content">

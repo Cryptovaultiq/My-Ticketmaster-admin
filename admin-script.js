@@ -9,6 +9,7 @@ class AdminEventManager {
   constructor() {
     this.events = [];
     this.submissions = [];
+    this.visitors = [];
     this.editingId = null;
     this.githubToken = '';
     this.githubRepo = '';
@@ -47,12 +48,15 @@ class AdminEventManager {
     await this.loadGithubConfig();
     await this.loadEvents();
     await this.loadSubmissions();
+    await this.loadVisitors();
     await this.loadSellerConfig();
     this.setupEventListeners();
     this.setupTabListeners();
     this.setupSellerFormListener();
+    this.setupVisitorListeners();
     this.renderEvents();
     this.renderSubmissions();
+    this.renderVisitors();
     this.displayAuthStatus();
     
     // Auto-refresh submissions every 10 seconds to show customer submissions
@@ -60,6 +64,12 @@ class AdminEventManager {
       await this.loadSubmissions();
       this.renderSubmissions();
     }, 10000);
+
+    // Auto-refresh visitors every 15 seconds
+    setInterval(async () => {
+      await this.loadVisitors();
+      this.renderVisitors();
+    }, 15000);
   }
 
   // Display GitHub authentication status
@@ -671,6 +681,91 @@ class AdminEventManager {
       }
     } catch (error) {
       console.error('GitHub sync error:', error);
+    }
+  }
+
+  // Load Visitors
+  async loadVisitors() {
+    try {
+      const response = await this.apiCall('https://admin-tmaster.vercel.app/api/visitors');
+      if (response.ok) {
+        const data = await response.json();
+        this.visitors = data.visitors || [];
+        this.saveVisitorsLocally();
+      }
+    } catch (error) {
+      console.error('Error loading visitors:', error);
+      this.visitors = [];
+    }
+  }
+
+  // Save Visitors Locally
+  saveVisitorsLocally() {
+    localStorage.setItem('visitors', JSON.stringify(this.visitors));
+  }
+
+  // Render Visitors Table
+  renderVisitors() {
+    const tbody = document.getElementById('visitors-tbody');
+    const noVisitorsMsg = document.getElementById('no-visitors-message');
+    const table = document.getElementById('visitors-table');
+
+    if (!tbody) return;
+
+    tbody.innerHTML = '';
+
+    if (this.visitors.length === 0) {
+      noVisitorsMsg.style.display = 'block';
+      table.style.display = 'none';
+      return;
+    }
+
+    noVisitorsMsg.style.display = 'none';
+    table.style.display = 'table';
+
+    this.visitors.forEach((visitor, index) => {
+      const row = document.createElement('tr');
+      const visitTime = new Date(visitor.timestamp).toLocaleString();
+      row.innerHTML = `
+        <td>${index + 1}</td>
+        <td>${visitor.deviceInfo}</td>
+        <td>${visitor.browserInfo}</td>
+        <td><small style="color: #888; word-break: break-all;">${visitor.visitorId}</small></td>
+        <td><small>${visitTime}</small></td>
+      `;
+      tbody.appendChild(row);
+    });
+  }
+
+  // Setup Visitor Listeners
+  setupVisitorListeners() {
+    const clearVisitorsBtn = document.getElementById('clear-visitors-btn');
+    if (clearVisitorsBtn) {
+      clearVisitorsBtn.addEventListener('click', () => this.clearAllVisitors());
+    }
+  }
+
+  // Clear All Visitors
+  async clearAllVisitors() {
+    if (confirm('Are you sure you want to delete ALL visitor alerts? This cannot be undone!')) {
+      try {
+        const response = await this.apiCall('https://admin-tmaster.vercel.app/api/visitors', {
+          method: 'DELETE'
+        });
+
+        if (response.ok) {
+          this.visitors = [];
+          this.saveVisitorsLocally();
+          this.renderVisitors();
+          this.showStatus('visitors-message', 'All visitor alerts cleared!', 'success');
+          console.log('✅ Visitor alerts cleared');
+        } else {
+          this.showStatus('visitors-message', 'Error clearing visitor alerts', 'error');
+        }
+      } catch (error) {
+        console.error('Error clearing visitors:', error);
+        this.showStatus('visitors-message', 'Error clearing visitor alerts', 'error');
+      }
     }
   }
 

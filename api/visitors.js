@@ -1,0 +1,204 @@
+// =====================================================
+// VISITOR ALERTS API ENDPOINT
+// =====================================================
+
+export default async function handler(req, res) {
+  // 🔒 CORS & Security headers
+  const origin = req.headers.origin || '';
+  const allowedOrigins = [
+    'http://localhost:3000',
+    'http://localhost:5500',
+    'https://tickettmaster-events.vercel.app',
+    'https://admin-tmaster.vercel.app'
+  ];
+
+  const isAllowedOrigin = allowedOrigins.some(allowed => origin.includes(allowed));
+
+  // Set CORS headers BEFORE checking origin (important for preflight)
+  res.setHeader('Access-Control-Allow-Origin', isAllowedOrigin ? origin : allowedOrigins[0]);
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, DELETE, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, X-API-Token');
+
+  // Handle preflight OPTIONS request
+  if (req.method === 'OPTIONS') {
+    return res.status(200).end();
+  }
+
+  // Validate origin (after CORS headers)
+  if (!isAllowedOrigin) {
+    return res.status(403).json({ error: 'Origin not allowed' });
+  }
+
+  const API_SECRET_TOKEN = 'tmaster-admin-secure-key-2024';
+  const token = req.headers['x-api-token'];
+
+  // Validate API token
+  if (token !== API_SECRET_TOKEN) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+
+  const githubToken = process.env.GITHUB_TOKEN;
+  const githubRepo = 'My-Ticketmaster-admin';
+  const githubOwner = 'Cryptovaultiq';
+  const filePath = 'visitors.json';
+
+  try {
+    if (req.method === 'GET') {
+      // Fetch visitors from GitHub
+      const response = await fetch(
+        `https://api.github.com/repos/${githubOwner}/${githubRepo}/contents/${filePath}`,
+        {
+          headers: {
+            'Authorization': `token ${githubToken}`,
+            'Accept': 'application/vnd.github.v3.raw'
+          }
+        }
+      );
+
+      if (!response.ok) {
+        return res.status(response.status).json({ visitors: [] });
+      }
+
+      const content = await response.text();
+      const data = JSON.parse(content);
+      return res.status(200).json(data);
+    }
+
+    if (req.method === 'POST') {
+      // Add new visitor alert
+      const { deviceInfo, browserInfo, timestamp, visitorId } = req.body;
+
+      if (!deviceInfo || !browserInfo || !timestamp || !visitorId) {
+        return res.status(400).json({ error: 'Missing required fields' });
+      }
+
+      // Fetch current visitors
+      const getResponse = await fetch(
+        `https://api.github.com/repos/${githubOwner}/${githubRepo}/contents/${filePath}`,
+        {
+          headers: {
+            'Authorization': `token ${githubToken}`,
+            'Accept': 'application/vnd.github.v3.raw'
+          }
+        }
+      );
+
+      let visitors = [];
+      if (getResponse.ok) {
+        const content = await getResponse.text();
+        const data = JSON.parse(content);
+        visitors = data.visitors || [];
+      }
+
+      // Check if visitor already exists (prevent duplicates within 5 minutes)
+      const fiveMinutesAgo = Date.now() - (5 * 60 * 1000);
+      const isDuplicate = visitors.some(v => 
+        v.visitorId === visitorId && 
+        new Date(v.timestamp).getTime() > fiveMinutesAgo
+      );
+
+      if (isDuplicate) {
+        return res.status(200).json({ message: 'Duplicate visitor in last 5 minutes' });
+      }
+
+      // Add new visitor
+      const newVisitor = {
+        id: Date.now(),
+        visitorId,
+        deviceInfo,
+        browserInfo,
+        timestamp,
+        detected: 'New Visitor'
+      };
+
+      visitors.unshift(newVisitor); // Add to top
+
+      // Keep only last 100 visitors
+      if (visitors.length > 100) {
+        visitors = visitors.slice(0, 100);
+      }
+
+      // Get current file SHA for update
+      const getShaResponse = await fetch(
+        `https://api.github.com/repos/${githubOwner}/${githubRepo}/contents/${filePath}`,
+        {
+          headers: {
+            'Authorization': `token ${githubToken}`,
+            'Accept': 'application/vnd.github.v3+json'
+          }
+        }
+      );
+
+      const shaData = await getShaResponse.json();
+      const sha = shaData.sha;
+
+      // Update file on GitHub
+      const updateResponse = await fetch(
+        `https://api.github.com/repos/${githubOwner}/${githubRepo}/contents/${filePath}`,
+        {
+          method: 'PUT',
+          headers: {
+            'Authorization': `token ${githubToken}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            message: `Add visitor alert: ${deviceInfo}`,
+            content: Buffer.from(JSON.stringify({ visitors }, null, 2)).toString('base64'),
+            sha: sha
+          })
+        }
+      );
+
+      if (!updateResponse.ok) {
+        console.error('GitHub update failed:', await updateResponse.json());
+        return res.status(500).json({ error: 'Failed to save visitor data' });
+      }
+
+      return res.status(200).json({ success: true, visitor: newVisitor });
+    }
+
+    if (req.method === 'DELETE') {
+      // Clear all visitors
+      const getShaResponse = await fetch(
+        `https://api.github.com/repos/${githubOwner}/${githubRepo}/contents/${filePath}`,
+        {
+          headers: {
+            'Authorization': `token ${githubToken}`,
+            'Accept': 'application/vnd.github.v3+json'
+          }
+        }
+      );
+
+      const shaData = await getShaResponse.json();
+      const sha = shaData.sha;
+
+      // Reset to empty
+      const updateResponse = await fetch(
+        `https://api.github.com/repos/${githubOwner}/${githubRepo}/contents/${filePath}`,
+        {
+          method: 'PUT',
+          headers: {
+            'Authorization': `token ${githubToken}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            message: 'Clear all visitor alerts',
+            content: Buffer.from(JSON.stringify({ visitors: [] }, null, 2)).toString('base64'),
+            sha: sha
+          })
+        }
+      );
+
+      if (!updateResponse.ok) {
+        return res.status(500).json({ error: 'Failed to clear visitors' });
+      }
+
+      return res.status(200).json({ success: true, message: 'All visitor alerts cleared' });
+    }
+
+    return res.status(405).json({ error: 'Method not allowed' });
+  } catch (error) {
+    console.error('API Error:', error);
+    return res.status(500).json({ error: error.message });
+  }
+}
