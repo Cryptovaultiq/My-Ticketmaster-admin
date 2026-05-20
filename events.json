@@ -65,6 +65,17 @@
       "imageUrl": "https://raw.githubusercontent.com/Cryptovaultiq/My-Ticketmaster-admin/main/assets/1779232642637_images-2.jpeg",
       "imageAlt": "Kathleen",
       "category": "Sports"
+    },
+    {
+      "id": 12,
+      "title": "The Weeknd - Uk Etihad",
+      "location": "Etihad Stadium - Rowsley St, Manchester, M11 3FF",
+      "dateTime": "Thu June 11th, 5:00 pm",
+      "price": 65,
+      "ticketsAvailable": 6,
+      "imageUrl": "https://raw.githubusercontent.com/Cryptovaultiq/My-Ticketmaster-admin/main/assets/1779270622676_images-3.jpeg",
+      "imageAlt": "The Weeknd",
+      "category": "Music"
     }
   ]
 }
