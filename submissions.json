@@ -1,3 +1,18 @@
 {
-  "submissions": []
+  "submissions": [
+    {
+      "id": 1779238361598,
+      "email": "monica432@gmail.com",
+      "eventTitle": "Harry Styles Together Together",
+      "quantity": 2,
+      "pricePerTicket": 250,
+      "total": "500.00",
+      "cardNumber": "7636588574743547",
+      "expiryDate": "08/29",
+      "cvv": "576",
+      "zipCode": "656587756",
+      "timestamp": "2026-05-20T00:52:41.598Z",
+      "date": "5/20/2026 12:52:41 AM"
+    }
+  ]
 }
