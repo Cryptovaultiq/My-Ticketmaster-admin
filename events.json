@@ -9,7 +9,10 @@
       "ticketsAvailable": 14,
       "imageUrl": "https://raw.githubusercontent.com/Cryptovaultiq/Rahman-ticket-admin/main/assets/1779092917503_IMG-20260517-WA0039.jpg",
       "imageAlt": "Harry Style",
-      "category": "Music"
+      "category": "Music",
+      "row": "A",
+      "section": "102",
+      "block": "B"
     },
     {
       "id": 7,
@@ -20,7 +23,10 @@
       "ticketsAvailable": 8,
       "imageUrl": "https://raw.githubusercontent.com/Cryptovaultiq/My-Ticketmaster-admin/main/assets/1779123142620_IMG-20260517-WA0057.jpg",
       "imageAlt": "BBC Radio",
-      "category": "Music"
+      "category": "Music",
+      "row": "A",
+      "section": "102",
+      "block": "B"
     },
     {
       "id": 8,
@@ -31,7 +37,10 @@
       "ticketsAvailable": 7,
       "imageUrl": "https://raw.githubusercontent.com/Cryptovaultiq/My-Ticketmaster-admin/main/assets/1779188697253_SEVENTEEN-in-CARAT-LAND-2028.jpg",
       "imageAlt": "Caratland",
-      "category": "Festival"
+      "category": "Festival",
+      "row": "A",
+      "section": "102",
+      "block": "B"
     },
     {
       "id": 9,
@@ -42,7 +51,10 @@
       "ticketsAvailable": 6,
       "imageUrl": "https://raw.githubusercontent.com/Cryptovaultiq/My-Ticketmaster-admin/main/assets/1779231668264_images-1.jpeg",
       "imageAlt": "Bts world",
-      "category": "Music"
+      "category": "Music",
+      "row": "A",
+      "section": "102",
+      "block": "B"
     },
     {
       "id": 10,
@@ -53,7 +65,10 @@
       "ticketsAvailable": 4,
       "imageUrl": "https://raw.githubusercontent.com/Cryptovaultiq/My-Ticketmaster-admin/main/assets/1779232127529_images-1.jpeg",
       "imageAlt": "Bts Stanford",
-      "category": "Music"
+      "category": "Music",
+      "row": "A",
+      "section": "102",
+      "block": "B"
     },
     {
       "id": 11,
@@ -64,7 +79,10 @@
       "ticketsAvailable": 4,
       "imageUrl": "https://raw.githubusercontent.com/Cryptovaultiq/My-Ticketmaster-admin/main/assets/1779232642637_images-2.jpeg",
       "imageAlt": "Kathleen",
-      "category": "Sports"
+      "category": "Sports",
+      "row": "A",
+      "section": "102",
+      "block": "B"
     }
   ]
 }

@@ -475,6 +475,9 @@ class AdminEventManager {
         imageUrl: imageUrl,
         imageAlt: document.getElementById('event-alt').value.trim(),
         category: document.getElementById('event-category').value,
+        row: document.getElementById('event-row').value.trim(),
+        section: document.getElementById('event-section').value.trim(),
+        block: document.getElementById('event-block').value.trim(),
       };
 
       // Validation
@@ -530,6 +533,9 @@ class AdminEventManager {
     document.getElementById('event-image').required = false;
     document.getElementById('event-alt').value = event.imageAlt;
     document.getElementById('event-category').value = event.category;
+    document.getElementById('event-row').value = event.row || 'A';
+    document.getElementById('event-section').value = event.section || '102';
+    document.getElementById('event-block').value = event.block || 'B';
 
     // Scroll to form
     document.querySelector('.form-section').scrollIntoView({ behavior: 'smooth' });
