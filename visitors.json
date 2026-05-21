@@ -1,3 +1,12 @@
 {
-  "visitors": []
+  "visitors": [
+    {
+      "id": 1779320847627,
+      "visitorId": "Q2hyb21lLUxpbnV4LU1vYmlsZS1lbi1VUw==-mpepowet",
+      "deviceInfo": "Mobile | Linux",
+      "browserInfo": "Chrome | Screen: 360x760",
+      "timestamp": "2026-05-20T23:47:27.131Z",
+      "detected": "New Visitor"
+    }
+  ]
 }
