@@ -125,6 +125,20 @@
       "row": "E",
       "section": "299",
       "block": "3"
+    },
+    {
+      "id": 16,
+      "title": "Ariana Grande - The Eternal Sunshine Tour",
+      "location": "1111 S. Figueroa St, Los Angeles, CA 90015, US",
+      "dateTime": "Sun • Jun 14, 2026 • 8:00 PM",
+      "price": 750.55,
+      "ticketsAvailable": 5,
+      "imageUrl": "https://raw.githubusercontent.com/Cryptovaultiq/My-Ticketmaster-admin/main/assets/1779333683689_fc874544-aef0-468d-8db5-0507863cbadb_CUSTOM.jpg",
+      "imageAlt": "Ariana",
+      "category": "Music",
+      "row": "12",
+      "section": "334",
+      "block": "A"
     }
   ]
 }
