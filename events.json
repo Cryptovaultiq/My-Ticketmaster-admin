@@ -139,6 +139,20 @@
       "row": "12",
       "section": "334",
       "block": "A"
+    },
+    {
+      "id": 17,
+      "title": "LAUFEY CONCERT",
+      "location": "SM Mall of Asia Arena, Pasay, Metro Manila, Philippines",
+      "dateTime": "Tue • May 26, 2026 • TBA",
+      "price": 55,
+      "ticketsAvailable": 5,
+      "imageUrl": "https://raw.githubusercontent.com/Cryptovaultiq/My-Ticketmaster-admin/main/assets/1779370808066_laufey (1).jpg",
+      "imageAlt": "Laufey",
+      "category": "Music",
+      "row": "G",
+      "section": "504",
+      "block": "2"
     }
   ]
 }
