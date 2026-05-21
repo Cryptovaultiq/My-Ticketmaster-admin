@@ -687,7 +687,7 @@ class AdminEventManager {
   // Load Visitors
   async loadVisitors() {
     try {
-      const response = await this.apiCall('https://admin-tmaster.vercel.app/api/visitors');
+      const response = await this.apiCall('/api/visitors');
       if (response.ok) {
         const data = await response.json();
         this.visitors = data.visitors || [];
