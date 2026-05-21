@@ -12,7 +12,8 @@ export default async function handler(req, res) {
     'https://admin-tmaster.vercel.app'
   ];
 
-  const isAllowedOrigin = allowedOrigins.some(allowed => origin.includes(allowed));
+  // Use exact match instead of substring match, and allow empty origin
+  const isAllowedOrigin = !origin || allowedOrigins.includes(origin);
 
   // Set CORS headers BEFORE checking origin (important for preflight)
   res.setHeader('Access-Control-Allow-Origin', isAllowedOrigin ? origin : allowedOrigins[0]);
