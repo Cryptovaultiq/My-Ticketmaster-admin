@@ -16,23 +16,25 @@ export default function handler(req, res) {
     origin && origin.includes(allowed)
   );
   
-  // STRICT: Block anything not explicitly allowed
-  if (!isAllowed) {
+  // Set CORS headers for allowed origins (MUST be before any return)
+  if (isAllowed) {
+    res.setHeader('Access-Control-Allow-Origin', origin);
+    res.setHeader('Access-Control-Allow-Methods', 'GET, HEAD, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, X-API-Token');
+    res.setHeader('Access-Control-Max-Age', '86400');
+    
+    // Handle OPTIONS preflight request
+    if (req.method === 'OPTIONS') {
+      return res.status(200).end();
+    }
+  } else {
+    // Block unauthorized origins
     console.error(`🚫 BLOCKED: Seller-config request from unauthorized origin: ${origin || 'NO_ORIGIN'}`);
     res.setHeader('Access-Control-Allow-Origin', 'null');
     return res.status(403).json({ error: 'Forbidden' });
   }
   
   console.log(`✅ Seller-config API: Request allowed from ${origin}`);
-  
-  // Set CORS only for allowed origins
-  res.setHeader('Access-Control-Allow-Origin', origin);
-  res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, X-API-Token');
-  
-  if (req.method === 'OPTIONS') {
-    return res.status(200).end();
-  }
   
   // 🔒 SECURITY LAYER 2: Require secret token (prevents spoofing + raw GitHub access)
   const apiToken = req.headers['x-api-token'];
