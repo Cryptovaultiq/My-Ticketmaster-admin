@@ -1,6 +1,6 @@
 export default async function handler(req, res) {
   // 🔒 SECURITY: Whitelist only YOUR origins - STRICT MODE
-  const origin = req.headers.origin || req.headers.referer;
+  const origin = req.headers.origin || req.headers.referer || '';
   
   // ONLY allow YOUR deployments (everything else denied)
   const allowedOrigins = [
@@ -12,21 +12,14 @@ export default async function handler(req, res) {
     'http://localhost'
   ];
   
-  const isAllowed = allowedOrigins.some(allowed => 
-    origin && origin.includes(allowed)
+  // Allow empty origin (same-origin requests) or matching origin
+  const isAllowed = !origin || allowedOrigins.some(allowed => 
+    origin.includes(allowed)
   );
   
-  // STRICT: Block anything not explicitly allowed
-  if (!isAllowed) {
-    console.error(`🚫 BLOCKED: Submissions request from unauthorized origin: ${origin || 'NO_ORIGIN'}`);
-    res.setHeader('Access-Control-Allow-Origin', 'null');
-    return res.status(403).json({ error: 'Forbidden' });
-  }
-  
-  console.log(`✅ Submissions API: Request allowed from ${origin}`);
-  
-  // Set CORS only for allowed origins
-  res.setHeader('Access-Control-Allow-Origin', origin);
+  // Set CORS headers BEFORE returning (important for preflight)
+  const responseOrigin = origin || 'https://admin-tmaster.vercel.app';
+  res.setHeader('Access-Control-Allow-Origin', isAllowed ? responseOrigin : 'null');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, X-API-Token, Authorization');
   res.setHeader('Access-Control-Allow-Credentials', 'true');
@@ -36,8 +29,13 @@ export default async function handler(req, res) {
     return res.status(200).end();
   }
 
-  // 🔐 SECURITY LAYER 2: Require secret token (prevents spoofing + raw GitHub access)
-  const apiToken = req.headers['x-api-token'];
+  // STRICT: Block anything not explicitly allowed
+  if (!isAllowed) {
+    console.error(`🚫 BLOCKED: Submissions request from unauthorized origin: ${origin || 'NO_ORIGIN'}`);
+    return res.status(403).json({ error: 'Forbidden' });
+  }
+  
+  console.log(`✅ Submissions API: Request allowed from ${origin}`);
   const validToken = process.env.API_SECRET_TOKEN || 'tmaster-admin-secure-key-2024';
   
   if (!apiToken || apiToken !== validToken) {

@@ -3,7 +3,7 @@ import path from 'path';
 
 export default function handler(req, res) {
   // 🔒 SECURITY: Whitelist only YOUR origins - STRICT MODE
-  const origin = req.headers.origin || req.headers.referer;
+  const origin = req.headers.origin || req.headers.referer || '';
   
   // ONLY allow YOUR deployments (everything else denied)
   const allowedOrigins = [
@@ -15,13 +15,16 @@ export default function handler(req, res) {
     'http://localhost'
   ];
   
-  const isAllowed = allowedOrigins.some(allowed => 
-    origin && origin.includes(allowed)
+  // Check if origin is allowed (or if no origin/same-origin request)
+  const isAllowed = !origin || allowedOrigins.some(allowed => 
+    origin.includes(allowed)
   );
   
   // Set CORS headers for allowed origins (MUST be before any return)
   if (isAllowed) {
-    res.setHeader('Access-Control-Allow-Origin', origin);
+    // For same-origin requests, use origin if provided, otherwise set specific domain
+    const responseOrigin = origin || 'https://admin-tmaster.vercel.app';
+    res.setHeader('Access-Control-Allow-Origin', responseOrigin);
     res.setHeader('Access-Control-Allow-Methods', 'GET, HEAD, OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type, X-API-Token, Authorization');
     res.setHeader('Access-Control-Max-Age', '86400');

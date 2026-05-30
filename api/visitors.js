@@ -12,11 +12,12 @@ export default async function handler(req, res) {
     'https://admin-tmaster.vercel.app'
   ];
 
-  // Use exact match instead of substring match, and allow empty origin
+  // Allow empty origin (same-origin requests) or exact match
   const isAllowedOrigin = !origin || allowedOrigins.includes(origin);
 
   // Set CORS headers BEFORE checking origin (important for preflight)
-  res.setHeader('Access-Control-Allow-Origin', isAllowedOrigin ? origin : allowedOrigins[0]);
+  const responseOrigin = origin || 'https://admin-tmaster.vercel.app';
+  res.setHeader('Access-Control-Allow-Origin', isAllowedOrigin ? responseOrigin : allowedOrigins[0]);
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, DELETE, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, X-API-Token, Authorization');
   res.setHeader('Access-Control-Max-Age', '86400');
