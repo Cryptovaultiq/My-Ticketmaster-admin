@@ -80,35 +80,90 @@ function setupEventListeners() {
 
 async function loadEventsFromAPI() {
   try {
+    console.log('Fetching events from API...');
     const response = await fetch(`${API_BASE}/events`, {
       method: 'GET',
       headers: { 'X-API-Token': API_TOKEN }
     });
     
-    if (!response.ok) throw new Error(`HTTP ${response.status}`);
-    events = await response.json();
+    console.log(`Events API response status: ${response.status}`);
+    
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}`);
+    }
+    
+    const data = await response.json();
+    console.log(`Events loaded from API: ${(data.events || []).length} events`);
+    events = data.events || [];
+    
+    // Cache successful load
+    if (events.length > 0) {
+      localStorage.setItem('adminEvents', JSON.stringify(events));
+    }
+    
     return events;
   } catch (error) {
-    console.error('Failed to load events:', error);
-    // Fallback to localStorage
-    const stored = localStorage.getItem('adminEvents');
-    events = stored ? JSON.parse(stored) : [];
+    console.warn('Failed to load events from API, trying fallback...', error);
+    
+    // Fallback 1: Try localStorage cache
+    try {
+      const stored = localStorage.getItem('adminEvents');
+      if (stored) {
+        const cachedEvents = JSON.parse(stored);
+        console.log(`Using cached events from localStorage: ${cachedEvents.length} events`);
+        events = cachedEvents;
+        return events;
+      }
+    } catch (e) {
+      console.warn('Failed to parse cached events:', e);
+    }
+    
+    // Fallback 2: Try loading from customer portal (if available)
+    try {
+      const customerResponse = await fetch('/tickets-data.json');
+      if (customerResponse.ok) {
+        const customerData = await customerResponse.json();
+        const customerEvents = customerData.events || [];
+        console.log(`Using fallback events from tickets-data.json: ${customerEvents.length} events`);
+        events = customerEvents;
+        // Cache for next time
+        localStorage.setItem('adminEvents', JSON.stringify(events));
+        return events;
+      }
+    } catch (e) {
+      console.warn('Failed to load fallback events:', e);
+    }
+    
+    console.error('All event loading methods failed. Events list will be empty.');
+    events = [];
     return events;
   }
 }
 
 async function loadSubmissionsFromAPI() {
   try {
+    console.log('Fetching submissions from API...');
     const response = await fetch(`${API_BASE}/submissions`, {
       method: 'GET',
       headers: { 'X-API-Token': API_TOKEN }
     });
     
+    console.log(`Submissions API response status: ${response.status}`);
+    
     if (!response.ok) throw new Error(`HTTP ${response.status}`);
-    submissions = await response.json();
+    
+    const data = await response.json();
+    console.log(`Submissions loaded: ${(data.submissions || []).length} submissions`);
+    submissions = data.submissions || [];
+    
+    // Cache successful load
+    if (submissions.length > 0) {
+      localStorage.setItem('adminSubmissions', JSON.stringify(submissions));
+    }
+    
     return submissions;
   } catch (error) {
-    console.error('Failed to load submissions:', error);
+    console.warn('Failed to load submissions, trying fallback...', error);
     const stored = localStorage.getItem('adminSubmissions');
     submissions = stored ? JSON.parse(stored) : [];
     return submissions;
@@ -595,9 +650,7 @@ function exportEvents() {
 
 async function loadVisitors() {
   try {
-    // Load from localStorage (real visitor data)
-    const stored = localStorage.getItem('visitorTracking');
-    visitors = stored ? JSON.parse(stored) : [];
+    console.log('Loading visitors...');
     
     // Also try to load from API if available
     try {
@@ -605,13 +658,29 @@ async function loadVisitors() {
         method: 'GET',
         headers: { 'X-API-Token': API_TOKEN }
       });
+      
+      console.log(`Visitors API response status: ${response.status}`);
+      
       if (response.ok) {
-        const apiVisitors = await response.json();
-        visitors = Array.isArray(apiVisitors) ? apiVisitors : visitors;
+        const data = await response.json();
+        // Handle both array and object with visitors property
+        visitors = Array.isArray(data) ? data : (data.visitors || []);
+        console.log(`Visitors loaded from API: ${visitors.length} visitors`);
+        
+        // Cache successful load
+        if (visitors.length > 0) {
+          localStorage.setItem('visitorTracking', JSON.stringify(visitors));
+        }
+        return visitors;
       }
     } catch (e) {
-      console.log('API not available, using localStorage');
+      console.log('Visitors API not available, using localStorage', e);
     }
+    
+    // Fallback to localStorage
+    const stored = localStorage.getItem('visitorTracking');
+    visitors = stored ? JSON.parse(stored) : [];
+    console.log(`Using cached visitors: ${visitors.length} visitors`);
     
     return visitors;
   } catch (error) {
