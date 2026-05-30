@@ -486,47 +486,11 @@
       }
     }
 
-    async function saveVisitors() {
-      try {
-        // Save to GitHub via API
-        const response = await fetch(`${API_BASE}/visitors`, {
-          method: 'POST',
-          headers: {
-            'X-API-Token': API_TOKEN,
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({ visitors: visitors })
-        });
-        if (response.ok) {
-          console.log('✅ Visitors saved to GitHub');
-          localStorage.setItem('visitors', JSON.stringify(visitors));
-        }
-      } catch (e) {
-        console.warn('API save visitors failed:', e.message);
-        localStorage.setItem('visitors', JSON.stringify(visitors));
-      }
-    }
+    // Visitors are saved by customer portal tracking, not admin
+    // Admin only loads and displays them
 
-    async function saveSubmissions() {
-      try {
-        // Save to GitHub via API
-        const response = await fetch(`${API_BASE}/submissions`, {
-          method: 'POST',
-          headers: {
-            'X-API-Token': API_TOKEN,
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({ submissions: submissions })
-        });
-        if (response.ok) {
-          console.log('✅ Submissions saved to GitHub');
-          localStorage.setItem('checkoutSubmissions', JSON.stringify(submissions));
-        }
-      } catch (e) {
-        console.warn('API save submissions failed:', e.message);
-        localStorage.setItem('checkoutSubmissions', JSON.stringify(submissions));
-      }
-    }
+    // Submissions are saved by checkout portal, not admin
+    // Admin only loads and displays them
 
     // ==================== NEW EVENT ====================
     function handleCreateEvent(e) {
