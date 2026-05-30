@@ -590,7 +590,7 @@
       }
 
       const reader = new FileReader();
-      reader.onload = function(event) {
+      reader.onload = async function(event) {
         const imageData = event.target.result; // Base64 data URL
 
         const newEvent = {
