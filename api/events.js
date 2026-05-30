@@ -23,7 +23,7 @@ export default function handler(req, res) {
   if (isAllowed) {
     res.setHeader('Access-Control-Allow-Origin', origin);
     res.setHeader('Access-Control-Allow-Methods', 'GET, HEAD, OPTIONS');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, X-API-Token');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, X-API-Token, Authorization');
     res.setHeader('Access-Control-Max-Age', '86400');
     
     // Handle OPTIONS preflight request

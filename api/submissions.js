@@ -28,7 +28,7 @@ export default async function handler(req, res) {
   // Set CORS only for allowed origins
   res.setHeader('Access-Control-Allow-Origin', origin);
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, X-API-Token');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, X-API-Token, Authorization');
   res.setHeader('Access-Control-Allow-Credentials', 'true');
 
   // Handle preflight requests
