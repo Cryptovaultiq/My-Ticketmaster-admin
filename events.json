@@ -1,158 +1,408 @@
 {
   "events": [
     {
-      "id": 6,
-      "title": "Harry Styles Together Together",
-      "location": "Johan Cruyff Arena, Arena Boulevard 1, Amsterdam, 1100 DL, NL",
-      "dateTime": "Sat • May 23, 2026 • 7:30 PM",
-      "price": 200,
-      "ticketsAvailable": 14,
-      "imageUrl": "https://raw.githubusercontent.com/Cryptovaultiq/Rahman-ticket-admin/main/assets/1779092917503_IMG-20260517-WA0039.jpg",
-      "imageAlt": "Harry Style",
-      "category": "Music",
-      "row": "A",
-      "section": "102",
-      "block": "B"
+      "id": "weeknd-2026",
+      "title": "The Weeknd: After Hours Til Dawn Tour",
+      "artist": "The Weeknd",
+      "category": "Hip-Hop/Rap",
+      "imageUrl": "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=500&h=400&fit=crop",
+      "ticketTypes": [
+        {
+          "id": "general",
+          "name": "General Admission",
+          "description": "General floor access",
+          "basePrice": 89.99
+        },
+        {
+          "id": "vip",
+          "name": "VIP",
+          "description": "Premium seating with benefits",
+          "basePrice": 179.99
+        },
+        {
+          "id": "seated",
+          "name": "Seated Ticket",
+          "description": "Reserved seat in designated section",
+          "basePrice": 129.99
+        }
+      ],
+      "tourDates": [
+        {
+          "id": "weeknd-manchester-1",
+          "date": "2026-06-11",
+          "time": "17:00",
+          "dayOfWeek": "Thursday",
+          "venue": "Etihad Stadium",
+          "location": "Manchester, United Kingdom",
+          "ticketsAvailable": 1250,
+          "sections": [
+            {"section": "102", "row": "A", "block": "B", "price": 89.99},
+            {"section": "105", "row": "C", "block": "D", "price": 99.99},
+            {"section": "110", "row": "F", "block": "A", "price": 109.99}
+          ]
+        },
+        {
+          "id": "weeknd-manchester-2",
+          "date": "2026-06-12",
+          "time": "17:00",
+          "dayOfWeek": "Friday",
+          "venue": "Etihad Stadium",
+          "location": "Manchester, United Kingdom",
+          "ticketsAvailable": 980,
+          "sections": [
+            {"section": "102", "row": "A", "block": "B", "price": 89.99},
+            {"section": "105", "row": "C", "block": "D", "price": 99.99},
+            {"section": "110", "row": "F", "block": "A", "price": 109.99}
+          ]
+        },
+        {
+          "id": "weeknd-copenhagen",
+          "date": "2026-06-19",
+          "time": "20:00",
+          "dayOfWeek": "Friday",
+          "venue": "Parken",
+          "location": "København Ø, Denmark",
+          "ticketsAvailable": 1500,
+          "sections": [
+            {"section": "150", "row": "B", "block": "A", "price": 85.99},
+            {"section": "155", "row": "D", "block": "C", "price": 95.99},
+            {"section": "160", "row": "E", "block": "B", "price": 105.99}
+          ]
+        }
+      ]
     },
     {
-      "id": 7,
-      "title": "BBC Radio 1s Big Weekend (Olivia Dean, Niall Horan, Myles Smith)",
-      "location": "Herrington Country Park Chester Rd, Penshaw, DH47EL, GB",
-      "dateTime": "Sun, May 24 - 11:00am",
-      "price": 470,
-      "ticketsAvailable": 8,
-      "imageUrl": "https://raw.githubusercontent.com/Cryptovaultiq/My-Ticketmaster-admin/main/assets/1779123142620_IMG-20260517-WA0057.jpg",
-      "imageAlt": "BBC Radio",
-      "category": "Music",
-      "row": "A",
-      "section": "102",
-      "block": "B"
+      "id": "taylor-swift-2026",
+      "title": "Taylor Swift: Eras Tour",
+      "artist": "Taylor Swift",
+      "category": "Pop",
+      "imageUrl": "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=500&h=400&fit=crop",
+      "ticketTypes": [
+        {
+          "id": "general",
+          "name": "General Admission",
+          "description": "General floor access",
+          "basePrice": 99.99
+        },
+        {
+          "id": "vip",
+          "name": "VIP",
+          "description": "Premium seating with benefits",
+          "basePrice": 249.99
+        },
+        {
+          "id": "seated",
+          "name": "Seated Ticket",
+          "description": "Reserved seat in designated section",
+          "basePrice": 159.99
+        }
+      ],
+      "tourDates": [
+        {
+          "id": "taylor-edinburgh",
+          "date": "2026-09-10",
+          "time": "19:00",
+          "dayOfWeek": "Friday",
+          "venue": "Murrayfield Stadium",
+          "location": "Edinburgh, Scotland",
+          "ticketsAvailable": 3500,
+          "sections": [
+            {"section": "320", "row": "D", "block": "C", "price": 99.99},
+            {"section": "325", "row": "E", "block": "B", "price": 129.99},
+            {"section": "330", "row": "A", "block": "A", "price": 159.99}
+          ]
+        },
+        {
+          "id": "taylor-london",
+          "date": "2026-09-12",
+          "time": "19:00",
+          "dayOfWeek": "Sunday",
+          "venue": "Wembley Stadium",
+          "location": "London, United Kingdom",
+          "ticketsAvailable": 4200,
+          "sections": [
+            {"section": "320", "row": "D", "block": "C", "price": 99.99},
+            {"section": "325", "row": "E", "block": "B", "price": 129.99},
+            {"section": "330", "row": "A", "block": "A", "price": 159.99}
+          ]
+        }
+      ]
     },
     {
-      "id": 8,
-      "title": "2026 SEVENTEEN in CARAT LAND",
-      "location": "Incheon Asiad Main Stadium",
-      "dateTime": "Sat • June 20, 2026 • 6:00 PM (KWT)",
-      "price": 45.27,
-      "ticketsAvailable": 7,
-      "imageUrl": "https://raw.githubusercontent.com/Cryptovaultiq/My-Ticketmaster-admin/main/assets/1779188697253_SEVENTEEN-in-CARAT-LAND-2028.jpg",
-      "imageAlt": "Caratland",
-      "category": "Festival",
-      "row": "A",
-      "section": "102",
-      "block": "B"
+      "id": "beyonce-2026",
+      "title": "Beyoncé: Renaissance Tour",
+      "artist": "Beyoncé",
+      "category": "R&B/Pop",
+      "imageUrl": "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=500&h=400&fit=crop",
+      "ticketTypes": [
+        {
+          "id": "general",
+          "name": "General Admission",
+          "description": "General floor access",
+          "basePrice": 109.99
+        },
+        {
+          "id": "vip",
+          "name": "VIP",
+          "description": "Premium seating with benefits",
+          "basePrice": 279.99
+        },
+        {
+          "id": "seated",
+          "name": "Seated Ticket",
+          "description": "Reserved seat in designated section",
+          "basePrice": 169.99
+        }
+      ],
+      "tourDates": [
+        {
+          "id": "beyonce-london",
+          "date": "2026-08-22",
+          "time": "21:00",
+          "dayOfWeek": "Friday",
+          "venue": "O2 Arena",
+          "location": "London, United Kingdom",
+          "ticketsAvailable": 850,
+          "sections": [
+            {"section": "150", "row": "B", "block": "A", "price": 109.99},
+            {"section": "155", "row": "C", "block": "B", "price": 149.99},
+            {"section": "160", "row": "D", "block": "C", "price": 189.99}
+          ]
+        },
+        {
+          "id": "beyonce-paris",
+          "date": "2026-09-05",
+          "time": "20:00",
+          "dayOfWeek": "Saturday",
+          "venue": "Stade de France",
+          "location": "Paris, France",
+          "ticketsAvailable": 2000,
+          "sections": [
+            {"section": "200", "row": "A", "block": "A", "price": 119.99},
+            {"section": "205", "row": "B", "block": "B", "price": 159.99},
+            {"section": "210", "row": "C", "block": "C", "price": 199.99}
+          ]
+        }
+      ]
     },
     {
-      "id": 9,
-      "title": "BTS WORLD TOUR",
-      "location": "Riyadh Air Metropolitano (Metropolitano Stadium) - Av. de Luis Aragonés, 4, Madrid, Comunidad de Madrid, 28022",
-      "dateTime": "Fri Jun 26, 8:00 pm",
-      "price": 205,
-      "ticketsAvailable": 6,
-      "imageUrl": "https://raw.githubusercontent.com/Cryptovaultiq/My-Ticketmaster-admin/main/assets/1779231668264_images-1.jpeg",
-      "imageAlt": "Bts world",
-      "category": "Music",
-      "row": "A",
-      "section": "102",
-      "block": "B"
+      "id": "ed-sheeran-2026",
+      "title": "Ed Sheeran: Mathematics Tour",
+      "artist": "Ed Sheeran",
+      "category": "Pop",
+      "imageUrl": "https://images.unsplash.com/photo-1459749411175-04bf5292ceea?w=500&h=400&fit=crop",
+      "ticketTypes": [
+        {
+          "id": "general",
+          "name": "General Admission",
+          "description": "General floor access",
+          "basePrice": 79.99
+        },
+        {
+          "id": "vip",
+          "name": "VIP",
+          "description": "Premium seating with benefits",
+          "basePrice": 169.99
+        },
+        {
+          "id": "seated",
+          "name": "Seated Ticket",
+          "description": "Reserved seat in designated section",
+          "basePrice": 119.99
+        }
+      ],
+      "tourDates": [
+        {
+          "id": "ed-london",
+          "date": "2026-07-15",
+          "time": "20:30",
+          "dayOfWeek": "Wednesday",
+          "venue": "Wembley Stadium",
+          "location": "London, United Kingdom",
+          "ticketsAvailable": 2100,
+          "sections": [
+            {"section": "205", "row": "C", "block": "D", "price": 79.99},
+            {"section": "210", "row": "D", "block": "C", "price": 99.99},
+            {"section": "215", "row": "E", "block": "B", "price": 119.99}
+          ]
+        }
+      ]
     },
     {
-      "id": 11,
-      "title": "2026 Kathleen Senior Graduation Ceremony",
-      "location": "R.P. Funding Center (Jenkins Arena) in Lakeland, Florida",
-      "dateTime": "May 20, 2026 - 3:00 pm",
-      "price": 75,
-      "ticketsAvailable": 4,
-      "imageUrl": "https://raw.githubusercontent.com/Cryptovaultiq/My-Ticketmaster-admin/main/assets/1779232642637_images-2.jpeg",
-      "imageAlt": "Kathleen",
-      "category": "Sports",
-      "row": "A",
-      "section": "102",
-      "block": "B"
+      "id": "coldplay-2026",
+      "title": "Coldplay: Music of the Spheres",
+      "artist": "Coldplay",
+      "category": "Rock/Pop",
+      "imageUrl": "https://images.unsplash.com/photo-1487180144351-b8472da7d491?w=500&h=400&fit=crop",
+      "ticketTypes": [
+        {
+          "id": "general",
+          "name": "General Admission",
+          "description": "General floor access",
+          "basePrice": 79.99
+        },
+        {
+          "id": "vip",
+          "name": "VIP",
+          "description": "Premium seating with benefits",
+          "basePrice": 149.99
+        },
+        {
+          "id": "seated",
+          "name": "Seated Ticket",
+          "description": "Reserved seat in designated section",
+          "basePrice": 109.99
+        }
+      ],
+      "tourDates": [
+        {
+          "id": "coldplay-cardiff",
+          "date": "2026-10-05",
+          "time": "20:00",
+          "dayOfWeek": "Monday",
+          "venue": "Principality Stadium",
+          "location": "Cardiff, Wales",
+          "ticketsAvailable": 1800,
+          "sections": [
+            {"section": "250", "row": "E", "block": "B", "price": 79.99},
+            {"section": "255", "row": "F", "block": "A", "price": 99.99},
+            {"section": "260", "row": "G", "block": "C", "price": 119.99}
+          ]
+        }
+      ]
     },
     {
-      "id": 12,
-      "title": "The Weeknd - Uk Etihad",
-      "location": "Etihad Stadium - Rowsley St, Manchester, M11 3FF",
-      "dateTime": "Thu June 11th, 5:00 pm",
-      "price": 65.6,
-      "ticketsAvailable": 4,
-      "imageUrl": "https://raw.githubusercontent.com/Cryptovaultiq/My-Ticketmaster-admin/main/assets/1779279391574_64a76c7b-2486-4369-a51a-2b3e88977a2f_RETINA_PORTRAIT_16_9.jpg",
-      "imageAlt": "The Weeknd",
-      "category": "Music",
-      "row": "E",
-      "section": "304",
-      "block": "2"
+      "id": "dua-lipa-2026",
+      "title": "Dua Lipa: Future Nostalgia Tour",
+      "artist": "Dua Lipa",
+      "category": "Pop",
+      "imageUrl": "https://images.unsplash.com/photo-1516461657872-4953c0ea7ffd?w=500&h=400&fit=crop",
+      "ticketTypes": [
+        {"id": "general", "name": "General Admission", "description": "General floor access", "basePrice": 84.99},
+        {"id": "vip", "name": "VIP", "description": "Premium seating with benefits", "basePrice": 199.99},
+        {"id": "seated", "name": "Seated Ticket", "description": "Reserved seat in designated section", "basePrice": 139.99}
+      ],
+      "tourDates": [
+        {"id": "dua-london", "date": "2026-07-15", "time": "19:30", "dayOfWeek": "Wednesday", "venue": "The O2 Arena", "location": "London, United Kingdom", "ticketsAvailable": 2100, "sections": [
+          {"section": "301", "row": "A", "block": "A", "price": 84.99},
+          {"section": "302", "row": "B", "block": "B", "price": 99.99},
+          {"section": "303", "row": "C", "block": "C", "price": 114.99}
+        ]}
+      ]
     },
     {
-      "id": 13,
-      "title": "The Weeknd - Denmark",
-      "location": "Parken, København",
-      "dateTime": "Fri June 19 2026 - 8:00 pm",
-      "price": 175.7,
-      "ticketsAvailable": 4,
-      "imageUrl": "https://raw.githubusercontent.com/Cryptovaultiq/My-Ticketmaster-admin/main/assets/1779279367188_64a76c7b-2486-4369-a51a-2b3e88977a2f_RETINA_PORTRAIT_16_9.jpg",
-      "imageAlt": "The Weeknd",
-      "category": "Music",
-      "row": "B",
-      "section": "310",
-      "block": "3"
+      "id": "the-killers-2026",
+      "title": "The Killers: Direct Hits Tour",
+      "artist": "The Killers",
+      "category": "Rock/Pop",
+      "imageUrl": "https://images.unsplash.com/photo-1511379938547-c1f69b13d835?w=500&h=400&fit=crop",
+      "ticketTypes": [
+        {"id": "general", "name": "General Admission", "description": "General floor access", "basePrice": 74.99},
+        {"id": "vip", "name": "VIP", "description": "Premium seating with benefits", "basePrice": 169.99},
+        {"id": "seated", "name": "Seated Ticket", "description": "Reserved seat in designated section", "basePrice": 119.99}
+      ],
+      "tourDates": [
+        {"id": "killers-berlin", "date": "2026-08-22", "time": "20:00", "dayOfWeek": "Saturday", "venue": "Tempelhof Feld", "location": "Berlin, Germany", "ticketsAvailable": 2500, "sections": [
+          {"section": "401", "row": "A", "block": "A", "price": 74.99},
+          {"section": "402", "row": "B", "block": "B", "price": 89.99},
+          {"section": "403", "row": "C", "block": "C", "price": 104.99}
+        ]}
+      ]
     },
     {
-      "id": 14,
-      "title": "The Weeknd - Germany Munich",
-      "location": "Allianz Arena, Munich",
-      "dateTime": "Thu Jun 25, 2026 - 6:30 pm",
-      "price": 185.18,
-      "ticketsAvailable": 5,
-      "imageUrl": "https://raw.githubusercontent.com/Cryptovaultiq/My-Ticketmaster-admin/main/assets/1779279310762_64a76c7b-2486-4369-a51a-2b3e88977a2f_RETINA_PORTRAIT_16_9.jpg",
-      "imageAlt": "The Weeknd",
-      "category": "Music",
-      "row": "B",
-      "section": "209",
-      "block": "1"
+      "id": "harry-styles-2026",
+      "title": "Harry Styles: Love On Tour",
+      "artist": "Harry Styles",
+      "category": "Pop",
+      "imageUrl": "https://images.unsplash.com/photo-1459749411175-04bf5292ceea?w=500&h=400&fit=crop",
+      "ticketTypes": [
+        {"id": "general", "name": "General Admission", "description": "General floor access", "basePrice": 94.99},
+        {"id": "vip", "name": "VIP", "description": "Premium seating with benefits", "basePrice": 229.99},
+        {"id": "seated", "name": "Seated Ticket", "description": "Reserved seat in designated section", "basePrice": 149.99}
+      ],
+      "tourDates": [
+        {"id": "harry-dublin", "date": "2026-06-26", "time": "19:00", "dayOfWeek": "Saturday", "venue": "Marlay Park", "location": "Dublin, Ireland", "ticketsAvailable": 3000, "sections": [
+          {"section": "501", "row": "A", "block": "A", "price": 94.99},
+          {"section": "502", "row": "B", "block": "B", "price": 109.99},
+          {"section": "503", "row": "C", "block": "C", "price": 124.99}
+        ]}
+      ]
     },
     {
-      "id": 15,
-      "title": "EXO CONCERT",
-      "location": "National Hockey Stadium, Jalan Merah CagaKuala Lumpur 57000 Malaysia",
-      "dateTime": "Jun 20, 2026 - 8:00 pm",
-      "price": 176.7,
-      "ticketsAvailable": 4,
-      "imageUrl": "https://raw.githubusercontent.com/Cryptovaultiq/My-Ticketmaster-admin/main/assets/1779282323846_f10152d6-9887-440f-91b5-69b2593b7a9a_RETINA_PORTRAIT_3_2.jpg",
-      "imageAlt": "Exo concert",
-      "category": "Music",
-      "row": "E",
-      "section": "299",
-      "block": "3"
+      "id": "arctic-monkeys-2026",
+      "title": "Arctic Monkeys: The Car Tour",
+      "artist": "Arctic Monkeys",
+      "category": "Rock/Pop",
+      "imageUrl": "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=500&h=400&fit=crop",
+      "ticketTypes": [
+        {"id": "general", "name": "General Admission", "description": "General floor access", "basePrice": 64.99},
+        {"id": "vip", "name": "VIP", "description": "Premium seating with benefits", "basePrice": 149.99},
+        {"id": "seated", "name": "Seated Ticket", "description": "Reserved seat in designated section", "basePrice": 99.99}
+      ],
+      "tourDates": [
+        {"id": "arctic-paris", "date": "2026-09-10", "time": "20:30", "dayOfWeek": "Friday", "venue": "Paris La Défense Arena", "location": "Paris, France", "ticketsAvailable": 2800, "sections": [
+          {"section": "601", "row": "A", "block": "A", "price": 64.99},
+          {"section": "602", "row": "B", "block": "B", "price": 79.99},
+          {"section": "603", "row": "C", "block": "C", "price": 94.99}
+        ]}
+      ]
     },
     {
-      "id": 16,
-      "title": "Ariana Grande - The Eternal Sunshine Tour",
-      "location": "1111 S. Figueroa St, Los Angeles, CA 90015, US",
-      "dateTime": "Sun • Jun 14, 2026 • 8:00 PM",
-      "price": 750.55,
-      "ticketsAvailable": 5,
-      "imageUrl": "https://raw.githubusercontent.com/Cryptovaultiq/My-Ticketmaster-admin/main/assets/1779333683689_fc874544-aef0-468d-8db5-0507863cbadb_CUSTOM.jpg",
-      "imageAlt": "Ariana",
-      "category": "Music",
-      "row": "12",
-      "section": "334",
-      "block": "A"
+      "id": "olivia-rodrigo-2026",
+      "title": "Olivia Rodrigo: Guts Tour",
+      "artist": "Olivia Rodrigo",
+      "category": "Pop",
+      "imageUrl": "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=500&h=400&fit=crop",
+      "ticketTypes": [
+        {"id": "general", "name": "General Admission", "description": "General floor access", "basePrice": 79.99},
+        {"id": "vip", "name": "VIP", "description": "Premium seating with benefits", "basePrice": 189.99},
+        {"id": "seated", "name": "Seated Ticket", "description": "Reserved seat in designated section", "basePrice": 129.99}
+      ],
+      "tourDates": [
+        {"id": "olivia-amsterdam", "date": "2026-07-08", "time": "20:00", "dayOfWeek": "Wednesday", "venue": "Johan Cruyff ArenA", "location": "Amsterdam, Netherlands", "ticketsAvailable": 2200, "sections": [
+          {"section": "701", "row": "A", "block": "A", "price": 79.99},
+          {"section": "702", "row": "B", "block": "B", "price": 94.99},
+          {"section": "703", "row": "C", "block": "C", "price": 109.99}
+        ]}
+      ]
     },
     {
-      "id": 17,
-      "title": "LAUFEY CONCERT",
-      "location": "SM Mall of Asia Arena, Pasay, Metro Manila, Philippines",
-      "dateTime": "Tue • May 26, 2026 • TBA",
-      "price": 55,
-      "ticketsAvailable": 5,
-      "imageUrl": "https://raw.githubusercontent.com/Cryptovaultiq/My-Ticketmaster-admin/main/assets/1779370808066_laufey (1).jpg",
-      "imageAlt": "Laufey",
-      "category": "Music",
-      "row": "G",
-      "section": "504",
-      "block": "2"
+      "id": "the-weeknd-2026-additional",
+      "title": "The Weeknd: After Hours Tour Extended",
+      "artist": "The Weeknd",
+      "category": "Hip-Hop/Rap",
+      "imageUrl": "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=500&h=400&fit=crop",
+      "ticketTypes": [
+        {"id": "general", "name": "General Admission", "description": "General floor access", "basePrice": 89.99},
+        {"id": "vip", "name": "VIP", "description": "Premium seating with benefits", "basePrice": 179.99},
+        {"id": "seated", "name": "Seated Ticket", "description": "Reserved seat in designated section", "basePrice": 129.99}
+      ],
+      "tourDates": [
+        {"id": "weeknd-amsterdam", "date": "2026-10-28", "time": "20:00", "dayOfWeek": "Wednesday", "venue": "Ziggo Dome", "location": "Amsterdam, Netherlands", "ticketsAvailable": 3200, "sections": [
+          {"section": "801", "row": "A", "block": "A", "price": 89.99},
+          {"section": "802", "row": "B", "block": "B", "price": 104.99},
+          {"section": "803", "row": "C", "block": "C", "price": 119.99}
+        ]}
+      ]
+    },
+    {
+      "id": "billie-eilish-2026",
+      "title": "Billie Eilish: Happier Than Ever Tour",
+      "artist": "Billie Eilish",
+      "category": "Pop",
+      "imageUrl": "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=500&h=400&fit=crop",
+      "ticketTypes": [
+        {"id": "general", "name": "General Admission", "description": "General floor access", "basePrice": 74.99},
+        {"id": "vip", "name": "VIP", "description": "Premium seating with benefits", "basePrice": 169.99},
+        {"id": "seated", "name": "Seated Ticket", "description": "Reserved seat in designated section", "basePrice": 119.99}
+      ],
+      "tourDates": [
+        {"id": "billie-berlin", "date": "2026-09-18", "time": "19:00", "dayOfWeek": "Saturday", "venue": "O2 World Berlin", "location": "Berlin, Germany", "ticketsAvailable": 2800, "sections": [
+          {"section": "401", "row": "A", "block": "A", "price": 74.99},
+          {"section": "402", "row": "B", "block": "B", "price": 89.99},
+          {"section": "403", "row": "C", "block": "C", "price": 104.99}
+        ]}
+      ]
     }
   ]
 }
