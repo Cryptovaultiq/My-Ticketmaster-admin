@@ -334,7 +334,8 @@
 
   <script>
     // ==================== API CONFIGURATION ====================
-    const API_BASE = 'https://admin-tmaster.vercel.app/api';
+    // NOTE: Events API points to customer portal to manage tickets-data.json (the real events)
+    const API_BASE = 'https://tickettmaster-events.vercel.app/api';
     const API_TOKEN = 'tmaster-admin-secure-key-2024';
 
     // ==================== STATE ====================
@@ -411,7 +412,7 @@
 
     async function saveEvents() {
       try {
-        // Save to GitHub via API
+        // Save all events via API (uses customer portal's events API)
         const response = await fetch(`${API_BASE}/events`, {
           method: 'POST',
           headers: {
@@ -421,7 +422,7 @@
           body: JSON.stringify({ events: allEvents })
         });
         if (response.ok) {
-          console.log('✅ Events saved to GitHub');
+          console.log('✅ Events saved to tickets-data.json');
           localStorage.setItem('events', JSON.stringify(allEvents));
           return;
         }
@@ -430,6 +431,82 @@
       }
       // Fallback: just save locally
       localStorage.setItem('events', JSON.stringify(allEvents));
+    }
+
+    async function createEventViaAPI(event) {
+      try {
+        const response = await fetch(`${API_BASE}/events`, {
+          method: 'POST',
+          headers: {
+            'X-API-Token': API_TOKEN,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(event)
+        });
+        
+        if (response.ok) {
+          const data = await response.json();
+          console.log('✅ Event created:', data.event.title);
+          await loadEvents();
+          return data.event;
+        } else {
+          const error = await response.json();
+          throw new Error(error.error || 'Failed to create event');
+        }
+      } catch (error) {
+        console.error('❌ Error creating event:', error);
+        throw error;
+      }
+    }
+
+    async function updateEventViaAPI(eventId, updates) {
+      try {
+        const response = await fetch(`${API_BASE}/events?id=${eventId}`, {
+          method: 'PUT',
+          headers: {
+            'X-API-Token': API_TOKEN,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(updates)
+        });
+        
+        if (response.ok) {
+          const data = await response.json();
+          console.log('✅ Event updated:', data.event.title);
+          await loadEvents();
+          return data.event;
+        } else {
+          const error = await response.json();
+          throw new Error(error.error || 'Failed to update event');
+        }
+      } catch (error) {
+        console.error('❌ Error updating event:', error);
+        throw error;
+      }
+    }
+
+    async function deleteEventViaAPI(eventId) {
+      try {
+        const response = await fetch(`${API_BASE}/events?id=${eventId}`, {
+          method: 'DELETE',
+          headers: {
+            'X-API-Token': API_TOKEN,
+            'Content-Type': 'application/json'
+          }
+        });
+        
+        if (response.ok) {
+          console.log('✅ Event deleted');
+          await loadEvents();
+          return true;
+        } else {
+          const error = await response.json();
+          throw new Error(error.error || 'Failed to delete event');
+        }
+      } catch (error) {
+        console.error('❌ Error deleting event:', error);
+        throw error;
+      }
     }
 
     async function loadSubmissions() {
@@ -489,7 +566,7 @@
     // Admin only loads and displays them
 
     // ==================== NEW EVENT ====================
-    function handleCreateEvent(e) {
+    async function handleCreateEvent(e) {
       e.preventDefault();
       const statusEl = document.getElementById('newEventStatus');
 
@@ -532,14 +609,18 @@
           createdAt: new Date().toISOString()
         };
 
-        allEvents.push(newEvent);
-        saveEvents();
-        statusEl.innerHTML = '<div class="status-message status-success">✅ Event created successfully!</div>';
-        document.getElementById('newEventForm').reset();
-        currentEvent = null;
-        renderTourDates();
-        renderEventsList();
-        setTimeout(() => statusEl.innerHTML = '', 4000);
+        // Use API to create event (saves to tickets-data.json)
+        try {
+          await createEventViaAPI(newEvent);
+          statusEl.innerHTML = '<div class="status-message status-success">✅ Event created successfully!</div>';
+          document.getElementById('newEventForm').reset();
+          currentEvent = null;
+          renderTourDates();
+          await renderEventsList();
+          setTimeout(() => statusEl.innerHTML = '', 4000);
+        } catch (error) {
+          statusEl.innerHTML = `<div class="status-message status-error">❌ Failed to create event: ${error.message}</div>`;
+        }
       };
 
       reader.onerror = function() {
@@ -792,7 +873,7 @@
               <p style="color: #718096; font-size: 12px;">By ${event.artist} • ${event.tourDates.length} tour dates • Created ${new Date(event.createdAt).toLocaleDateString()}</p>
             </div>
             <div style="display: flex; gap: 10px;">
-              <button class="btn btn-secondary btn-sm" onclick="alert('Edit feature available in full admin panel')">Edit</button>
+              <button class="btn btn-secondary btn-sm" onclick="openEditEventModal('${event.id}')">Edit</button>
               <button class="btn btn-danger btn-sm" onclick="deleteEvent('${event.id}')">Delete</button>
             </div>
           </div>
@@ -808,11 +889,47 @@
       `).join('');
     }
 
-    function deleteEvent(id) {
+    async function deleteEvent(id) {
       if (!confirm('Permanently delete this event?')) return;
-      allEvents = allEvents.filter(e => e.id !== id);
-      saveEvents();
-      renderEventsList();
+      try {
+        await deleteEventViaAPI(id);
+        await renderEventsList();
+      } catch (error) {
+        alert(`Failed to delete event: ${error.message}`);
+      }
+    }
+
+    function openEditEventModal(eventId) {
+      const event = allEvents.find(e => e.id === eventId);
+      if (!event) {
+        alert('Event not found');
+        return;
+      }
+
+      // For now, show a simple prompt-based edit (can be enhanced with full modal)
+      const newTitle = prompt('Event Title:', event.title);
+      if (newTitle === null) return; // User cancelled
+
+      const newArtist = prompt('Artist:', event.artist);
+      if (newArtist === null) return;
+
+      const newCategory = prompt('Category:', event.category);
+      if (newCategory === null) return;
+
+      const updates = {
+        title: newTitle || event.title,
+        artist: newArtist || event.artist,
+        category: newCategory || event.category
+      };
+
+      updateEventViaAPI(eventId, updates)
+        .then(() => {
+          alert('✅ Event updated successfully!');
+          renderEventsList();
+        })
+        .catch(error => {
+          alert(`❌ Failed to update event: ${error.message}`);
+        });
     }
 
     // ==================== SUBMISSIONS ====================
