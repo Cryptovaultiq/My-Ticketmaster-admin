@@ -887,7 +887,7 @@
 
       // Mark all as read
       visitors = visitors.map(v => ({ ...v, isNew: false }));
-      saveVisitors();
+      // Note: Admin only displays visitors from GitHub, no local save needed
     }
 
     // ==================== ACTIONS ====================
