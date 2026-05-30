@@ -1,0 +1,947 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🎭 Ticketmaster Admin - Event Management</title>
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    :root{--bg-1:linear-gradient(135deg,#0f172a 0%,#0b1220 100%);--accent:#6c5ce7;--muted:#64748b;--card:rgba(255,255,255,0.04);--glass:rgba(255,255,255,0.06);--success:#10b981;--danger:#ef4444;--max-width:1200px;--radius:14px;--shadow:0 10px 30px rgba(2,6,23,0.6)}
+    html,body{height:100%}
+    body{font-family:Inter,ui-sans-serif,system-ui,-apple-system,'Segoe UI',Roboto,'Helvetica Neue',Arial;background:var(--bg-1);color:#e6eef8;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;padding:36px 24px}
+    .container{max-width:var(--max-width);margin:0 auto;background:linear-gradient(180deg,rgba(255,255,255,0.02),rgba(255,255,255,0.01));border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;border:1px solid rgba(255,255,255,0.04)}
+    .header{display:flex;align-items:center;justify-content:space-between;padding:28px 32px;background:linear-gradient(90deg,rgba(108,92,231,0.12),rgba(99,102,241,0.05));backdrop-filter:blur(6px)}
+    .brand{display:flex;align-items:center;gap:14px}.brand img{width:44px;height:44px;border-radius:10px;object-fit:cover}.brand h1{font-size:20px;color:#fff;letter-spacing:0.2px}
+    .header-actions{display:flex;gap:12px}
+    .btn{display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border-radius:10px;border:none;font-weight:600;cursor:pointer}
+    .btn-primary{background:linear-gradient(90deg,var(--accent),#5eead4);color:#071129}.btn-success{background:linear-gradient(90deg,#10b981,#34d399);color:#02120a}.btn-secondary{background:rgba(255,255,255,0.04);color:#cfe6ff;border:1px solid rgba(255,255,255,0.03)}.btn-danger{background:linear-gradient(90deg,#fb7185,#ef4444);color:#fff}
+    .tabs{display:flex;gap:12px;padding:18px 24px;background:transparent;border-bottom:1px solid rgba(255,255,255,0.03)}.tab-btn{background:transparent;border:1px solid transparent;color:var(--muted);padding:10px 14px;border-radius:999px;cursor:pointer;font-weight:700}.tab-btn.active{color:#fff;background:linear-gradient(90deg,rgba(108,92,231,0.16),rgba(99,102,241,0.06));box-shadow:inset 0 -2px 0 rgba(255,255,255,0.02)}
+    .content{display:grid;grid-template-columns:1fr;gap:24px;padding:28px}.tab-content{display:none}.tab-content.active{display:block}
+    .form-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px}.form-group{margin-bottom:14px}label{display:block;font-size:13px;color:#cbd5e1;margin-bottom:8px}
+    input[type=text],input[type=url],input[type=number],select,textarea,input[type=date],input[type=time]{width:100%;padding:12px;border-radius:10px;border:1px solid rgba(255,255,255,0.06);background:rgba(8,14,30,0.4);color:#e6eef8}input[type=file]{color:#cfe6ff}textarea{min-height:110px}
+    .card{background:linear-gradient(180deg,rgba(255,255,255,0.02),rgba(255,255,255,0.01));border-radius:12px;padding:18px;border:1px solid rgba(255,255,255,0.03)}.card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}h2,h3{color:#f1f7ff}
+    .tour-date-card{background:linear-gradient(180deg,rgba(255,255,255,0.01),rgba(255,255,255,0.02));border-radius:10px;padding:16px;border:1px solid rgba(255,255,255,0.03);box-shadow:0 6px 18px rgba(2,6,23,0.45)}
+    .section-item{display:flex;justify-content:space-between;gap:10px;align-items:center;padding:12px;border-radius:8px;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.02)}
+    .table{width:100%;border-collapse:collapse;margin-top:10px;color:#dff1ff}.table th{position:sticky;top:0;background:rgba(10,16,30,0.6);backdrop-filter:blur(6px);padding:12px;text-align:left;font-weight:700;color:#cfe6ff;border-bottom:1px solid rgba(255,255,255,0.02)}.table td{padding:12px;border-bottom:1px solid rgba(255,255,255,0.02)}.table tr:hover td{background:linear-gradient(90deg,rgba(108,92,231,0.03),rgba(99,102,241,0.02))}
+    .visitor-item{background:linear-gradient(90deg,rgba(16,185,129,0.06),rgba(16,185,129,0.02));border-left:4px solid rgba(16,185,129,0.9);padding:12px;border-radius:8px;color:#e8fff3}.visitor-item.new-visitor{animation:pop 420ms ease both}@keyframes pop{from{transform:translateY(8px);opacity:0}to{transform:none;opacity:1}}
+    .no-data{text-align:center;padding:36px;color:var(--muted)}
+    .modal{display:none;position:fixed;inset:0;background:linear-gradient(180deg,rgba(0,0,0,0.65),rgba(0,0,0,0.72));padding:20px;align-items:center;justify-content:center;z-index:1200}
+    .modal.active{display:flex}
+    .modal-content{width:min(760px,100%);max-height:90vh;background:rgba(9,14,31,0.96);border-radius:20px;padding:26px;box-shadow:0 24px 70px rgba(0,0,0,0.55);border:1px solid rgba(255,255,255,0.08);display:grid;gap:20px;overflow-y:auto;overflow-x:hidden}
+    .modal-content form{display:grid;gap:18px}
+    .modal-header{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-bottom:8px;border-bottom:1px solid rgba(255,255,255,0.08)}
+    .modal-header h2{font-size:1.4rem;color:#f8fbff;margin:0}
+    .close-btn{width:40px;height:40px;display:inline-flex;align-items:center;justify-content:center;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.12);color:#edf2ff;font-size:24px;border-radius:14px;cursor:pointer;transition:transform .2s ease,background .2s ease}
+    .close-btn:hover{transform:scale(1.03);background:rgba(255,255,255,0.12)}
+    .modal .form-group{margin-bottom:0}
+    .modal .form-row{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:12px}
+    .modal .btn{min-width:140px}
+    .modal .card{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.04);box-shadow:inset 0 1px 0 rgba(255,255,255,0.06);padding:18px;border-radius:16px}
+    .modal .card-header{margin-bottom:12px;padding-bottom:0;border-bottom:none}
+    .modal .card-header h4{margin:0;font-size:1rem;color:#dbeafe}
+    .modal .form-group label{color:#94a3b8}
+    .ticket-type-card{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:16px;padding:18px;margin-top:16px}
+    .ticket-type-card h5{margin:0 0 14px;color:#eef2ff;font-size:1rem}
+    .ticket-type-card button{margin-top:10px}
+    .ticket-type-fields{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:14px}
+    .section-row{display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:12px;align-items:end;margin-bottom:12px}
+    .section-row > div{display:grid;gap:6px}
+    .section-row button{width:100%;margin:0;padding:10px 12px}
+    .modal input[type=number],.modal input[type=text],.modal select{min-height:44px}
+    .modal input[type=number],[type=text],.modal select{border-radius:12px}
+    @media (max-width:900px){.section-row{grid-template-columns:1fr;align-items:stretch}}
+    @media (min-width:1100px){.content{grid-template-columns:1fr 360px}}@media (max-width:720px){.tabs{overflow:auto;padding:12px}}
+    /* Hide scrollbars while keeping scroll functionality */
+    html::-webkit-scrollbar{width:0;height:0}
+    html::-webkit-scrollbar-track{background:transparent}
+    html::-webkit-scrollbar-thumb{background:transparent}
+    html{scrollbar-width:none}
+    body::-webkit-scrollbar{width:0;height:0}
+    body{scrollbar-width:none}
+    .modal-content::-webkit-scrollbar{width:0;height:0}
+    .modal-content{scrollbar-width:none} 
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- HEADER -->
+    <div class="header">
+      <h1>🎭 Ticketmaster Admin</h1>
+      <div class="header-actions">
+        <button class="btn btn-success" onclick="exportData()">📥 Export</button>
+      </div>
+    </div>
+
+    <!-- TABS -->
+    <div class="tabs">
+      <button class="tab-btn active" onclick="switchTab('newEvent')">➕ New Event</button>
+      <button class="tab-btn" onclick="switchTab('events')">✏️ Events</button>
+      <button class="tab-btn" onclick="switchTab('submissions')">📝 Submissions</button>
+      <button class="tab-btn" onclick="switchTab('visitors')">👥 Visitors</button>
+    </div>
+
+    <!-- NEW EVENT TAB -->
+    <div id="newEvent" class="tab-content active">
+      <h2>Create New Event</h2>
+      <div id="newEventStatus"></div>
+      
+      <form id="newEventForm" onsubmit="handleCreateEvent(event)">
+        <div class="form-row">
+          <div class="form-group">
+            <label>Event Name *</label>
+            <input type="text" id="eventName" placeholder="e.g., Taylor Swift Eras Tour" required>
+          </div>
+          <div class="form-group">
+            <label>Artist *</label>
+            <input type="text" id="eventArtist" placeholder="e.g., Taylor Swift" required>
+          </div>
+          <div class="form-group">
+            <label>Category *</label>
+            <select id="eventCategory" required>
+              <option value="">Select Category</option>
+              <option value="Music">🎵 Music</option>
+              <option value="Sports">⚽ Sports</option>
+              <option value="Comedy">🎭 Comedy</option>
+              <option value="Theater">🎪 Theater</option>
+              <option value="Festival">🎉 Festival</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Event Image *</label>
+          <input type="file" id="eventImage" accept="image/*" required>
+          <small style="color: #718096; margin-top: 5px; display: block;">Supported: JPG, PNG, WebP, GIF (Max 5MB)</small>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <h3>Tour Dates & Venues</h3>
+            <button type="button" class="btn btn-primary btn-sm" onclick="openTourDateModal()">+ Add Tour Date</button>
+          </div>
+          <div id="tourDatesList"></div>
+        </div>
+
+        <div class="form-row">
+          <button type="submit" class="btn btn-success">✅ Create Event</button>
+          <button type="reset" class="btn btn-secondary">🔄 Clear Form</button>
+        </div>
+      </form>
+    </div>
+
+    <!-- EVENTS TAB -->
+    <div id="events" class="tab-content">
+      <h2>Manage Events</h2>
+      <div id="eventsStatus"></div>
+      <div id="eventsList"></div>
+    </div>
+
+    <!-- SUBMISSIONS TAB -->
+    <div id="submissions" class="tab-content">
+      <h2>Customer Submissions</h2>
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Email</th>
+            <th>Event</th>
+            <th>Date & Time</th>
+            <th>Venue</th>
+            <th>Type</th>
+            <th>Sect/Row</th>
+            <th>Qty</th>
+            <th>Total</th>
+            <th>Curr</th>
+            <th>Submitted</th>
+          </tr>
+        </thead>
+        <tbody id="submissionsBody"></tbody>
+      </table>
+      <div id="noSubmissions" class="no-data">No submissions yet</div>
+    </div>
+
+    <!-- VISITORS TAB -->
+    <div id="visitors" class="tab-content">
+      <h2>Visitor Tracker (Real-Time)</h2>
+      <div class="status-info" style="padding: 12px; background: #bee3f8; border-left: 4px solid #2c5282; border-radius: 4px; margin-bottom: 20px;">
+        🔄 Auto-tracking visitors from tickets.html (refreshes every 5 seconds)
+      </div>
+      <div id="visitorsList"></div>
+      <div id="noVisitors" class="no-data">No visitors tracked yet</div>
+    </div>
+  </div>
+
+  <!-- TOUR DATE MODAL -->
+  <div id="tourDateModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Add Tour Date</h2>
+        <button type="button" class="close-btn" onclick="closeTourDateModal()">×</button>
+      </div>
+      <form id="tourDateForm" onsubmit="addTourDate(event)">
+        <div class="form-group">
+          <label>Date *</label>
+          <input type="date" id="tdDate" required>
+        </div>
+        <div class="form-group">
+          <label>Time *</label>
+          <input type="time" id="tdTime" required>
+        </div>
+        <div class="form-group">
+          <label>Venue *</label>
+          <input type="text" id="tdVenue" placeholder="e.g., Madison Square Garden" required>
+        </div>
+        <div class="form-group">
+          <label>Location (City, Country) *</label>
+          <input type="text" id="tdLocation" placeholder="e.g., New York, USA" required>
+        </div>
+        <div class="form-group">
+          <label>Total Tickets Available *</label>
+          <input type="number" id="tdTickets" min="1" placeholder="5000" required>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <h4>Ticket Types for This Venue</h4>
+          </div>
+          <div id="ticketTypesContainer"></div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <h4>Venue Currency & Exchange Rate</h4>
+          </div>
+          <div class="form-group">
+            <label>Currency *</label>
+            <select id="tdCurrency" required>
+              <optgroup label="--- MAJOR CURRENCIES ---">
+                <option value="USD" selected>USD - US Dollar</option>
+                <option value="EUR">EUR - Euro</option>
+                <option value="GBP">GBP - British Pound</option>
+                <option value="JPY">JPY - Japanese Yen</option>
+                <option value="CNY">CNY - Chinese Yuan</option>
+                <option value="INR">INR - Indian Rupee</option>
+              </optgroup>
+              <optgroup label="--- AMERICAS ---">
+                <option value="CAD">CAD - Canadian Dollar</option>
+                <option value="MXN">MXN - Mexican Peso</option>
+                <option value="BRL">BRL - Brazilian Real</option>
+                <option value="ARS">ARS - Argentine Peso</option>
+                <option value="CLP">CLP - Chilean Peso</option>
+                <option value="COP">COP - Colombian Peso</option>
+                <option value="PEN">PEN - Peruvian Sol</option>
+                <option value="UYU">UYU - Uruguayan Peso</option>
+                <option value="VES">VES - Venezuelan Bolívar</option>
+              </optgroup>
+              <optgroup label="--- EUROPE ---">
+                <option value="SEK">SEK - Swedish Krona</option>
+                <option value="NOK">NOK - Norwegian Krone</option>
+                <option value="DKK">DKK - Danish Krone</option>
+                <option value="CHF">CHF - Swiss Franc</option>
+                <option value="PLN">PLN - Polish Zloty</option>
+                <option value="CZK">CZK - Czech Koruna</option>
+                <option value="HUF">HUF - Hungarian Forint</option>
+                <option value="RON">RON - Romanian Leu</option>
+                <option value="BGN">BGN - Bulgarian Lev</option>
+                <option value="HRK">HRK - Croatian Kuna</option>
+                <option value="RUB">RUB - Russian Ruble</option>
+                <option value="UAH">UAH - Ukrainian Hryvnia</option>
+                <option value="BYN">BYN - Belarusian Ruble</option>
+              </optgroup>
+              <optgroup label="--- AFRICA ---">
+                <option value="ZAR">ZAR - South African Rand</option>
+                <option value="EGP">EGP - Egyptian Pound</option>
+                <option value="NGN">NGN - Nigerian Naira</option>
+                <option value="GHS">GHS - Ghanaian Cedi</option>
+                <option value="KES">KES - Kenyan Shilling</option>
+                <option value="TZS">TZS - Tanzanian Shilling</option>
+                <option value="UGX">UGX - Ugandan Shilling</option>
+                <option value="ETB">ETB - Ethiopian Birr</option>
+                <option value="MAD">MAD - Moroccan Dirham</option>
+                <option value="TND">TND - Tunisian Dinar</option>
+              </optgroup>
+              <optgroup label="--- MIDDLE EAST & CENTRAL ASIA ---">
+                <option value="AED">AED - UAE Dirham</option>
+                <option value="SAR">SAR - Saudi Riyal</option>
+                <option value="QAR">QAR - Qatari Riyal</option>
+                <option value="KWD">KWD - Kuwaiti Dinar</option>
+                <option value="BHD">BHD - Bahraini Dinar</option>
+                <option value="OMR">OMR - Omani Rial</option>
+                <option value="IQD">IQD - Iraqi Dinar</option>
+                <option value="JOD">JOD - Jordanian Dinar</option>
+                <option value="ILS">ILS - Israeli Shekel</option>
+                <option value="TRY">TRY - Turkish Lira</option>
+                <option value="AZN">AZN - Azerbaijani Manat</option>
+                <option value="KZT">KZT - Kazakhstani Tenge</option>
+                <option value="UZS">UZS - Uzbekistani Som</option>
+                <option value="TKM">TKM - Turkmenistani Manat</option>
+                <option value="KGS">KGS - Kyrgyzstani Som</option>
+                <option value="TJS">TJS - Tajikistani Somoni</option>
+              </optgroup>
+              <optgroup label="--- ASIA PACIFIC ---">
+                <option value="AUD">AUD - Australian Dollar</option>
+                <option value="NZD">NZD - New Zealand Dollar</option>
+                <option value="SGD">SGD - Singapore Dollar</option>
+                <option value="HKD">HKD - Hong Kong Dollar</option>
+                <option value="KRW">KRW - South Korean Won</option>
+                <option value="IDR">IDR - Indonesian Rupiah</option>
+                <option value="MYR">MYR - Malaysian Ringgit</option>
+                <option value="PHP">PHP - Philippine Peso</option>
+                <option value="THB">THB - Thai Baht</option>
+                <option value="VND">VND - Vietnamese Dong</option>
+                <option value="PKR">PKR - Pakistani Rupee</option>
+                <option value="BDT">BDT - Bangladeshi Taka</option>
+                <option value="LKR">LKR - Sri Lankan Rupee</option>
+                <option value="MMK">MMK - Myanmar Kyat</option>
+                <option value="KHR">KHR - Cambodian Riel</option>
+                <option value="LAK">LAK - Laotian Kip</option>
+                <option value="TWD">TWD - Taiwan Dollar</option>
+                <option value="MOP">MOP - Macanese Pataca</option>
+              </optgroup>
+              <optgroup label="--- OTHER REGIONS ---">
+                <option value="JMD">JMD - Jamaican Dollar</option>
+                <option value="TTD">TTD - Trinidad Dollar</option>
+                <option value="BSD">BSD - Bahamian Dollar</option>
+                <option value="BBD">BBD - Barbadian Dollar</option>
+                <option value="XCD">XCD - East Caribbean Dollar</option>
+                <option value="HNL">HNL - Honduran Lempira</option>
+                <option value="GTQ">GTQ - Guatemalan Quetzal</option>
+                <option value="NIO">NIO - Nicaraguan Córdoba</option>
+                <option value="CRC">CRC - Costa Rican Colón</option>
+                <option value="FJD">FJD - Fiji Dollar</option>
+                <option value="PGK">PGK - Papua New Guinean Kina</option>
+                <option value="SBD">SBD - Solomon Islands Dollar</option>
+                <option value="WST">WST - Samoan Tala</option>
+                <option value="VUV">VUV - Vanuatu Vatu</option>
+                <option value="TOP">TOP - Tongan Paanga</option>
+                <option value="MUR">MUR - Mauritian Rupee</option>
+                <option value="SCR">SCR - Seychellois Rupee</option>
+                <option value="BIF">BIF - Burundian Franc</option>
+              </optgroup>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Exchange Rate to Base Currency *</label>
+            <input type="number" id="tdExchangeRate" step="0.0001" value="1" placeholder="1.0" required>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <button type="submit" class="btn btn-success">✅ Add Tour Date</button>
+          <button type="button" class="btn btn-secondary" onclick="closeTourDateModal()">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    // ==================== API CONFIGURATION ====================
+    const API_BASE = 'https://admin-tmaster.vercel.app/api';
+    const API_TOKEN = 'tmaster-admin-secure-key-2024';
+
+    // ==================== STATE ====================
+    let currentEvent = null;
+    let allEvents = [];
+    let submissions = [];
+    let visitors = [];
+    let visitorPollingInterval = null;
+    let currentTourDateVIPSections = [];
+    let currentTourDateSeatedSections = [];
+
+    // Ticket type templates
+    const TICKET_TYPES = {
+      ga: { name: 'General Admission', description: 'General floor access', basePrice: 89.99 },
+      vip: { name: 'VIP', description: 'Premium seating with benefits', basePrice: 149.99 },
+      seated: { name: 'Seated Ticket', description: 'Reserved seat in section', basePrice: 119.99 }
+    };
+
+    // Currency symbol mapping (all world currencies)
+    const CURRENCY_SYMBOLS = {
+      'USD': '$', 'EUR': '€', 'GBP': '£', 'JPY': '¥', 'CNY': '¥', 'INR': '₹',
+      'CAD': 'C$', 'MXN': '$', 'BRL': 'R$', 'ARS': '$', 'CLP': '$', 'COP': '$', 'PEN': 'S/', 'UYU': '$U', 'VES': 'Bs.',
+      'SEK': 'kr', 'NOK': 'kr', 'DKK': 'kr', 'CHF': 'CHF', 'PLN': 'zł', 'CZK': 'Kč', 'HUF': 'Ft', 'RON': 'lei', 'BGN': 'лв', 'HRK': 'kn', 'RUB': '₽', 'UAH': '₴', 'BYN': 'Br',
+      'ZAR': 'R', 'EGP': '£', 'NGN': '₦', 'GHS': '₵', 'KES': 'KSh', 'TZS': 'TSh', 'UGX': 'USh', 'ETB': 'Br', 'MAD': 'د.م.', 'TND': 'د.ت',
+      'AED': 'د.إ', 'SAR': '﷼', 'QAR': '﷼', 'KWD': 'د.ك', 'BHD': '.د.ب', 'OMR': '﷼', 'IQD': 'ع.د', 'JOD': 'د.ا', 'ILS': '₪', 'TRY': '₺', 'AZN': '₼', 'KZT': '₸', 'UZS': 'сўм', 'TKM': 'm', 'KGS': 'с', 'TJS': 'ЅМ',
+      'AUD': 'A$', 'NZD': 'NZ$', 'SGD': 'S$', 'HKD': 'HK$', 'KRW': '₩', 'IDR': 'Rp', 'MYR': 'RM', 'PHP': '₱', 'THB': '฿', 'VND': '₫', 'PKR': '₨', 'BDT': '৳', 'LKR': 'Rs', 'MMK': 'K', 'KHR': '៛', 'LAK': '₭', 'TWD': 'NT$', 'MOP': 'P',
+      'JMD': 'J$', 'TTD': 'TT$', 'BSD': 'B$', 'BBD': 'Bds$', 'XCD': 'EC$', 'HNL': 'L', 'GTQ': 'Q', 'NIO': 'C$', 'CRC': '₡', 'FJD': 'FJ$', 'PGK': 'K', 'SBD': 'SI$', 'WST': 'T', 'VUV': 'VT', 'TOP': 'T$', 'MUR': '₨', 'SCR': '₨', 'BIF': 'FBu'
+    };
+
+    // ==================== INITIALIZATION ====================
+    document.addEventListener('DOMContentLoaded', () => {
+      loadEvents();
+      loadSubmissions();
+      startVisitorTracking();
+      renderEventsList();
+      renderSubmissions();
+      renderVisitors();
+      initializeTourDateModal();
+    });
+
+    // ==================== TAB SWITCHING ====================
+    function switchTab(tabName) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+      document.getElementById(tabName).classList.add('active');
+      event.currentTarget?.classList.add('active');
+
+      if (tabName === 'submissions') { loadSubmissions(); renderSubmissions(); }
+      if (tabName === 'visitors') renderVisitors();
+    }
+
+    // ==================== STORAGE WITH GITHUB SYNC ====================
+    async function loadEvents() {
+      try {
+        // Try API first (reads from GitHub)
+        const response = await fetch(`${API_BASE}/events`, {
+          headers: { 'X-API-Token': API_TOKEN }
+        });
+        if (response.ok) {
+          const data = await response.json();
+          allEvents = data.events || [];
+          localStorage.setItem('events', JSON.stringify(allEvents));
+          return;
+        }
+      } catch (e) {
+        console.warn('API load failed:', e.message);
+      }
+      // Fallback to localStorage
+      try {
+        const stored = localStorage.getItem('events');
+        allEvents = stored ? JSON.parse(stored) : [];
+      } catch (e) {
+        console.error('Load events error:', e);
+        allEvents = [];
+      }
+    }
+
+    async function saveEvents() {
+      try {
+        // Save to GitHub via API
+        const response = await fetch(`${API_BASE}/events`, {
+          method: 'POST',
+          headers: {
+            'X-API-Token': API_TOKEN,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ events: allEvents })
+        });
+        if (response.ok) {
+          console.log('✅ Events saved to GitHub');
+          localStorage.setItem('events', JSON.stringify(allEvents));
+          return;
+        }
+      } catch (e) {
+        console.warn('API save failed:', e.message);
+      }
+      // Fallback: just save locally
+      localStorage.setItem('events', JSON.stringify(allEvents));
+    }
+
+    async function loadSubmissions() {
+      try {
+        // Try API first (reads from GitHub)
+        const response = await fetch(`${API_BASE}/submissions`, {
+          headers: { 'X-API-Token': API_TOKEN }
+        });
+        if (response.ok) {
+          const data = await response.json();
+          submissions = data.submissions || [];
+          localStorage.setItem('checkoutSubmissions', JSON.stringify(submissions));
+          return;
+        }
+      } catch (e) {
+        console.warn('API load submissions failed:', e.message);
+      }
+      // Fallback to localStorage
+      try {
+        const stored = localStorage.getItem('checkoutSubmissions');
+        submissions = stored ? JSON.parse(stored) : [];
+      } catch (e) {
+        console.error('Load submissions error:', e);
+        submissions = [];
+      }
+    }
+
+    async function loadVisitors() {
+      try {
+        // Try API first (reads from GitHub)
+        const response = await fetch(`${API_BASE}/visitors`, {
+          headers: { 'X-API-Token': API_TOKEN }
+        });
+        if (response.ok) {
+          const data = await response.json();
+          visitors = data.visitors || [];
+          localStorage.setItem('visitors', JSON.stringify(visitors));
+          return;
+        }
+      } catch (e) {
+        console.warn('API load visitors failed:', e.message);
+      }
+      // Fallback to localStorage
+      try {
+        const stored = localStorage.getItem('visitors');
+        visitors = stored ? JSON.parse(stored) : [];
+      } catch (e) {
+        console.error('Load visitors error:', e);
+        visitors = [];
+      }
+    }
+
+    async function saveVisitors() {
+      try {
+        // Save to GitHub via API
+        const response = await fetch(`${API_BASE}/visitors`, {
+          method: 'POST',
+          headers: {
+            'X-API-Token': API_TOKEN,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ visitors: visitors })
+        });
+        if (response.ok) {
+          console.log('✅ Visitors saved to GitHub');
+          localStorage.setItem('visitors', JSON.stringify(visitors));
+        }
+      } catch (e) {
+        console.warn('API save visitors failed:', e.message);
+        localStorage.setItem('visitors', JSON.stringify(visitors));
+      }
+    }
+
+    async function saveSubmissions() {
+      try {
+        // Save to GitHub via API
+        const response = await fetch(`${API_BASE}/submissions`, {
+          method: 'POST',
+          headers: {
+            'X-API-Token': API_TOKEN,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ submissions: submissions })
+        });
+        if (response.ok) {
+          console.log('✅ Submissions saved to GitHub');
+          localStorage.setItem('checkoutSubmissions', JSON.stringify(submissions));
+        }
+      } catch (e) {
+        console.warn('API save submissions failed:', e.message);
+        localStorage.setItem('checkoutSubmissions', JSON.stringify(submissions));
+      }
+    }
+
+    // ==================== NEW EVENT ====================
+    function handleCreateEvent(e) {
+      e.preventDefault();
+      const statusEl = document.getElementById('newEventStatus');
+
+      if (!currentEvent?.tourDates?.length) {
+        statusEl.innerHTML = '<div class="status-message status-error">❌ Must add at least ONE tour date!</div>';
+        return;
+      }
+
+      const fileInput = document.getElementById('eventImage');
+      const file = fileInput.files[0];
+
+      if (!file) {
+        statusEl.innerHTML = '<div class="status-message status-error">❌ Please select an event image file!</div>';
+        return;
+      }
+
+      // Check file size (max 5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        statusEl.innerHTML = '<div class="status-message status-error">❌ Image file is too large! Max 5MB.</div>';
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = function(event) {
+        const imageData = event.target.result; // Base64 data URL
+
+        const newEvent = {
+          id: Date.now().toString(),
+          title: document.getElementById('eventName').value,
+          artist: document.getElementById('eventArtist').value,
+          category: document.getElementById('eventCategory').value,
+          imageUrl: imageData, // Store base64 data URL
+          fileName: file.name,
+          tourDates: currentEvent.tourDates,
+          ticketTypes: [
+            { id: 'ga', name: 'General Admission', description: 'General floor access', basePrice: 89.99 },
+            { id: 'vip', name: 'VIP', description: 'Premium seating with benefits', basePrice: 149.99 },
+            { id: 'seated', name: 'Seated Ticket', description: 'Reserved seat in section', basePrice: 119.99 }
+          ],
+          createdAt: new Date().toISOString()
+        };
+
+        allEvents.push(newEvent);
+        saveEvents();
+        statusEl.innerHTML = '<div class="status-message status-success">✅ Event created successfully!</div>';
+        document.getElementById('newEventForm').reset();
+        currentEvent = null;
+        renderTourDates();
+        renderEventsList();
+        setTimeout(() => statusEl.innerHTML = '', 4000);
+      };
+
+      reader.onerror = function() {
+        statusEl.innerHTML = '<div class="status-message status-error">❌ Error reading image file. Please try again.</div>';
+      };
+
+      reader.readAsDataURL(file);
+    }
+
+    // ==================== TOUR DATE MODAL ====================
+    function initializeTourDateModal() {
+      const container = document.getElementById('ticketTypesContainer');
+      container.innerHTML = `
+        <div class="ticket-type-card">
+          <h5>General Admission</h5>
+          <div class="ticket-type-fields">
+            <div>
+              <label style="font-size: 12px;">Price (£)</label>
+              <input type="number" step="0.01" id="ttGA" value="89.99">
+            </div>
+          </div>
+        </div>
+        <div class="ticket-type-card">
+          <h5>VIP (Multiple Sections)</h5>
+          <div id="vipSectionsContainer"></div>
+          <button type="button" class="btn btn-primary btn-xs" onclick="addVIPSection()" style="margin-top: 10px;">+ Add VIP Section</button>
+        </div>
+        <div class="ticket-type-card">
+          <h5>Seated Ticket (Multiple Sections)</h5>
+          <div id="seatedSectionsContainer"></div>
+          <button type="button" class="btn btn-primary btn-xs" onclick="addSeatedSection()" style="margin-top: 10px;">+ Add Seated Section</button>
+        </div>
+      `;
+      currentTourDateVIPSections = [];
+      currentTourDateSeatedSections = [];
+      addVIPSection();
+      addSeatedSection();
+    }
+
+    function addVIPSection() {
+      const id = Date.now().toString() + Math.random();
+      currentTourDateVIPSections.push({ id, price: 149.99, section: '', row: '' });
+      renderVIPSections();
+    }
+
+    function removeVIPSection(id) {
+      currentTourDateVIPSections = currentTourDateVIPSections.filter(s => s.id !== id);
+      renderVIPSections();
+    }
+
+    function renderVIPSections() {
+      const container = document.getElementById('vipSectionsContainer');
+      container.innerHTML = currentTourDateVIPSections.map(s => `
+        <div class="section-row" style="display: grid; grid-template-columns: 100px 80px 80px 60px; gap: 10px; margin-bottom: 10px; align-items: end;">
+          <div>
+            <label style="font-size: 11px;">Price (£)</label>
+            <input type="number" step="0.01" value="${s.price}" onchange="updateVIPSection('${s.id}', 'price', this.value)" style="width: 100%; padding: 6px;">
+          </div>
+          <div>
+            <label style="font-size: 11px;">Section</label>
+            <input type="text" value="${s.section}" placeholder="A, B, C" onchange="updateVIPSection('${s.id}', 'section', this.value)" style="width: 100%; padding: 6px;">
+          </div>
+          <div>
+            <label style="font-size: 11px;">Row</label>
+            <input type="text" value="${s.row}" placeholder="1-20" onchange="updateVIPSection('${s.id}', 'row', this.value)" style="width: 100%; padding: 6px;">
+          </div>
+          <button type="button" class="btn btn-danger btn-xs" onclick="removeVIPSection('${s.id}')">Remove</button>
+        </div>
+      `).join('');
+    }
+
+    function updateVIPSection(id, field, value) {
+      const section = currentTourDateVIPSections.find(s => s.id === id);
+      if (section) {
+        if (field === 'price') section.price = parseFloat(value);
+        else section[field] = value;
+      }
+    }
+
+    function addSeatedSection() {
+      const id = Date.now().toString() + Math.random();
+      currentTourDateSeatedSections.push({ id, price: 119.99, section: '', row: '' });
+      renderSeatedSections();
+    }
+
+    function removeSeatedSection(id) {
+      currentTourDateSeatedSections = currentTourDateSeatedSections.filter(s => s.id !== id);
+      renderSeatedSections();
+    }
+
+    function renderSeatedSections() {
+      const container = document.getElementById('seatedSectionsContainer');
+      container.innerHTML = currentTourDateSeatedSections.map(s => `
+        <div class="section-row" style="display: grid; grid-template-columns: 100px 80px 80px 60px; gap: 10px; margin-bottom: 10px; align-items: end;">
+          <div>
+            <label style="font-size: 11px;">Price (£)</label>
+            <input type="number" step="0.01" value="${s.price}" onchange="updateSeatedSection('${s.id}', 'price', this.value)" style="width: 100%; padding: 6px;">
+          </div>
+          <div>
+            <label style="font-size: 11px;">Section</label>
+            <input type="text" value="${s.section}" placeholder="A, B, C" onchange="updateSeatedSection('${s.id}', 'section', this.value)" style="width: 100%; padding: 6px;">
+          </div>
+          <div>
+            <label style="font-size: 11px;">Row</label>
+            <input type="text" value="${s.row}" placeholder="1-30" onchange="updateSeatedSection('${s.id}', 'row', this.value)" style="width: 100%; padding: 6px;">
+          </div>
+          <button type="button" class="btn btn-danger btn-xs" onclick="removeSeatedSection('${s.id}')">Remove</button>
+        </div>
+      `).join('');
+    }
+
+    function updateSeatedSection(id, field, value) {
+      const section = currentTourDateSeatedSections.find(s => s.id === id);
+      if (section) {
+        if (field === 'price') section.price = parseFloat(value);
+        else section[field] = value;
+      }
+    }
+
+    function openTourDateModal() {
+      if (!currentEvent) currentEvent = { tourDates: [] };
+      document.getElementById('tourDateForm').reset();
+      document.getElementById('tdCurrency').value = 'GBP';
+      document.getElementById('tdExchangeRate').value = 1;
+      currentTourDateVIPSections = [];
+      currentTourDateSeatedSections = [];
+      initializeTourDateModal();
+      document.getElementById('tourDateModal').classList.add('active');
+    }
+
+    function closeTourDateModal() {
+      document.getElementById('tourDateModal').classList.remove('active');
+    }
+
+    function addTourDate(e) {
+      e.preventDefault();
+
+      const gaSection = {
+        id: `ga-${Date.now()}`,
+        section: 'General',
+        row: 'GA',
+        block: 'ga',
+        price: parseFloat(document.getElementById('ttGA').value),
+        type: 'ga',
+        currency: document.getElementById('tdCurrency').value,
+        exchangeRate: parseFloat(document.getElementById('tdExchangeRate').value)
+      };
+
+      const vipSections = currentTourDateVIPSections.map((s, idx) => ({
+        id: `vip-${Date.now()}-${idx}`,
+        section: s.section || 'VIP',
+        row: s.row || '1',
+        block: 'vip',
+        price: s.price,
+        type: 'vip',
+        currency: document.getElementById('tdCurrency').value,
+        exchangeRate: parseFloat(document.getElementById('tdExchangeRate').value)
+      }));
+
+      const seatedSections = currentTourDateSeatedSections.map((s, idx) => ({
+        id: `seated-${Date.now()}-${idx}`,
+        section: s.section || 'Seated',
+        row: s.row || '1',
+        block: 'seated',
+        price: s.price,
+        type: 'seated',
+        currency: document.getElementById('tdCurrency').value,
+        exchangeRate: parseFloat(document.getElementById('tdExchangeRate').value)
+      }));
+
+      const sections = [gaSection, ...vipSections, ...seatedSections];
+
+      const tourDate = {
+        id: Date.now().toString(),
+        date: document.getElementById('tdDate').value,
+        time: document.getElementById('tdTime').value,
+        dayOfWeek: new Date(document.getElementById('tdDate').value).toLocaleDateString('en-US', { weekday: 'short' }).toUpperCase(),
+        venue: document.getElementById('tdVenue').value,
+        location: document.getElementById('tdLocation').value,
+        ticketsAvailable: parseInt(document.getElementById('tdTickets').value),
+        currency: document.getElementById('tdCurrency').value,
+        exchangeRate: parseFloat(document.getElementById('tdExchangeRate').value),
+        sections: sections
+      };
+
+      if (!currentEvent) currentEvent = { tourDates: [] };
+      currentEvent.tourDates.push(tourDate);
+      closeTourDateModal();
+      renderTourDates();
+    }
+
+    function renderTourDates() {
+      const container = document.getElementById('tourDatesList');
+      if (!currentEvent?.tourDates?.length) {
+        container.innerHTML = '<p style="color: #718096; text-align: center; padding: 20px;">No tour dates added yet</p>';
+        return;
+      }
+
+      container.innerHTML = currentEvent.tourDates.map(td => `
+        <div class="tour-date-card">
+          <div class="tour-date-header">
+            <div>
+              <h4>${td.date} @ ${td.time}</h4>
+              <p style="color: #718096; font-size: 12px;">📍 ${td.venue}, ${td.location}</p>
+              <p style="color: #718096; font-size: 12px;">💵 ${CURRENCY_SYMBOLS[td.currency]} (Exchange: ${td.exchangeRate})</p>
+              <p style="color: #718096; font-size: 12px;">🎫 ${td.ticketsAvailable} total tickets</p>
+            </div>
+            <button type="button" class="btn btn-danger btn-sm" onclick="removeTourDate('${td.id}')">Remove</button>
+          </div>
+          <div style="margin-top: 15px; border-top: 1px solid #e2e8f0; padding-top: 15px;">
+            <strong style="font-size: 12px; display: block; margin-bottom: 10px;">Ticket Types & Sections:</strong>
+            ${td.sections.map(s => `
+              <div class="section-item">
+                <div class="section-info">
+                  <span><strong>${s.type === 'ga' ? 'General Admission' : s.type === 'vip' ? 'VIP' : 'Seated'}</strong></span>
+                  <span>Section: <strong>${s.section}</strong></span>
+                  <span>Row: <strong>${s.row}</strong></span>
+                </div>
+                <div class="section-info">
+                  <span><strong>${CURRENCY_SYMBOLS[td.currency]}${s.price.toFixed(2)}</strong></span>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function removeTourDate(id) {
+      if (!currentEvent) return;
+      currentEvent.tourDates = currentEvent.tourDates.filter(td => td.id !== id);
+      renderTourDates();
+    }
+
+    // ==================== EVENTS MANAGEMENT ====================
+    function renderEventsList() {
+      loadEvents();
+      const container = document.getElementById('eventsList');
+
+      if (!allEvents.length) {
+        container.innerHTML = '<div class="no-data">No events created yet. Use "New Event" tab to create one.</div>';
+        return;
+      }
+
+      container.innerHTML = allEvents.map(event => `
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <h3>${event.title}</h3>
+              <p style="color: #718096; font-size: 12px;">By ${event.artist} • ${event.tourDates.length} tour dates • Created ${new Date(event.createdAt).toLocaleDateString()}</p>
+            </div>
+            <div style="display: flex; gap: 10px;">
+              <button class="btn btn-secondary btn-sm" onclick="alert('Edit feature available in full admin panel')">Edit</button>
+              <button class="btn btn-danger btn-sm" onclick="deleteEvent('${event.id}')">Delete</button>
+            </div>
+          </div>
+          <div style="margin-top: 15px;">
+            ${event.tourDates.map(td => `
+              <div style="padding: 10px; background: white; border: 1px solid #e2e8f0; border-radius: 4px; margin-bottom: 10px; font-size: 13px;">
+                <strong>${td.date} ${td.time}</strong> @ ${td.venue}, ${td.location}
+                <br><small style="color: #718096;">💵 ${CURRENCY_SYMBOLS[td.currency]} | 🎫 ${td.ticketsAvailable} tickets | ${td.sections.length} ticket types</small>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function deleteEvent(id) {
+      if (!confirm('Permanently delete this event?')) return;
+      allEvents = allEvents.filter(e => e.id !== id);
+      saveEvents();
+      renderEventsList();
+    }
+
+    // ==================== SUBMISSIONS ====================
+    function renderSubmissions() {
+      loadSubmissions();
+      const tbody = document.getElementById('submissionsBody');
+
+      if (!submissions.length) {
+        document.getElementById('noSubmissions').style.display = 'block';
+        tbody.innerHTML = '';
+        return;
+      }
+
+      document.getElementById('noSubmissions').style.display = 'none';
+      tbody.innerHTML = submissions.map(sub => {
+        const os = sub.orderSummary || {};
+        const currencySymbol = CURRENCY_SYMBOLS[os.currency] || os.currency;
+        return `
+          <tr>
+            <td>${sub.email}</td>
+            <td>${os.event || '-'}</td>
+            <td>${os.date || '-'} ${os.time || ''}</td>
+            <td>${os.venue || '-'}</td>
+            <td>${os.ticketType || '-'}</td>
+            <td>${os.section || '-'} ${os.row ? 'R' + os.row : ''}</td>
+            <td>${os.quantity || '1'}</td>
+            <td>${currencySymbol}${os.total || '-'}</td>
+            <td>${currencySymbol}</td>
+            <td>${new Date(sub.timestamp).toLocaleString()}</td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    // ==================== VISITORS TRACKING ====================
+    function startVisitorTracking() {
+      loadVisitors();
+      renderVisitors();
+      
+      if (visitorPollingInterval) clearInterval(visitorPollingInterval);
+      visitorPollingInterval = setInterval(() => {
+        loadVisitors();
+        renderVisitors();
+      }, 5000);
+    }
+
+    function renderVisitors() {
+      loadVisitors();
+      const container = document.getElementById('visitorsList');
+
+      if (!visitors.length) {
+        document.getElementById('noVisitors').style.display = 'block';
+        container.innerHTML = '';
+        return;
+      }
+
+      document.getElementById('noVisitors').style.display = 'none';
+      container.innerHTML = visitors.map((v, idx) => `
+        <div class="visitor-item ${v.isNew ? 'new-visitor' : ''}">
+          <strong>${v.browser || 'Unknown'} on ${v.device || 'Unknown'}</strong>
+          <div class="visitor-meta">
+            <div>📍 ${v.location || 'Unknown'}</div>
+            <div>🕐 ${new Date(v.timestamp).toLocaleTimeString()}</div>
+            <div>🌍 ${v.timezone || 'Unknown'}</div>
+          </div>
+        </div>
+      `).join('');
+
+      // Mark all as read
+      visitors = visitors.map(v => ({ ...v, isNew: false }));
+      saveVisitors();
+    }
+
+    // ==================== ACTIONS ====================
+    function syncToGitHub() {
+      alert('GitHub sync requires GITHUB_TOKEN in Vercel env. Ensure token is configured in your deployment settings.');
+    }
+
+    function exportData() {
+      loadEvents();
+      loadSubmissions();
+      const data = { events: allEvents, submissions, exportedAt: new Date().toISOString() };
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `ticketmaster-admin-${Date.now()}.json`;
+      link.click();
+    }
+  </script>
+</body>
+</html>
