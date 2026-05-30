@@ -36,6 +36,9 @@ export default async function handler(req, res) {
   }
   
   console.log(`✅ Submissions API: Request allowed from ${origin}`);
+  
+  // 🔒 SECURITY LAYER 2: Require secret token
+  const apiToken = req.headers['x-api-token'];
   const validToken = process.env.API_SECRET_TOKEN || 'tmaster-admin-secure-key-2024';
   
   if (!apiToken || apiToken !== validToken) {
