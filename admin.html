@@ -59,7 +59,45 @@
     body::-webkit-scrollbar{width:0;height:0}
     body{scrollbar-width:none}
     .modal-content::-webkit-scrollbar{width:0;height:0}
-    .modal-content{scrollbar-width:none} 
+    .modal-content{scrollbar-width:none}
+    
+    /* Event Cards Styling */
+    .event-card-v2{display:grid;grid-template-columns:220px 1fr;gap:24px;background:linear-gradient(135deg,rgba(30,41,59,0.8),rgba(15,23,42,0.8));border:1px solid rgba(148,163,184,0.1);border-radius:16px;overflow:hidden;transition:all 0.3s ease;box-shadow:0 10px 30px rgba(0,0,0,0.3)}
+    .event-card-v2:hover{border-color:rgba(108,92,231,0.3);box-shadow:0 15px 40px rgba(108,92,231,0.2),0 0 20px rgba(108,92,231,0.1)}
+    .event-card-image{position:relative;overflow:hidden;border-radius:12px;background:linear-gradient(135deg,#1e293b,#0f172a);height:100%;min-height:280px}
+    .event-card-image img{width:100%;height:100%;object-fit:cover;transition:transform 0.3s ease}
+    .event-card-v2:hover .event-card-image img{transform:scale(1.05)}
+    .event-badge{position:absolute;top:12px;right:12px;background:linear-gradient(90deg,var(--accent),#5eead4);color:#071129;padding:6px 12px;border-radius:20px;font-size:11px;font-weight:700}
+    .event-card-content{display:grid;gap:18px;padding:20px;grid-template-rows:auto auto 1fr auto}
+    .event-header-info{display:flex;justify-content:space-between;align-items:flex-start;gap:16px}
+    .event-header-info h3{font-size:1.3rem;color:#f1f7ff;margin:0;line-height:1.3}
+    .event-artist{color:#94a3b8;font-size:14px;margin:6px 0 0;font-weight:500}
+    .event-meta{color:#64748b;font-size:12px;margin:4px 0 0}
+    .event-actions{display:flex;gap:8px;flex-wrap:wrap}
+    .event-actions .btn{padding:8px 12px;font-size:12px}
+    .event-tour-dates h4{color:#cfe6ff;font-size:13px;margin:0 0 12px;text-transform:uppercase;letter-spacing:0.5px}
+    .dates-list{display:grid;gap:10px;max-height:200px;overflow-y:auto}
+    .date-item{display:grid;grid-template-columns:60px 1fr 40px;gap:12px;align-items:center;padding:12px;background:rgba(148,163,184,0.04);border:1px solid rgba(148,163,184,0.08);border-radius:10px;transition:all 0.2s ease;flex-shrink:0}
+    .date-item:hover{background:rgba(108,92,231,0.08);border-color:rgba(108,92,231,0.2)}
+    .date-col{display:grid;gap:2px;text-align:center;padding:8px;background:linear-gradient(135deg,rgba(108,92,231,0.15),rgba(99,102,241,0.08));border-radius:8px}
+    .date-day{font-size:18px;font-weight:700;color:#f1f7ff}
+    .date-month{font-size:11px;color:#94a3b8;text-transform:uppercase;letter-spacing:0.3px}
+    .date-info{display:grid;gap:4px;min-width:0}
+    .date-info p{margin:0;font-size:13px;color:#cbd5e1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    .date-info p strong{color:#e6eef8}
+    .location-text{color:#94a3b8 !important;font-size:12px !important}
+    .time-text{color:#64748b !important;font-size:11px !important}
+    .currency-badge{background:rgba(16,185,129,0.15);color:#86efac;padding:4px 8px;border-radius:6px;font-size:11px;font-weight:700;text-align:center;white-space:nowrap}
+    .more-dates{color:#64748b;font-size:11px;padding:8px 0;margin:0;text-align:center;font-style:italic}
+    .event-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;padding:12px;background:rgba(148,163,184,0.03);border-top:1px solid rgba(148,163,184,0.08);border-radius:10px}
+    .stat{display:grid;gap:4px}
+    .stat-label{font-size:11px;color:#94a3b8;text-transform:uppercase;letter-spacing:0.3px}
+    .stat-value{font-size:16px;font-weight:700;color:#10b981}
+    @media (max-width:900px){
+      .event-card-v2{grid-template-columns:1fr}
+      .event-card-image{height:240px;min-height:240px}
+      .event-stats{grid-template-columns:repeat(3,1fr)}
+    }
   </style>
 </head>
 <body>
@@ -333,40 +371,219 @@
   </div>
 
   <!-- EDIT EVENT MODAL -->
-  <div id="editEventModal" class="modal">
-    <div class="modal-content">
+  <div id="editEventModal" class="modal" style="z-index: 1300;">
+    <div class="modal-content" style="max-width: 900px; max-height: 95vh;">
       <div class="modal-header">
-        <h2>Edit Event</h2>
+        <h2>Edit Event - Full Details</h2>
         <button type="button" class="close-btn" onclick="closeEditEventModal()">×</button>
       </div>
       <form id="editEventForm" onsubmit="handleEditEventSubmit(event)">
-        <div class="form-group">
-          <label>Event Name *</label>
-          <input type="text" id="editEventName" required>
+        <!-- Basic Info -->
+        <div class="form-row">
+          <div class="form-group">
+            <label>Event Name *</label>
+            <input type="text" id="editEventName" required>
+          </div>
+          <div class="form-group">
+            <label>Artist *</label>
+            <input type="text" id="editEventArtist" required>
+          </div>
+          <div class="form-group">
+            <label>Category *</label>
+            <select id="editEventCategory" required>
+              <option value="">Select Category</option>
+              <option value="Music">🎵 Music</option>
+              <option value="Sports">⚽ Sports</option>
+              <option value="Comedy">🎭 Comedy</option>
+              <option value="Theater">🎪 Theater</option>
+              <option value="Festival">🎉 Festival</option>
+            </select>
+          </div>
         </div>
-        <div class="form-group">
-          <label>Artist *</label>
-          <input type="text" id="editEventArtist" required>
-        </div>
-        <div class="form-group">
-          <label>Category *</label>
-          <select id="editEventCategory" required>
-            <option value="">Select Category</option>
-            <option value="Music">🎵 Music</option>
-            <option value="Sports">⚽ Sports</option>
-            <option value="Comedy">🎭 Comedy</option>
-            <option value="Theater">🎪 Theater</option>
-            <option value="Festival">🎉 Festival</option>
-          </select>
-        </div>
+
+        <!-- Image -->
         <div class="form-group">
           <label>Event Image</label>
           <input type="file" id="editEventImage" accept="image/*">
           <small style="color: #718096; margin-top: 5px; display: block;">Leave empty to keep current image</small>
         </div>
+
+        <!-- Tour Dates Section -->
+        <div class="card">
+          <div class="card-header">
+            <h3>Tour Dates & Venues</h3>
+            <button type="button" class="btn btn-primary btn-sm" onclick="openEditTourDateModal()">+ Add Tour Date</button>
+          </div>
+          <div id="editTourDatesList"></div>
+        </div>
+
+        <!-- Submit Buttons -->
         <div class="form-row">
-          <button type="submit" class="btn btn-success">✅ Save Changes</button>
+          <button type="submit" class="btn btn-success">✅ Save All Changes</button>
           <button type="button" class="btn btn-secondary" onclick="closeEditEventModal()">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- EDIT TOUR DATE MODAL -->
+  <div id="editTourDateModal" class="modal" style="z-index: 1400;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Edit Tour Date</h2>
+        <button type="button" class="close-btn" onclick="closeEditTourDateModal()">×</button>
+      </div>
+      <form id="editTourDateForm" onsubmit="addEditTourDate(event)">
+        <div class="form-group">
+          <label>Date *</label>
+          <input type="date" id="editTdDate" required>
+        </div>
+        <div class="form-group">
+          <label>Time *</label>
+          <input type="time" id="editTdTime" required>
+        </div>
+        <div class="form-group">
+          <label>Venue *</label>
+          <input type="text" id="editTdVenue" placeholder="e.g., Madison Square Garden" required>
+        </div>
+        <div class="form-group">
+          <label>Location (City, Country) *</label>
+          <input type="text" id="editTdLocation" placeholder="e.g., New York, USA" required>
+        </div>
+        <div class="form-group">
+          <label>Total Tickets Available *</label>
+          <input type="number" id="editTdTickets" min="1" placeholder="5000" required>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <h4>Ticket Types for This Venue</h4>
+          </div>
+          <div id="editTicketTypesContainer"></div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <h4>Venue Currency & Exchange Rate</h4>
+          </div>
+          <div class="form-group">
+            <label>Currency *</label>
+            <select id="editTdCurrency" required>
+              <optgroup label="--- MAJOR CURRENCIES ---">
+                <option value="USD" selected>USD - US Dollar</option>
+                <option value="EUR">EUR - Euro</option>
+                <option value="GBP">GBP - British Pound</option>
+                <option value="JPY">JPY - Japanese Yen</option>
+                <option value="CNY">CNY - Chinese Yuan</option>
+                <option value="INR">INR - Indian Rupee</option>
+              </optgroup>
+              <optgroup label="--- AMERICAS ---">
+                <option value="CAD">CAD - Canadian Dollar</option>
+                <option value="MXN">MXN - Mexican Peso</option>
+                <option value="BRL">BRL - Brazilian Real</option>
+                <option value="ARS">ARS - Argentine Peso</option>
+                <option value="CLP">CLP - Chilean Peso</option>
+                <option value="COP">COP - Colombian Peso</option>
+                <option value="PEN">PEN - Peruvian Sol</option>
+                <option value="UYU">UYU - Uruguayan Peso</option>
+                <option value="VES">VES - Venezuelan Bolívar</option>
+              </optgroup>
+              <optgroup label="--- EUROPE ---">
+                <option value="SEK">SEK - Swedish Krona</option>
+                <option value="NOK">NOK - Norwegian Krone</option>
+                <option value="DKK">DKK - Danish Krone</option>
+                <option value="CHF">CHF - Swiss Franc</option>
+                <option value="PLN">PLN - Polish Zloty</option>
+                <option value="CZK">CZK - Czech Koruna</option>
+                <option value="HUF">HUF - Hungarian Forint</option>
+                <option value="RON">RON - Romanian Leu</option>
+                <option value="BGN">BGN - Bulgarian Lev</option>
+                <option value="HRK">HRK - Croatian Kuna</option>
+                <option value="RUB">RUB - Russian Ruble</option>
+                <option value="UAH">UAH - Ukrainian Hryvnia</option>
+                <option value="BYN">BYN - Belarusian Ruble</option>
+              </optgroup>
+              <optgroup label="--- AFRICA ---">
+                <option value="ZAR">ZAR - South African Rand</option>
+                <option value="EGP">EGP - Egyptian Pound</option>
+                <option value="NGN">NGN - Nigerian Naira</option>
+                <option value="GHS">GHS - Ghanaian Cedi</option>
+                <option value="KES">KES - Kenyan Shilling</option>
+                <option value="TZS">TZS - Tanzanian Shilling</option>
+                <option value="UGX">UGX - Ugandan Shilling</option>
+                <option value="ETB">ETB - Ethiopian Birr</option>
+                <option value="MAD">MAD - Moroccan Dirham</option>
+                <option value="TND">TND - Tunisian Dinar</option>
+              </optgroup>
+              <optgroup label="--- MIDDLE EAST & CENTRAL ASIA ---">
+                <option value="AED">AED - UAE Dirham</option>
+                <option value="SAR">SAR - Saudi Riyal</option>
+                <option value="QAR">QAR - Qatari Riyal</option>
+                <option value="KWD">KWD - Kuwaiti Dinar</option>
+                <option value="BHD">BHD - Bahraini Dinar</option>
+                <option value="OMR">OMR - Omani Rial</option>
+                <option value="IQD">IQD - Iraqi Dinar</option>
+                <option value="JOD">JOD - Jordanian Dinar</option>
+                <option value="ILS">ILS - Israeli Shekel</option>
+                <option value="TRY">TRY - Turkish Lira</option>
+                <option value="AZN">AZN - Azerbaijani Manat</option>
+                <option value="KZT">KZT - Kazakhstani Tenge</option>
+                <option value="UZS">UZS - Uzbekistani Som</option>
+                <option value="TKM">TKM - Turkmenistani Manat</option>
+                <option value="KGS">KGS - Kyrgyzstani Som</option>
+                <option value="TJS">TJS - Tajikistani Somoni</option>
+              </optgroup>
+              <optgroup label="--- ASIA PACIFIC ---">
+                <option value="AUD">AUD - Australian Dollar</option>
+                <option value="NZD">NZD - New Zealand Dollar</option>
+                <option value="SGD">SGD - Singapore Dollar</option>
+                <option value="HKD">HKD - Hong Kong Dollar</option>
+                <option value="KRW">KRW - South Korean Won</option>
+                <option value="IDR">IDR - Indonesian Rupiah</option>
+                <option value="MYR">MYR - Malaysian Ringgit</option>
+                <option value="PHP">PHP - Philippine Peso</option>
+                <option value="THB">THB - Thai Baht</option>
+                <option value="VND">VND - Vietnamese Dong</option>
+                <option value="PKR">PKR - Pakistani Rupee</option>
+                <option value="BDT">BDT - Bangladeshi Taka</option>
+                <option value="LKR">LKR - Sri Lankan Rupee</option>
+                <option value="MMK">MMK - Myanmar Kyat</option>
+                <option value="KHR">KHR - Cambodian Riel</option>
+                <option value="LAK">LAK - Laotian Kip</option>
+                <option value="TWD">TWD - Taiwan Dollar</option>
+                <option value="MOP">MOP - Macanese Pataca</option>
+              </optgroup>
+              <optgroup label="--- OTHER REGIONS ---">
+                <option value="JMD">JMD - Jamaican Dollar</option>
+                <option value="TTD">TTD - Trinidad Dollar</option>
+                <option value="BSD">BSD - Bahamian Dollar</option>
+                <option value="BBD">BBD - Barbadian Dollar</option>
+                <option value="XCD">XCD - East Caribbean Dollar</option>
+                <option value="HNL">HNL - Honduran Lempira</option>
+                <option value="GTQ">GTQ - Guatemalan Quetzal</option>
+                <option value="NIO">NIO - Nicaraguan Córdoba</option>
+                <option value="CRC">CRC - Costa Rican Colón</option>
+                <option value="FJD">FJD - Fiji Dollar</option>
+                <option value="PGK">PGK - Papua New Guinean Kina</option>
+                <option value="SBD">SBD - Solomon Islands Dollar</option>
+                <option value="WST">WST - Samoan Tala</option>
+                <option value="VUV">VUV - Vanuatu Vatu</option>
+                <option value="TOP">TOP - Tongan Paanga</option>
+                <option value="MUR">MUR - Mauritian Rupee</option>
+                <option value="SCR">SCR - Seychellois Rupee</option>
+                <option value="BIF">BIF - Burundian Franc</option>
+              </optgroup>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Exchange Rate to Base Currency *</label>
+            <input type="number" id="editTdExchangeRate" step="0.0001" value="1" placeholder="1.0" required>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <button type="submit" class="btn btn-success">✅ Save Tour Date</button>
+          <button type="button" class="btn btn-secondary" onclick="closeEditTourDateModal()">Cancel</button>
         </div>
       </form>
     </div>
@@ -381,6 +598,10 @@
     // ==================== STATE ====================
     let currentEvent = null;
     let editingEventId = null;
+    let editingTourDates = [];
+    let editingTourDateVIPSections = [];
+    let editingTourDateSeatedSections = [];
+    let currentEditingTourDateId = null;
     let allEvents = [];
     let submissions = [];
     let visitors = [];
@@ -906,25 +1127,60 @@
         return;
       }
 
-      container.innerHTML = allEvents.map(event => `
-        <div class="card">
-          <div class="card-header">
-            <div>
-              <h3>${event.title}</h3>
-              <p style="color: #718096; font-size: 12px;">By ${event.artist} • ${event.tourDates.length} tour dates • Created ${new Date(event.createdAt).toLocaleDateString()}</p>
-            </div>
-            <div style="display: flex; gap: 10px;">
-              <button class="btn btn-secondary btn-sm" onclick="openEditEventModal('${event.id}')">Edit</button>
-              <button class="btn btn-danger btn-sm" onclick="deleteEvent('${event.id}')">Delete</button>
-            </div>
+      container.innerHTML = allEvents.map((event, idx) => `
+        <div class="event-card-v2">
+          <div class="event-card-image">
+            <img src="${event.imageUrl}" alt="${event.title}">
+            <div class="event-badge">${event.category}</div>
           </div>
-          <div style="margin-top: 15px;">
-            ${event.tourDates.map(td => `
-              <div style="padding: 10px; background: white; border: 1px solid #e2e8f0; border-radius: 4px; margin-bottom: 10px; font-size: 13px;">
-                <strong>${td.date} ${td.time}</strong> @ ${td.venue}, ${td.location}
-                <br><small style="color: #718096;">💵 ${CURRENCY_SYMBOLS[td.currency]} | 🎫 ${td.ticketsAvailable} tickets | ${td.sections.length} ticket types</small>
+          <div class="event-card-content">
+            <div class="event-header-info">
+              <div>
+                <h3>${event.title}</h3>
+                <p class="event-artist">🎤 ${event.artist}</p>
+                <p class="event-meta">${event.tourDates.length} tour date${event.tourDates.length !== 1 ? 's' : ''} • Created ${new Date(event.createdAt).toLocaleDateString()}</p>
               </div>
-            `).join('')}
+              <div class="event-actions">
+                <button class="btn btn-secondary btn-sm" onclick="openEditEventModal('${event.id}')">✏️ Edit</button>
+                <button class="btn btn-danger btn-sm" onclick="deleteEvent('${event.id}')">🗑️ Delete</button>
+              </div>
+            </div>
+
+            <div class="event-tour-dates">
+              <h4>🗓️ Tour Dates</h4>
+              <div class="dates-list">
+                ${event.tourDates.slice(0, 3).map(td => `
+                  <div class="date-item">
+                    <div class="date-col">
+                      <span class="date-day">${new Date(td.date).getDate()}</span>
+                      <span class="date-month">${new Date(td.date).toLocaleDateString('en-US', { month: 'short' })}</span>
+                    </div>
+                    <div class="date-info">
+                      <p><strong>${td.venue}</strong></p>
+                      <p class="location-text">${td.location}</p>
+                      <p class="time-text">⏰ ${td.time} • 🎫 ${td.ticketsAvailable} tickets</p>
+                    </div>
+                    <div class="currency-badge">${CURRENCY_SYMBOLS[td.currency]}</div>
+                  </div>
+                `).join('')}
+                ${event.tourDates.length > 3 ? `<p class="more-dates">+${event.tourDates.length - 3} more date${event.tourDates.length - 3 !== 1 ? 's' : ''}</p>` : ''}
+              </div>
+            </div>
+
+            <div class="event-stats">
+              <div class="stat">
+                <span class="stat-label">Ticket Types:</span>
+                <span class="stat-value">${event.tourDates[0]?.sections?.length || 0}</span>
+              </div>
+              <div class="stat">
+                <span class="stat-label">Total Venues:</span>
+                <span class="stat-value">${event.tourDates.length}</span>
+              </div>
+              <div class="stat">
+                <span class="stat-label">Total Tickets:</span>
+                <span class="stat-value">${event.tourDates.reduce((sum, td) => sum + (td.ticketsAvailable || 0), 0).toLocaleString()}</span>
+              </div>
+            </div>
           </div>
         </div>
       `).join('');
@@ -948,17 +1204,311 @@
       }
 
       editingEventId = eventId;
+      editingTourDates = JSON.parse(JSON.stringify(event.tourDates || []));
+      
       document.getElementById('editEventName').value = event.title;
       document.getElementById('editEventArtist').value = event.artist;
       document.getElementById('editEventCategory').value = event.category;
       document.getElementById('editEventImage').value = '';
+      
+      renderEditTourDates();
       document.getElementById('editEventModal').classList.add('active');
     }
 
     function closeEditEventModal() {
       editingEventId = null;
+      editingTourDates = [];
       document.getElementById('editEventForm').reset();
       document.getElementById('editEventModal').classList.remove('active');
+    }
+
+    function renderEditTourDates() {
+      const container = document.getElementById('editTourDatesList');
+      if (!editingTourDates.length) {
+        container.innerHTML = '<p style="color: #718096; text-align: center; padding: 20px;">No tour dates added yet</p>';
+        return;
+      }
+
+      container.innerHTML = editingTourDates.map(td => `
+        <div class="tour-date-card">
+          <div class="tour-date-header">
+            <div>
+              <h4>${td.date} @ ${td.time}</h4>
+              <p style="color: #718096; font-size: 12px;">📍 ${td.venue}, ${td.location}</p>
+              <p style="color: #718096; font-size: 12px;">💵 ${CURRENCY_SYMBOLS[td.currency]} (Exchange: ${td.exchangeRate})</p>
+              <p style="color: #718096; font-size: 12px;">🎫 ${td.ticketsAvailable} total tickets</p>
+            </div>
+            <div style="display: flex; gap: 8px;">
+              <button type="button" class="btn btn-secondary btn-sm" onclick="openEditTourDateModalForEdit('${td.id}')">Edit</button>
+              <button type="button" class="btn btn-danger btn-sm" onclick="removeEditTourDate('${td.id}')">Remove</button>
+            </div>
+          </div>
+          <div style="margin-top: 15px; border-top: 1px solid #e2e8f0; padding-top: 15px;">
+            <strong style="font-size: 12px; display: block; margin-bottom: 10px;">Ticket Types & Sections:</strong>
+            ${td.sections.map(s => `
+              <div class="section-item">
+                <div class="section-info">
+                  <span><strong>${s.type === 'ga' ? 'General Admission' : s.type === 'vip' ? 'VIP' : 'Seated'}</strong></span>
+                  <span>Section: <strong>${s.section}</strong></span>
+                  <span>Row: <strong>${s.row}</strong></span>
+                </div>
+                <div class="section-info">
+                  <span><strong>${CURRENCY_SYMBOLS[td.currency]}${s.price.toFixed(2)}</strong></span>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function removeEditTourDate(id) {
+      editingTourDates = editingTourDates.filter(td => td.id !== id);
+      renderEditTourDates();
+    }
+
+    function openEditTourDateModalForEdit(tourDateId) {
+      const tourDate = editingTourDates.find(td => td.id === tourDateId);
+      if (!tourDate) {
+        alert('Tour date not found');
+        return;
+      }
+
+      currentEditingTourDateId = tourDateId;
+      document.getElementById('editTdDate').value = tourDate.date;
+      document.getElementById('editTdTime').value = tourDate.time;
+      document.getElementById('editTdVenue').value = tourDate.venue;
+      document.getElementById('editTdLocation').value = tourDate.location;
+      document.getElementById('editTdTickets').value = tourDate.ticketsAvailable;
+      document.getElementById('editTdCurrency').value = tourDate.currency;
+      document.getElementById('editTdExchangeRate').value = tourDate.exchangeRate;
+
+      // Load sections
+      editingTourDateVIPSections = tourDate.sections.filter(s => s.type === 'vip').map(s => ({
+        id: s.id,
+        price: s.price,
+        section: s.section,
+        row: s.row
+      }));
+      editingTourDateSeatedSections = tourDate.sections.filter(s => s.type === 'seated').map(s => ({
+        id: s.id,
+        price: s.price,
+        section: s.section,
+        row: s.row
+      }));
+
+      const ga = tourDate.sections.find(s => s.type === 'ga');
+      document.getElementById('editTicketTypesContainer').innerHTML = `
+        <div class="ticket-type-card">
+          <h5>General Admission</h5>
+          <div class="ticket-type-fields">
+            <div>
+              <label style="font-size: 12px;">Price (${CURRENCY_SYMBOLS[tourDate.currency]})</label>
+              <input type="number" step="0.01" id="editTtGA" value="${ga ? ga.price : 89.99}">
+            </div>
+          </div>
+        </div>
+        <div class="ticket-type-card">
+          <h5>VIP (Multiple Sections)</h5>
+          <div id="editVipSectionsContainer"></div>
+          <button type="button" class="btn btn-primary btn-xs" onclick="addEditVIPSection()" style="margin-top: 10px;">+ Add VIP Section</button>
+        </div>
+        <div class="ticket-type-card">
+          <h5>Seated Ticket (Multiple Sections)</h5>
+          <div id="editSeatedSectionsContainer"></div>
+          <button type="button" class="btn btn-primary btn-xs" onclick="addEditSeatedSection()" style="margin-top: 10px;">+ Add Seated Section</button>
+        </div>
+      `;
+
+      renderEditVIPSections();
+      renderEditSeatedSections();
+      document.getElementById('editTourDateModal').classList.add('active');
+    }
+
+    function closeEditTourDateModal() {
+      currentEditingTourDateId = null;
+      document.getElementById('editTourDateForm').reset();
+      document.getElementById('editTourDateModal').classList.remove('active');
+    }
+
+    function addEditVIPSection() {
+      const id = Date.now().toString() + Math.random();
+      editingTourDateVIPSections.push({ id, price: 149.99, section: '', row: '' });
+      renderEditVIPSections();
+    }
+
+    function removeEditVIPSection(id) {
+      editingTourDateVIPSections = editingTourDateVIPSections.filter(s => s.id !== id);
+      renderEditVIPSections();
+    }
+
+    function renderEditVIPSections() {
+      const container = document.getElementById('editVipSectionsContainer');
+      container.innerHTML = editingTourDateVIPSections.map(s => `
+        <div class="section-row" style="display: grid; grid-template-columns: 100px 80px 80px 60px; gap: 10px; margin-bottom: 10px; align-items: end;">
+          <div>
+            <label style="font-size: 11px;">Price</label>
+            <input type="number" step="0.01" value="${s.price}" onchange="updateEditVIPSection('${s.id}', 'price', this.value)" style="width: 100%; padding: 6px;">
+          </div>
+          <div>
+            <label style="font-size: 11px;">Section</label>
+            <input type="text" value="${s.section}" placeholder="A, B, C" onchange="updateEditVIPSection('${s.id}', 'section', this.value)" style="width: 100%; padding: 6px;">
+          </div>
+          <div>
+            <label style="font-size: 11px;">Row</label>
+            <input type="text" value="${s.row}" placeholder="1-20" onchange="updateEditVIPSection('${s.id}', 'row', this.value)" style="width: 100%; padding: 6px;">
+          </div>
+          <button type="button" class="btn btn-danger btn-xs" onclick="removeEditVIPSection('${s.id}')">Remove</button>
+        </div>
+      `).join('');
+    }
+
+    function updateEditVIPSection(id, field, value) {
+      const section = editingTourDateVIPSections.find(s => s.id === id);
+      if (section) {
+        if (field === 'price') section.price = parseFloat(value);
+        else section[field] = value;
+      }
+    }
+
+    function addEditSeatedSection() {
+      const id = Date.now().toString() + Math.random();
+      editingTourDateSeatedSections.push({ id, price: 119.99, section: '', row: '' });
+      renderEditSeatedSections();
+    }
+
+    function removeEditSeatedSection(id) {
+      editingTourDateSeatedSections = editingTourDateSeatedSections.filter(s => s.id !== id);
+      renderEditSeatedSections();
+    }
+
+    function renderEditSeatedSections() {
+      const container = document.getElementById('editSeatedSectionsContainer');
+      container.innerHTML = editingTourDateSeatedSections.map(s => `
+        <div class="section-row" style="display: grid; grid-template-columns: 100px 80px 80px 60px; gap: 10px; margin-bottom: 10px; align-items: end;">
+          <div>
+            <label style="font-size: 11px;">Price</label>
+            <input type="number" step="0.01" value="${s.price}" onchange="updateEditSeatedSection('${s.id}', 'price', this.value)" style="width: 100%; padding: 6px;">
+          </div>
+          <div>
+            <label style="font-size: 11px;">Section</label>
+            <input type="text" value="${s.section}" placeholder="A, B, C" onchange="updateEditSeatedSection('${s.id}', 'section', this.value)" style="width: 100%; padding: 6px;">
+          </div>
+          <div>
+            <label style="font-size: 11px;">Row</label>
+            <input type="text" value="${s.row}" placeholder="1-30" onchange="updateEditSeatedSection('${s.id}', 'row', this.value)" style="width: 100%; padding: 6px;">
+          </div>
+          <button type="button" class="btn btn-danger btn-xs" onclick="removeEditSeatedSection('${s.id}')">Remove</button>
+        </div>
+      `).join('');
+    }
+
+    function updateEditSeatedSection(id, field, value) {
+      const section = editingTourDateSeatedSections.find(s => s.id === id);
+      if (section) {
+        if (field === 'price') section.price = parseFloat(value);
+        else section[field] = value;
+      }
+    }
+
+    function addEditTourDate(e) {
+      e.preventDefault();
+
+      const gaPrice = parseFloat(document.getElementById('editTtGA').value);
+      const gaSection = {
+        id: `ga-${Date.now()}`,
+        section: 'General',
+        row: 'GA',
+        block: 'ga',
+        price: gaPrice,
+        type: 'ga',
+        currency: document.getElementById('editTdCurrency').value,
+        exchangeRate: parseFloat(document.getElementById('editTdExchangeRate').value)
+      };
+
+      const vipSections = editingTourDateVIPSections.map((s, idx) => ({
+        id: s.id,
+        section: s.section || 'VIP',
+        row: s.row || '1',
+        block: 'vip',
+        price: s.price,
+        type: 'vip',
+        currency: document.getElementById('editTdCurrency').value,
+        exchangeRate: parseFloat(document.getElementById('editTdExchangeRate').value)
+      }));
+
+      const seatedSections = editingTourDateSeatedSections.map((s, idx) => ({
+        id: s.id,
+        section: s.section || 'Seated',
+        row: s.row || '1',
+        block: 'seated',
+        price: s.price,
+        type: 'seated',
+        currency: document.getElementById('editTdCurrency').value,
+        exchangeRate: parseFloat(document.getElementById('editTdExchangeRate').value)
+      }));
+
+      const sections = [gaSection, ...vipSections, ...seatedSections];
+
+      const tourDate = {
+        id: currentEditingTourDateId || Date.now().toString(),
+        date: document.getElementById('editTdDate').value,
+        time: document.getElementById('editTdTime').value,
+        dayOfWeek: new Date(document.getElementById('editTdDate').value).toLocaleDateString('en-US', { weekday: 'short' }).toUpperCase(),
+        venue: document.getElementById('editTdVenue').value,
+        location: document.getElementById('editTdLocation').value,
+        ticketsAvailable: parseInt(document.getElementById('editTdTickets').value),
+        currency: document.getElementById('editTdCurrency').value,
+        exchangeRate: parseFloat(document.getElementById('editTdExchangeRate').value),
+        sections: sections
+      };
+
+      if (currentEditingTourDateId) {
+        const index = editingTourDates.findIndex(td => td.id === currentEditingTourDateId);
+        if (index !== -1) {
+          editingTourDates[index] = tourDate;
+        }
+      } else {
+        editingTourDates.push(tourDate);
+      }
+
+      closeEditTourDateModal();
+      renderEditTourDates();
+    }
+
+    function openEditTourDateModal() {
+      currentEditingTourDateId = null;
+      document.getElementById('editTourDateForm').reset();
+      document.getElementById('editTdCurrency').value = 'GBP';
+      document.getElementById('editTdExchangeRate').value = 1;
+      editingTourDateVIPSections = [];
+      editingTourDateSeatedSections = [];
+
+      document.getElementById('editTicketTypesContainer').innerHTML = `
+        <div class="ticket-type-card">
+          <h5>General Admission</h5>
+          <div class="ticket-type-fields">
+            <div>
+              <label style="font-size: 12px;">Price (£)</label>
+              <input type="number" step="0.01" id="editTtGA" value="89.99">
+            </div>
+          </div>
+        </div>
+        <div class="ticket-type-card">
+          <h5>VIP (Multiple Sections)</h5>
+          <div id="editVipSectionsContainer"></div>
+          <button type="button" class="btn btn-primary btn-xs" onclick="addEditVIPSection()" style="margin-top: 10px;">+ Add VIP Section</button>
+        </div>
+        <div class="ticket-type-card">
+          <h5>Seated Ticket (Multiple Sections)</h5>
+          <div id="editSeatedSectionsContainer"></div>
+          <button type="button" class="btn btn-primary btn-xs" onclick="addEditSeatedSection()" style="margin-top: 10px;">+ Add Seated Section</button>
+        </div>
+      `;
+
+      addEditVIPSection();
+      addEditSeatedSection();
+      document.getElementById('editTourDateModal').classList.add('active');
     }
 
     async function handleEditEventSubmit(e) {
@@ -971,10 +1521,16 @@
         return;
       }
 
+      if (!editingTourDates.length) {
+        alert('❌ Must have at least ONE tour date!');
+        return;
+      }
+
       const updates = {
         title: document.getElementById('editEventName').value,
         artist: document.getElementById('editEventArtist').value,
-        category: document.getElementById('editEventCategory').value
+        category: document.getElementById('editEventCategory').value,
+        tourDates: editingTourDates
       };
 
       const fileInput = document.getElementById('editEventImage');
