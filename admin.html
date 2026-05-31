@@ -1300,15 +1300,26 @@
         tourDate.sections = [];
       }
 
+      // Normalize sections with type if missing
+      tourDate.sections = tourDate.sections.map(s => {
+        if (!s.type) {
+          // Infer type from block field or assume seated if not GA
+          if (s.block === 'ga' || s.row === 'GA') s.type = 'ga';
+          else if (s.block && s.block !== 'ga') s.type = s.block === 'vip' ? 'vip' : 'seated';
+          else s.type = 'seated'; // default to seated
+        }
+        return s;
+      });
+
       // Load sections - safely filter with check
       editingTourDateVIPSections = (tourDate.sections || []).filter(s => s && s.type === 'vip').map(s => ({
-        id: s.id,
+        id: s.id || `vip-${Math.random()}`,
         price: s.price,
         section: s.section,
         row: s.row
       }));
       editingTourDateSeatedSections = (tourDate.sections || []).filter(s => s && s.type === 'seated').map(s => ({
-        id: s.id,
+        id: s.id || `seated-${Math.random()}`,
         price: s.price,
         section: s.section,
         row: s.row
