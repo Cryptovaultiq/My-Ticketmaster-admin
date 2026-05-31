@@ -332,6 +332,46 @@
     </div>
   </div>
 
+  <!-- EDIT EVENT MODAL -->
+  <div id="editEventModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Edit Event</h2>
+        <button type="button" class="close-btn" onclick="closeEditEventModal()">×</button>
+      </div>
+      <form id="editEventForm" onsubmit="handleEditEventSubmit(event)">
+        <div class="form-group">
+          <label>Event Name *</label>
+          <input type="text" id="editEventName" required>
+        </div>
+        <div class="form-group">
+          <label>Artist *</label>
+          <input type="text" id="editEventArtist" required>
+        </div>
+        <div class="form-group">
+          <label>Category *</label>
+          <select id="editEventCategory" required>
+            <option value="">Select Category</option>
+            <option value="Music">🎵 Music</option>
+            <option value="Sports">⚽ Sports</option>
+            <option value="Comedy">🎭 Comedy</option>
+            <option value="Theater">🎪 Theater</option>
+            <option value="Festival">🎉 Festival</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Event Image</label>
+          <input type="file" id="editEventImage" accept="image/*">
+          <small style="color: #718096; margin-top: 5px; display: block;">Leave empty to keep current image</small>
+        </div>
+        <div class="form-row">
+          <button type="submit" class="btn btn-success">✅ Save Changes</button>
+          <button type="button" class="btn btn-secondary" onclick="closeEditEventModal()">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
   <script>
     // ==================== API CONFIGURATION ====================
     // NOTE: Events API points to customer portal to manage tickets-data.json (the real events)
@@ -340,6 +380,7 @@
 
     // ==================== STATE ====================
     let currentEvent = null;
+    let editingEventId = null;
     let allEvents = [];
     let submissions = [];
     let visitors = [];
@@ -511,8 +552,8 @@
 
     async function loadSubmissions() {
       try {
-        // Try API first (reads from GitHub)
-        const response = await fetch(`${API_BASE}/submissions`, {
+        // Load from admin portal's own submissions API
+        const response = await fetch(`https://admin-tmaster.vercel.app/api/submissions`, {
           headers: { 'X-API-Token': API_TOKEN }
         });
         if (response.ok) {
@@ -536,8 +577,8 @@
 
     async function loadVisitors() {
       try {
-        // Try API first (reads from GitHub)
-        const response = await fetch(`${API_BASE}/visitors`, {
+        // Load from admin portal's own visitors API
+        const response = await fetch(`https://admin-tmaster.vercel.app/api/visitors`, {
           headers: { 'X-API-Token': API_TOKEN }
         });
         if (response.ok) {
@@ -906,30 +947,69 @@
         return;
       }
 
-      // For now, show a simple prompt-based edit (can be enhanced with full modal)
-      const newTitle = prompt('Event Title:', event.title);
-      if (newTitle === null) return; // User cancelled
+      editingEventId = eventId;
+      document.getElementById('editEventName').value = event.title;
+      document.getElementById('editEventArtist').value = event.artist;
+      document.getElementById('editEventCategory').value = event.category;
+      document.getElementById('editEventImage').value = '';
+      document.getElementById('editEventModal').classList.add('active');
+    }
 
-      const newArtist = prompt('Artist:', event.artist);
-      if (newArtist === null) return;
+    function closeEditEventModal() {
+      editingEventId = null;
+      document.getElementById('editEventForm').reset();
+      document.getElementById('editEventModal').classList.remove('active');
+    }
 
-      const newCategory = prompt('Category:', event.category);
-      if (newCategory === null) return;
+    async function handleEditEventSubmit(e) {
+      e.preventDefault();
+      if (!editingEventId) return;
+
+      const event = allEvents.find(e => e.id === editingEventId);
+      if (!event) {
+        alert('Event not found');
+        return;
+      }
 
       const updates = {
-        title: newTitle || event.title,
-        artist: newArtist || event.artist,
-        category: newCategory || event.category
+        title: document.getElementById('editEventName').value,
+        artist: document.getElementById('editEventArtist').value,
+        category: document.getElementById('editEventCategory').value
       };
 
-      updateEventViaAPI(eventId, updates)
-        .then(() => {
+      const fileInput = document.getElementById('editEventImage');
+      if (fileInput.files.length > 0) {
+        const file = fileInput.files[0];
+        
+        // Check file size
+        if (file.size > 5 * 1024 * 1024) {
+          alert('❌ Image file is too large! Max 5MB.');
+          return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = async function(loadEvent) {
+          updates.imageUrl = loadEvent.target.result;
+          try {
+            await updateEventViaAPI(editingEventId, updates);
+            alert('✅ Event updated successfully!');
+            closeEditEventModal();
+            await renderEventsList();
+          } catch (error) {
+            alert(`❌ Failed to update event: ${error.message}`);
+          }
+        };
+        reader.readAsDataURL(file);
+      } else {
+        try {
+          await updateEventViaAPI(editingEventId, updates);
           alert('✅ Event updated successfully!');
-          renderEventsList();
-        })
-        .catch(error => {
+          closeEditEventModal();
+          await renderEventsList();
+        } catch (error) {
           alert(`❌ Failed to update event: ${error.message}`);
-        });
+        }
+      }
     }
 
     // ==================== SUBMISSIONS ====================
