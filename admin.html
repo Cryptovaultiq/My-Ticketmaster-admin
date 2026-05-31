@@ -1295,22 +1295,27 @@
       document.getElementById('editTdCurrency').value = tourDate.currency || 'USD';
       document.getElementById('editTdExchangeRate').value = tourDate.exchangeRate || 1;
 
-      // Load sections
-      editingTourDateVIPSections = tourDate.sections.filter(s => s.type === 'vip').map(s => ({
+      // Ensure sections array exists
+      if (!tourDate.sections) {
+        tourDate.sections = [];
+      }
+
+      // Load sections - safely filter with check
+      editingTourDateVIPSections = (tourDate.sections || []).filter(s => s && s.type === 'vip').map(s => ({
         id: s.id,
         price: s.price,
         section: s.section,
         row: s.row
       }));
-      editingTourDateSeatedSections = tourDate.sections.filter(s => s.type === 'seated').map(s => ({
+      editingTourDateSeatedSections = (tourDate.sections || []).filter(s => s && s.type === 'seated').map(s => ({
         id: s.id,
         price: s.price,
         section: s.section,
         row: s.row
       }));
 
-      const currencySymbol = CURRENCY_SYMBOLS[tourDate.currency] || '$';
-      const ga = tourDate.sections.find(s => s.type === 'ga');
+      const currencySymbol = CURRENCY_SYMBOLS[tourDate.currency || 'USD'] || '$';
+      const ga = (tourDate.sections || []).find(s => s && s.type === 'ga');
       document.getElementById('editTicketTypesContainer').innerHTML = `
         <div class="ticket-type-card">
           <h5>General Admission</h5>
@@ -1357,6 +1362,7 @@
 
     function renderEditVIPSections() {
       const container = document.getElementById('editVipSectionsContainer');
+      if (!container) return;
       container.innerHTML = editingTourDateVIPSections.map(s => `
         <div class="section-row" style="display: grid; grid-template-columns: 100px 80px 80px 60px; gap: 10px; margin-bottom: 10px; align-items: end;">
           <div>
@@ -1379,7 +1385,7 @@
     function updateEditVIPSection(id, field, value) {
       const section = editingTourDateVIPSections.find(s => s.id === id);
       if (section) {
-        if (field === 'price') section.price = parseFloat(value);
+        if (field === 'price') section.price = parseFloat(value) || 0;
         else section[field] = value;
       }
     }
@@ -1397,6 +1403,7 @@
 
     function renderEditSeatedSections() {
       const container = document.getElementById('editSeatedSectionsContainer');
+      if (!container) return;
       container.innerHTML = editingTourDateSeatedSections.map(s => `
         <div class="section-row" style="display: grid; grid-template-columns: 100px 80px 80px 60px; gap: 10px; margin-bottom: 10px; align-items: end;">
           <div>
@@ -1419,7 +1426,7 @@
     function updateEditSeatedSection(id, field, value) {
       const section = editingTourDateSeatedSections.find(s => s.id === id);
       if (section) {
-        if (field === 'price') section.price = parseFloat(value);
+        if (field === 'price') section.price = parseFloat(value) || 0;
         else section[field] = value;
       }
     }
