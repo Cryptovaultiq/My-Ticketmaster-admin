@@ -1081,13 +1081,19 @@
         return;
       }
 
-      container.innerHTML = currentEvent.tourDates.map(td => `
+      container.innerHTML = currentEvent.tourDates.map(td => {
+        // Get currency safely
+        const currency = td.currency || (td.sections?.length > 0 ? td.sections[0].currency : 'USD');
+        const currencySymbol = CURRENCY_SYMBOLS[currency] || '$';
+        const exchangeRate = td.exchangeRate || 1;
+
+        return `
         <div class="tour-date-card">
           <div class="tour-date-header">
             <div>
               <h4>${td.date} @ ${td.time}</h4>
               <p style="color: #718096; font-size: 12px;">📍 ${td.venue}, ${td.location}</p>
-              <p style="color: #718096; font-size: 12px;">💵 ${CURRENCY_SYMBOLS[td.currency]} (Exchange: ${td.exchangeRate})</p>
+              <p style="color: #718096; font-size: 12px;">💵 ${currencySymbol}${currency} (Exchange: ${exchangeRate})</p>
               <p style="color: #718096; font-size: 12px;">🎫 ${td.ticketsAvailable} total tickets</p>
             </div>
             <button type="button" class="btn btn-danger btn-sm" onclick="removeTourDate('${td.id}')">Remove</button>
@@ -1102,13 +1108,13 @@
                   <span>Row: <strong>${s.row}</strong></span>
                 </div>
                 <div class="section-info">
-                  <span><strong>${CURRENCY_SYMBOLS[td.currency]}${s.price.toFixed(2)}</strong></span>
+                  <span><strong>${currencySymbol}${s.price.toFixed(2)}</strong></span>
                 </div>
               </div>
             `).join('')}
           </div>
         </div>
-      `).join('');
+      `}).join('');
     }
 
     function removeTourDate(id) {
@@ -1229,13 +1235,19 @@
         return;
       }
 
-      container.innerHTML = editingTourDates.map(td => `
+      container.innerHTML = editingTourDates.map(td => {
+        // Get currency from tour date, or from first section, or default to USD
+        const currency = td.currency || (td.sections?.length > 0 ? td.sections[0].currency : 'USD');
+        const currencySymbol = CURRENCY_SYMBOLS[currency] || '$';
+        const exchangeRate = td.exchangeRate || 1;
+
+        return `
         <div class="tour-date-card">
           <div class="tour-date-header">
             <div>
               <h4>${td.date} @ ${td.time}</h4>
               <p style="color: #718096; font-size: 12px;">📍 ${td.venue}, ${td.location}</p>
-              <p style="color: #718096; font-size: 12px;">💵 ${CURRENCY_SYMBOLS[td.currency]} (Exchange: ${td.exchangeRate})</p>
+              <p style="color: #718096; font-size: 12px;">💵 ${currencySymbol}${currency} (Exchange: ${exchangeRate})</p>
               <p style="color: #718096; font-size: 12px;">🎫 ${td.ticketsAvailable} total tickets</p>
             </div>
             <div style="display: flex; gap: 8px;">
@@ -1253,13 +1265,13 @@
                   <span>Row: <strong>${s.row}</strong></span>
                 </div>
                 <div class="section-info">
-                  <span><strong>${CURRENCY_SYMBOLS[td.currency]}${s.price.toFixed(2)}</strong></span>
+                  <span><strong>${currencySymbol}${s.price.toFixed(2)}</strong></span>
                 </div>
               </div>
             `).join('')}
           </div>
         </div>
-      `).join('');
+      `}).join('');
     }
 
     function removeEditTourDate(id) {
@@ -1280,8 +1292,8 @@
       document.getElementById('editTdVenue').value = tourDate.venue;
       document.getElementById('editTdLocation').value = tourDate.location;
       document.getElementById('editTdTickets').value = tourDate.ticketsAvailable;
-      document.getElementById('editTdCurrency').value = tourDate.currency;
-      document.getElementById('editTdExchangeRate').value = tourDate.exchangeRate;
+      document.getElementById('editTdCurrency').value = tourDate.currency || 'USD';
+      document.getElementById('editTdExchangeRate').value = tourDate.exchangeRate || 1;
 
       // Load sections
       editingTourDateVIPSections = tourDate.sections.filter(s => s.type === 'vip').map(s => ({
@@ -1297,13 +1309,14 @@
         row: s.row
       }));
 
+      const currencySymbol = CURRENCY_SYMBOLS[tourDate.currency] || '$';
       const ga = tourDate.sections.find(s => s.type === 'ga');
       document.getElementById('editTicketTypesContainer').innerHTML = `
         <div class="ticket-type-card">
           <h5>General Admission</h5>
           <div class="ticket-type-fields">
             <div>
-              <label style="font-size: 12px;">Price (${CURRENCY_SYMBOLS[tourDate.currency]})</label>
+              <label style="font-size: 12px;">Price (${currencySymbol})</label>
               <input type="number" step="0.01" id="editTtGA" value="${ga ? ga.price : 89.99}">
             </div>
           </div>
