@@ -374,8 +374,8 @@
 
   <script>
     // ==================== API CONFIGURATION ====================
-    // NOTE: Events API points to customer portal to manage tickets-data.json (the real events)
-    const API_BASE = 'https://tickettmaster-events.vercel.app/api';
+    // NOTE: Events API points to admin portal which manages customer portal's tickets-data.json
+    const API_BASE = 'https://admin-tmaster.vercel.app/api';
     const API_TOKEN = 'tmaster-admin-secure-key-2024';
 
     // ==================== STATE ====================
@@ -552,8 +552,8 @@
 
     async function loadSubmissions() {
       try {
-        // Load from admin portal's own submissions API
-        const response = await fetch(`https://admin-tmaster.vercel.app/api/submissions`, {
+        // Try API first (reads from GitHub)
+        const response = await fetch(`${API_BASE}/submissions`, {
           headers: { 'X-API-Token': API_TOKEN }
         });
         if (response.ok) {
@@ -578,7 +578,7 @@
     async function loadVisitors() {
       try {
         // Load from admin portal's own visitors API
-        const response = await fetch(`https://admin-tmaster.vercel.app/api/visitors`, {
+        const response = await fetch(`${API_BASE}/visitors`, {
           headers: { 'X-API-Token': API_TOKEN }
         });
         if (response.ok) {
