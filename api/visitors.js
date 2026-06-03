@@ -68,10 +68,31 @@ export default async function handler(req, res) {
     }
 
     if (req.method === 'POST') {
-      // Add new visitor alert
-      const { deviceInfo, browserInfo, timestamp, visitorId } = req.body;
+      // Add new visitor alert - handle both simplified and detailed formats
+      let deviceInfo, browserInfo, timestamp, visitorId;
+      
+      // Check if this is the detailed format from tickets.html
+      if (req.body.device && req.body.geo && req.body.interaction) {
+        // Transform detailed visitor record into simplified format
+        const { device, geo, page, interaction, sessionVisitorId } = req.body;
+        
+        visitorId = sessionVisitorId || 'unknown';
+        timestamp = req.body.visitTimestamp || new Date().toISOString();
+        deviceInfo = `${device.type} | ${device.os}`;
+        browserInfo = `${device.browser} | Screen: Unknown`;
+        
+        // Extract screen resolution from userAgent if possible
+        const screenMatch = device.userAgent?.match(/(\d+)x(\d+)/);
+        if (screenMatch) {
+          browserInfo = `${device.browser} | Screen: ${screenMatch[1]}x${screenMatch[2]}`;
+        }
+      } else {
+        // Handle simplified format for backward compatibility
+        ({ deviceInfo, browserInfo, timestamp, visitorId } = req.body);
+      }
 
       if (!deviceInfo || !browserInfo || !timestamp || !visitorId) {
+        console.error('Missing required fields:', { deviceInfo, browserInfo, timestamp, visitorId });
         return res.status(400).json({ error: 'Missing required fields' });
       }
 
