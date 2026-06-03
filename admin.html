@@ -684,28 +684,45 @@
     function switchTab(tabName) {
       console.log('Switching to tab:', tabName);
       
-      // Remove active from all tabs and buttons
-      document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-      document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+      // Remove active from all tabs
+      document.querySelectorAll('.tab-content').forEach(el => {
+        el.classList.remove('active');
+      });
       
-      // Add active to selected tab
+      // Remove active from all buttons
+      document.querySelectorAll('.tab-btn').forEach(el => {
+        el.classList.remove('active');
+      });
+      
+      // Add active to selected tab  
       const tab = document.getElementById(tabName);
       if (tab) {
         tab.classList.add('active');
-        console.log('Tab active added:', tab.id);
+        console.log('✓ Tab active:', tabName, 'display:', window.getComputedStyle(tab).display);
       }
       
-      // Add active to button (find the button with matching onclick)
+      // Add active to button - find by looking for the matching tab
+      let matchingButton = null;
       document.querySelectorAll('.tab-btn').forEach(btn => {
-        if (btn.onclick && btn.onclick.toString().includes(`'${tabName}'`)) {
-          btn.classList.add('active');
+        const onclickAttr = btn.getAttribute('onclick') || '';
+        if (onclickAttr.includes(`'${tabName}'`) || onclickAttr.includes(`"${tabName}"`)) {
+          matchingButton = btn;
         }
       });
       
+      if (matchingButton) {
+        matchingButton.classList.add('active');
+        console.log('✓ Button active');
+      }
+      
       // Render appropriate content
-      if (tabName === 'events') renderEventsList();
-      if (tabName === 'submissions') renderSubmissionsTable();
-      if (tabName === 'visitors') renderVisitorsTable();
+      if (tabName === 'events') {
+        renderEventsList();
+      } else if (tabName === 'submissions') {
+        renderSubmissionsTable();
+      } else if (tabName === 'visitors') {
+        renderVisitorsTable();
+      }
     }
 
     // ==================== STORAGE WITH GITHUB SYNC ====================
