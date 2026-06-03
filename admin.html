@@ -98,6 +98,28 @@
       .event-card-image{height:240px;min-height:240px}
       .event-stats{grid-template-columns:repeat(3,1fr)}
     }
+    
+    /* Visitor Cards Styling */
+    #visitorsList{display:grid;grid-template-columns:repeat(auto-fill,minmax(360px,1fr));gap:16px}
+    .visitor-card{background:linear-gradient(135deg,rgba(16,185,129,0.06),rgba(16,185,129,0.02));border:1px solid rgba(16,185,129,0.15);border-radius:12px;padding:16px;box-shadow:0 4px 12px rgba(0,0,0,0.2);transition:all 0.3s ease}
+    .visitor-card:hover{border-color:rgba(16,185,129,0.3);box-shadow:0 8px 20px rgba(16,185,129,0.15)}
+    .visitor-card-header{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:12px;padding-bottom:12px;border-bottom:1px solid rgba(16,185,129,0.1)}
+    .visitor-info-primary{display:grid;gap:6px}
+    .visitor-device{font-weight:600;color:#86efac;font-size:14px}
+    .visitor-location{color:#6ee7b7;font-size:13px}
+    .visitor-time{color:#9ca3af;font-size:11px;white-space:nowrap}
+    .visitor-metrics{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:12px}
+    .metric{display:flex;flex-direction:column;gap:3px;padding:8px;background:rgba(16,185,129,0.04);border-radius:8px}
+    .metric-label{font-size:11px;color:#9ca3af;text-transform:uppercase;letter-spacing:0.3px}
+    .metric-value{font-size:13px;font-weight:600;color:#86efac}
+    .visitor-details-row{display:grid;gap:8px;padding:12px;background:rgba(16,185,129,0.03);border-radius:8px;border:1px solid rgba(16,185,129,0.08)}
+    .detail-item{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:12px}
+    .detail-label{color:#9ca3af;font-weight:500}
+    .detail-value{color:#d1fae5;background:rgba(0,0,0,0.2);padding:4px 8px;border-radius:4px;font-family:monospace;overflow:hidden;text-overflow:ellipsis;max-width:150px}
+    .btn-sm{padding:8px 12px;font-size:12px}
+    @media (max-width:900px){
+      #visitorsList{grid-template-columns:1fr}
+    }
   </style>
 </head>
 <body>
@@ -586,6 +608,17 @@
           <button type="button" class="btn btn-secondary" onclick="closeEditTourDateModal()">Cancel</button>
         </div>
       </form>
+    </div>
+  </div>
+
+  <!-- SUBMISSION MODAL (for viewing visitor/submission details) -->
+  <div id="submission-modal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>📊 Visitor Details</h2>
+        <button type="button" class="close-btn" onclick="document.getElementById('submission-modal').classList.remove('active')">×</button>
+      </div>
+      <div id="submission-details-content"></div>
     </div>
   </div>
 

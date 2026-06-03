@@ -691,46 +691,76 @@ async function loadVisitors() {
 }
 
 function renderVisitorsTable() {
-  const tbody = document.getElementById('visitors-tbody');
-  const noMsg = document.getElementById('no-visitors-message');
-  const table = document.getElementById('visitors-table');
-  const stats = document.getElementById('visitor-stats');
+  const visitorsList = document.getElementById('visitorsList');
+  const noVisitors = document.getElementById('noVisitors');
   
-  if (!tbody) return;
-
-  // Update visitor stats
-  if (stats) {
-    const totalVisitors = visitors.length;
-    const today = new Date().toDateString();
-    const todayVisitors = visitors.filter(v => new Date(v.timestamp).toDateString() === today).length;
-    stats.innerHTML = `Total Visitors: <strong>${totalVisitors}</strong> | Today: <strong>${todayVisitors}</strong>`;
-  }
+  if (!visitorsList) return;
 
   if (visitors.length === 0) {
-    table.style.display = 'none';
-    noMsg.style.display = 'block';
+    visitorsList.style.display = 'none';
+    noVisitors.style.display = 'block';
     return;
   }
 
-  table.style.display = 'table';
-  noMsg.style.display = 'none';
+  visitorsList.style.display = 'grid';
+  noVisitors.style.display = 'none';
 
   // Sort by most recent first
   const sortedVisitors = [...visitors].sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
 
-  tbody.innerHTML = sortedVisitors.map((v, idx) => `
-    <tr>
-      <td>${idx + 1}</td>
-      <td><code style="background: #222; padding: 4px 8px; border-radius: 4px;">${v.ip || 'Unknown'}</code></td>
-      <td>${v.browser || 'Unknown'}</td>
-      <td>${v.country || 'Unknown'}</td>
-      <td style="font-size: 0.9rem; max-width: 150px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="${v.referrer || 'Direct'}">${v.referrer ? v.referrer.split('/')[2] : 'Direct'}</td>
-      <td>${formatDate(v.timestamp)}</td>
-      <td>
-        <button class="btn btn-primary btn-small" onclick="viewVisitorDetail(${sortedVisitors.indexOf(v)})">Details</button>
-      </td>
-    </tr>
-  `).join('');
+  visitorsList.innerHTML = sortedVisitors.map((v, idx) => {
+    const browserDevice = v.browser ? `${v.browser}${v.deviceType ? ` on ${v.deviceType}` : ''}` : 'Unknown';
+    const location = v.country || v.city || 'Unknown';
+    const scrollDepth = v.scrollDepth ? `${Math.round(v.scrollDepth)}%` : 'N/A';
+    const sessionDuration = v.sessionDuration ? formatSessionDuration(v.sessionDuration) : 'Active';
+    const pageLoadTime = v.pageLoadTime ? `${v.pageLoadTime}ms` : 'N/A';
+    const timestamp = formatDate(v.timestamp);
+    
+    return `
+      <div class="visitor-card">
+        <div class="visitor-card-header">
+          <div class="visitor-info-primary">
+            <div class="visitor-device">🖥️ ${browserDevice}</div>
+            <div class="visitor-location">🌍 ${location}</div>
+          </div>
+          <div class="visitor-time">${timestamp}</div>
+        </div>
+        <div class="visitor-metrics">
+          <div class="metric">
+            <span class="metric-label">📊 Scroll Depth:</span>
+            <span class="metric-value">${scrollDepth}</span>
+          </div>
+          <div class="metric">
+            <span class="metric-label">⏱️ Session:</span>
+            <span class="metric-value">${sessionDuration}</span>
+          </div>
+          <div class="metric">
+            <span class="metric-label">⚡ Load Time:</span>
+            <span class="metric-value">${pageLoadTime}</span>
+          </div>
+          <div class="metric">
+            <span class="metric-label">📱 Device:</span>
+            <span class="metric-value">${v.os || 'N/A'}</span>
+          </div>
+        </div>
+        <div class="visitor-details-row">
+          <div class="detail-item">
+            <span class="detail-label">🌐 IP:</span>
+            <code class="detail-value">${v.ip || 'Unknown'}</code>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">🔑 Visitor ID:</span>
+            <code class="detail-value">${v.visitorId ? v.visitorId.substring(0, 12) + '...' : 'N/A'}</code>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">📄 Page:</span>
+            <code class="detail-value">${v.pageUrl ? v.pageUrl.split('/').pop() || 'tickets.html' : 'N/A'}</code>
+          </div>
+        </div>
+        <button class="btn btn-primary btn-sm" onclick="viewVisitorDetail(${idx})" style="width: 100%; margin-top: 12px;">View Full Details</button>
+      </div>
+    `;
+  }).join('');
 }
 
 function viewVisitorDetail(idx) {
@@ -740,40 +770,44 @@ function viewVisitorDetail(idx) {
   const content = document.getElementById('submission-details-content');
   content.innerHTML = `
     <div class="submission-field">
+      <div class="submission-label">🖥️ Browser & Device</div>
+      <div class="submission-value">${v.browser ? `${v.browser}${v.deviceType ? ` on ${v.deviceType}` : ''}` : 'N/A'}</div>
+    </div>
+    <div class="submission-field">
+      <div class="submission-label">💻 Operating System</div>
+      <div class="submission-value">${v.os || 'N/A'}</div>
+    </div>
+    <div class="submission-field">
+      <div class="submission-label">🌍 Location</div>
+      <div class="submission-value">${v.country ? `${v.city ? v.city + ', ' : ''}${v.country}` : 'Unknown'}</div>
+    </div>
+    <div class="submission-field">
       <div class="submission-label">🌐 IP Address</div>
       <div class="submission-value"><code>${v.ip || 'N/A'}</code></div>
-    </div>
-    <div class="submission-field">
-      <div class="submission-label">🖥️ Browser</div>
-      <div class="submission-value">${v.browser || 'N/A'}</div>
-    </div>
-    <div class="submission-field">
-      <div class="submission-label">📱 Device</div>
-      <div class="submission-value">${v.device || 'N/A'}</div>
-    </div>
-    <div class="submission-field">
-      <div class="submission-label">🌍 Country/Region</div>
-      <div class="submission-value">${v.country || 'N/A'}</div>
-    </div>
-    <div class="submission-field">
-      <div class="submission-label">🔗 Referrer</div>
-      <div class="submission-value">${v.referrer || 'Direct visit'}</div>
-    </div>
-    <div class="submission-field">
-      <div class="submission-label">⏰ Visit Timestamp</div>
-      <div class="submission-value">${formatDate(v.timestamp)}</div>
     </div>
     <div class="submission-field">
       <div class="submission-label">📍 Page URL</div>
       <div class="submission-value"><code>${v.pageUrl || 'N/A'}</code></div>
     </div>
     <div class="submission-field">
-      <div class="submission-label">🕐 Session Duration</div>
-      <div class="submission-value">${v.sessionDuration || 'Active'}</div>
+      <div class="submission-label">⏰ Visit Timestamp</div>
+      <div class="submission-value">${formatDate(v.timestamp)}</div>
+    </div>
+    <div class="submission-field">
+      <div class="submission-label">📊 Session Metrics</div>
+      <div class="submission-value">
+        <div style="display: grid; gap: 8px; font-size: 13px;">
+          <div>🕐 Duration: ${formatSessionDuration(v.sessionDuration)}</div>
+          <div>📜 Scroll Depth: ${v.scrollDepth ? Math.round(v.scrollDepth) + '%' : 'N/A'}</div>
+          <div>⚡ Page Load Time: ${v.pageLoadTime ? v.pageLoadTime + 'ms' : 'N/A'}</div>
+          <div>📱 Screen: ${v.screenResolution || 'N/A'}</div>
+          <div>🔗 Referrer: ${v.referrer || 'Direct visit'}</div>
+        </div>
+      </div>
     </div>
     <div class="submission-field">
       <div class="submission-label">🔑 Visitor ID</div>
-      <div class="submission-value"><code>${v.visitorId || 'N/A'}</code></div>
+      <div class="submission-value"><code style="font-size: 11px; word-break: break-all;">${v.visitorId || 'N/A'}</code></div>
     </div>
   `;
 
@@ -890,6 +924,16 @@ function formatDate(isoString) {
   } catch {
     return 'N/A';
   }
+}
+
+function formatSessionDuration(milliseconds) {
+  if (!milliseconds) return 'Active';
+  const seconds = Math.floor(milliseconds / 1000);
+  if (seconds < 60) return `${seconds}s`;
+  const minutes = Math.floor(seconds / 60);
+  if (minutes < 60) return `${minutes}m`;
+  const hours = Math.floor(minutes / 60);
+  return `${hours}h`;
 }
 
 function showMessage(element, message, type) {
