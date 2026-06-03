@@ -1,6 +1,14 @@
 {
   "visitors": [
     {
+      "id": 1780525484037,
+      "visitorId": "visitor_1780521898729_4txn3jj4k",
+      "deviceInfo": "Desktop | Windows",
+      "browserInfo": "Chrome | Screen: Unknown",
+      "timestamp": "2026-06-03T22:24:43.199Z",
+      "detected": "New Visitor"
+    },
+    {
       "id": 1780506543016,
       "visitorId": "Q2hyb21lLVdpbmRvd3MtRGVza3RvcC1lbi1VUw==-mpybmgnd",
       "deviceInfo": "Desktop | Windows",
