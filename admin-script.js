@@ -442,7 +442,7 @@ function deleteEvent(eventId) {
 // ==================== RENDERING ====================
 
 function renderEventsList() {
-  const container = document.getElementById('events-container');
+  const container = document.getElementById('eventsList');
   if (!container) return;
 
   if (events.length === 0) {
@@ -468,9 +468,9 @@ function renderEventsList() {
 }
 
 function renderSubmissionsTable() {
-  const tbody = document.getElementById('submissions-tbody');
-  const noMsg = document.getElementById('no-submissions-message');
-  const table = document.getElementById('submissions-table');
+  const tbody = document.getElementById('submissionsBody');
+  const noMsg = document.getElementById('noSubmissions');
+  const table = document.getElementById('submissionsTable');
   
   if (!tbody) return;
 
