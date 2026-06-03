@@ -451,17 +451,57 @@ function renderEventsList() {
   }
 
   container.innerHTML = events.map(event => `
-    <div class="event-card">
-      <div class="event-id">ID: ${event.id}</div>
-      <h3>${event.title}</h3>
-      <p><strong>Location:</strong> ${event.location}</p>
-      <p><strong>When:</strong> ${event.datetime}</p>
-      <p><strong>Price:</strong> $${event.price.toFixed(2)}</p>
-      <p><strong>Tickets:</strong> ${event.tickets}</p>
-      <p><strong>Category:</strong> ${event.category}</p>
-      <div class="event-card-actions">
-        <button class="btn btn-primary btn-small" onclick="editEvent(${event.id})">✏️ Edit</button>
-        <button class="btn btn-secondary btn-small" onclick="deleteEvent(${event.id})">🗑️ Delete</button>
+    <div class="event-card-v2">
+      <div class="event-card-image">
+        <img src="${event.imageUrl || 'https://via.placeholder.com/220x280?text=No+Image'}" alt="${event.title}" onerror="this.src='https://via.placeholder.com/220x280?text=No+Image'">
+        <div class="event-badge">${event.category || 'Event'}</div>
+      </div>
+      <div class="event-card-content">
+        <div class="event-header-info">
+          <div>
+            <h3>${event.title}</h3>
+            <p class="event-artist">${event.artist || 'N/A'}</p>
+            <p class="event-meta">ID: ${event.id}</p>
+          </div>
+          <div class="event-actions">
+            <button class="btn btn-primary btn-sm" onclick="editEvent('${event.id}')">✏️ Edit</button>
+            <button class="btn btn-danger btn-sm" onclick="deleteEvent('${event.id}')">🗑️ Delete</button>
+          </div>
+        </div>
+        <div class="event-tour-dates">
+          <h4>${event.tourDates?.length || 0} Tour Dates</h4>
+          <div class="dates-list">
+            ${event.tourDates?.slice(0, 3).map(date => `
+              <div class="date-item">
+                <div class="date-col">
+                  <div class="date-day">${new Date(date.date).getDate()}</div>
+                  <div class="date-month">${new Date(date.date).toLocaleString('en', {month: 'short'})}</div>
+                </div>
+                <div class="date-info">
+                  <p><strong>${date.venue}</strong></p>
+                  <p class="location-text">${date.location}</p>
+                  <p class="time-text">${date.time || 'TBA'}</p>
+                </div>
+                <div class="currency-badge">${date.currency || 'USD'}</div>
+              </div>
+            `).join('') || '<p style="color: #999;">No dates added</p>'}
+          </div>
+          ${event.tourDates?.length > 3 ? `<p class="more-dates">+${event.tourDates.length - 3} more</p>` : ''}
+        </div>
+        <div class="event-stats">
+          <div class="stat">
+            <div class="stat-label">Dates</div>
+            <div class="stat-value">${event.tourDates?.length || 0}</div>
+          </div>
+          <div class="stat">
+            <div class="stat-label">Category</div>
+            <div class="stat-value">${event.category || 'N/A'}</div>
+          </div>
+          <div class="stat">
+            <div class="stat-label">Status</div>
+            <div class="stat-value">Active</div>
+          </div>
+        </div>
       </div>
     </div>
   `).join('');
