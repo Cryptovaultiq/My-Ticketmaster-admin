@@ -662,9 +662,12 @@
 
     // ==================== INITIALIZATION ====================
     document.addEventListener('DOMContentLoaded', async () => {
-      await renderEventsList();
-      await renderSubmissions();
-      await startVisitorTracking();
+      await loadEvents();
+      await loadSubmissionsFromAPI();
+      await loadVisitors();
+      renderEventsList();
+      renderSubmissionsTable();
+      renderVisitorsTable();
       initializeTourDateModal();
     });
 
@@ -675,8 +678,9 @@
       document.getElementById(tabName).classList.add('active');
       event.currentTarget?.classList.add('active');
 
-      if (tabName === 'submissions') { await renderSubmissions(); }
-      if (tabName === 'visitors') await renderVisitors();
+      if (tabName === 'events') renderEventsList();
+      if (tabName === 'submissions') renderSubmissionsTable();
+      if (tabName === 'visitors') renderVisitorsTable();
     }
 
     // ==================== STORAGE WITH GITHUB SYNC ====================
