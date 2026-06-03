@@ -1672,30 +1672,9 @@
     }
 
     async function renderVisitors() {
-      await loadVisitors();
-      const container = document.getElementById('visitorsList');
-
-      if (!visitors.length) {
-        document.getElementById('noVisitors').style.display = 'block';
-        container.innerHTML = '';
-        return;
-      }
-
-      document.getElementById('noVisitors').style.display = 'none';
-      container.innerHTML = visitors.map((v, idx) => `
-        <div class="visitor-item ${v.isNew ? 'new-visitor' : ''}">
-          <strong>${v.browser || 'Unknown'} on ${v.device || 'Unknown'}</strong>
-          <div class="visitor-meta">
-            <div>📍 ${v.location || 'Unknown'}</div>
-            <div>🕐 ${new Date(v.timestamp).toLocaleTimeString()}</div>
-            <div>🌍 ${v.timezone || 'Unknown'}</div>
-          </div>
-        </div>
-      `).join('');
-
-      // Mark all as read
-      visitors = visitors.map(v => ({ ...v, isNew: false }));
-      // Note: Admin only displays visitors from GitHub, no local save needed
+      // This function now delegates to renderVisitorsTable from admin-script.js
+      // which handles the enhanced visitor display with all metrics
+      renderVisitorsTable();
     }
 
     // ==================== ACTIONS ====================
