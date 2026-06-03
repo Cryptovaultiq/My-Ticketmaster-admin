@@ -945,25 +945,8 @@ async function handleSellerFormSubmit(e) {
 
 // ==================== UTILITY FUNCTIONS ====================
 
-function switchTab(tabName) {
-  // Hide all tabs
-  document.querySelectorAll('.tab-content').forEach(tab => {
-    tab.classList.remove('active');
-  });
-  
-  // Deactivate all buttons
-  document.querySelectorAll('.tab-btn').forEach(btn => {
-    btn.classList.remove('active');
-  });
-
-  // Show selected tab
-  const tab = document.getElementById(`${tabName}-tab`);
-  if (tab) tab.classList.add('active');
-
-  // Activate button
-  const btn = document.querySelector(`.tab-btn[data-tab="${tabName}"]`);
-  if (btn) btn.classList.add('active');
-}
+// NOTE: switchTab function is defined in admin.html inline script
+// It correctly handles tab switching using id="tabName" and onclick attributes
 
 async function refreshAllData() {
   try {
