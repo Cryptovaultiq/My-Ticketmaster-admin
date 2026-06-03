@@ -5,13 +5,10 @@
 // GitHub integration, API endpoints to https://admin-tmaster.vercel.app/api/
 // ===============================================================
 
-// NOTE: API_BASE and API_TOKEN are already defined in admin.html inline script
-// Using global scope to avoid duplicate const declarations
+// NOTE: API_BASE, API_TOKEN, events, submissions, visitors, and editingEventId 
+// are already defined in admin.html inline script
+// Using global scope to avoid duplicate declarations
 
-let events = [];
-let submissions = [];
-let visitors = [];
-let editingEventId = null;
 let submissionsPage = 1;
 const submissionsPerPage = 10;
 
