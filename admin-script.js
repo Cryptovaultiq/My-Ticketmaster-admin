@@ -5,8 +5,8 @@
 // GitHub integration, API endpoints to https://admin-tmaster.vercel.app/api/
 // ===============================================================
 
-const API_BASE = 'https://admin-tmaster.vercel.app/api';
-const API_TOKEN = 'tmaster-admin-secure-key-2024';
+// NOTE: API_BASE and API_TOKEN are already defined in admin.html inline script
+// Using global scope to avoid duplicate const declarations
 
 let events = [];
 let submissions = [];
