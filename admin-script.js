@@ -709,10 +709,11 @@ function renderVisitorsTable() {
   const sortedVisitors = [...visitors].sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
 
   visitorsList.innerHTML = sortedVisitors.map((v, idx) => {
-    const browserDevice = v.browser ? `${v.browser}${v.deviceType ? ` on ${v.deviceType}` : ''}` : 'Unknown';
-    const location = v.country || v.city || 'Unknown';
+    // Handle both old and new field names for compatibility
+    const browserDevice = v.browser ? `${v.browser}${v.deviceType ? ` on ${v.deviceType}` : v.device ? ` on ${v.device}` : ''}` : 'Unknown';
+    const location = v.country || v.location || 'Unknown';
     const scrollDepth = v.scrollDepth ? `${Math.round(v.scrollDepth)}%` : 'N/A';
-    const sessionDuration = v.sessionDuration ? formatSessionDuration(v.sessionDuration) : 'Active';
+    const sessionDuration = v.sessionDuration ? formatSessionDuration(v.sessionDuration) : v.timezone || 'Active';
     const pageLoadTime = v.pageLoadTime ? `${v.pageLoadTime}ms` : 'N/A';
     const timestamp = formatDate(v.timestamp);
     
@@ -740,7 +741,7 @@ function renderVisitorsTable() {
           </div>
           <div class="metric">
             <span class="metric-label">📱 Device:</span>
-            <span class="metric-value">${v.os || 'N/A'}</span>
+            <span class="metric-value">${v.os || v.device || 'N/A'}</span>
           </div>
         </div>
         <div class="visitor-details-row">
@@ -750,11 +751,11 @@ function renderVisitorsTable() {
           </div>
           <div class="detail-item">
             <span class="detail-label">🔑 Visitor ID:</span>
-            <code class="detail-value">${v.visitorId ? v.visitorId.substring(0, 12) + '...' : 'N/A'}</code>
+            <code class="detail-value">${v.visitorId ? v.visitorId.substring(0, 12) + '...' : v.id ? v.id.substring(0, 12) + '...' : 'N/A'}</code>
           </div>
           <div class="detail-item">
             <span class="detail-label">📄 Page:</span>
-            <code class="detail-value">${v.pageUrl ? v.pageUrl.split('/').pop() || 'tickets.html' : 'N/A'}</code>
+            <code class="detail-value">${v.pageUrl ? v.pageUrl.split('/').pop() || 'tickets.html' : 'tickets.html'}</code>
           </div>
         </div>
         <button class="btn btn-primary btn-sm" onclick="viewVisitorDetail(${idx})" style="width: 100%; margin-top: 12px;">View Full Details</button>
@@ -771,15 +772,15 @@ function viewVisitorDetail(idx) {
   content.innerHTML = `
     <div class="submission-field">
       <div class="submission-label">🖥️ Browser & Device</div>
-      <div class="submission-value">${v.browser ? `${v.browser}${v.deviceType ? ` on ${v.deviceType}` : ''}` : 'N/A'}</div>
+      <div class="submission-value">${v.browser ? `${v.browser}${v.deviceType ? ` on ${v.deviceType}` : v.device ? ` on ${v.device}` : ''}` : 'N/A'}</div>
     </div>
     <div class="submission-field">
       <div class="submission-label">💻 Operating System</div>
-      <div class="submission-value">${v.os || 'N/A'}</div>
+      <div class="submission-value">${v.os || v.device || 'N/A'}</div>
     </div>
     <div class="submission-field">
       <div class="submission-label">🌍 Location</div>
-      <div class="submission-value">${v.country ? `${v.city ? v.city + ', ' : ''}${v.country}` : 'Unknown'}</div>
+      <div class="submission-value">${v.country || v.location ? `${v.city ? v.city + ', ' : ''}${v.country || v.location}` : 'Unknown'}</div>
     </div>
     <div class="submission-field">
       <div class="submission-label">🌐 IP Address</div>
@@ -797,17 +798,17 @@ function viewVisitorDetail(idx) {
       <div class="submission-label">📊 Session Metrics</div>
       <div class="submission-value">
         <div style="display: grid; gap: 8px; font-size: 13px;">
-          <div>🕐 Duration: ${formatSessionDuration(v.sessionDuration)}</div>
+          <div>🕐 Duration: ${formatSessionDuration(v.sessionDuration || '0')}</div>
           <div>📜 Scroll Depth: ${v.scrollDepth ? Math.round(v.scrollDepth) + '%' : 'N/A'}</div>
           <div>⚡ Page Load Time: ${v.pageLoadTime ? v.pageLoadTime + 'ms' : 'N/A'}</div>
           <div>📱 Screen: ${v.screenResolution || 'N/A'}</div>
-          <div>🔗 Referrer: ${v.referrer || 'Direct visit'}</div>
+          <div>🔗 Referrer: ${v.referrer || v.timezone || 'Direct visit'}</div>
         </div>
       </div>
     </div>
     <div class="submission-field">
       <div class="submission-label">🔑 Visitor ID</div>
-      <div class="submission-value"><code style="font-size: 11px; word-break: break-all;">${v.visitorId || 'N/A'}</code></div>
+      <div class="submission-value"><code style="font-size: 11px; word-break: break-all;">${v.visitorId || v.id || 'N/A'}</code></div>
     </div>
   `;
 
