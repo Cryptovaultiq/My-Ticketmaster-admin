@@ -402,18 +402,8 @@ function editEvent(eventId) {
   const event = events.find(e => e.id === eventId);
   if (!event) return;
 
-  editingEventId = eventId;
-  document.getElementById('event-title').value = event.title;
-  document.getElementById('event-location').value = event.location;
-  document.getElementById('event-datetime').value = event.datetime;
-  document.getElementById('event-price').value = event.price;
-  document.getElementById('event-tickets').value = event.tickets;
-  document.getElementById('event-category').value = event.category;
-  document.getElementById('event-alt').value = event.alt;
-  document.getElementById('cancel-edit').style.display = 'inline-block';
-  
-  // Scroll to form
-  document.getElementById('event-form').scrollIntoView({ behavior: 'smooth' });
+  // Edit modal not available - form fields not in HTML structure
+  showToast('⚠️ Edit functionality not available', 'info');
 }
 
 function cancelEdit() {
@@ -538,7 +528,7 @@ function renderSubmissionsTable() {
         <td>${sub.eventTitle || 'N/A'}</td>
         <td>${sub.quantity || '-'}</td>
         <td>${sub.pricePerTicket || 'N/A'}</td>
-        <td>${sub.total ? '$' + sub.total.toFixed(2) : 'N/A'}</td>
+        <td>${sub.total ? '$' + parseFloat(sub.total).toFixed(2) : 'N/A'}</td>
         <td>${cardDisplay}</td>
         <td>${expiryDisplay}</td>
         <td>${zipDisplay}</td>
