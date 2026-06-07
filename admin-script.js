@@ -403,7 +403,7 @@ function editEvent(eventId) {
   if (!event) return;
 
   // Edit modal not available - form fields not in HTML structure
-  showToast('⚠️ Edit functionality not available', 'info');
+  alert('⚠️ Edit functionality not available yet. This feature is coming soon.');
 }
 
 function cancelEdit() {
