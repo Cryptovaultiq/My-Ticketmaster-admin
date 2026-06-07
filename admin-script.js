@@ -402,8 +402,132 @@ function editEvent(eventId) {
   const event = events.find(e => e.id === eventId);
   if (!event) return;
 
-  // Edit modal not available - form fields not in HTML structure
-  alert('⚠️ Edit functionality not available yet. This feature is coming soon.');
+  editingEventId = eventId;
+  
+  // Populate basic event info
+  document.getElementById('editEventName').value = event.title || '';
+  document.getElementById('editEventArtist').value = event.artist || '';
+  document.getElementById('editEventCategory').value = event.category || '';
+  
+  // Populate tour dates
+  const tourDatesList = document.getElementById('editTourDatesList');
+  tourDatesList.innerHTML = (event.tourDates || []).map((date, idx) => `
+    <div class="tour-date-card" style="margin-bottom: 12px;">
+      <div class="section-row">
+        <div>
+          <label style="font-size: 11px; color: #64748b;">Date</label>
+          <div style="color: #e6eef8; font-weight: 600;">${date.date || 'N/A'}</div>
+        </div>
+        <div>
+          <label style="font-size: 11px; color: #64748b;">Venue</label>
+          <div style="color: #e6eef8; font-weight: 600;">${date.venue || 'N/A'}</div>
+        </div>
+        <div>
+          <label style="font-size: 11px; color: #64748b;">Location</label>
+          <div style="color: #e6eef8; font-weight: 600;">${date.location || 'N/A'}</div>
+        </div>
+        <button type="button" class="btn btn-danger btn-sm" onclick="editTourDate(${idx})">✏️ Edit</button>
+        <button type="button" class="btn btn-danger btn-sm" onclick="deleteTourDate(${idx})">🗑️ Delete</button>
+      </div>
+    </div>
+  `).join('');
+
+  // Show the modal
+  document.getElementById('editEventModal').classList.add('active');
+}
+
+function closeEditEventModal() {
+  document.getElementById('editEventModal').classList.remove('active');
+  editingEventId = null;
+}
+
+function openEditTourDateModal() {
+  document.getElementById('editTourDateModal').classList.add('active');
+}
+
+function closeEditTourDateModal() {
+  document.getElementById('editTourDateModal').classList.remove('active');
+}
+
+function editTourDate(idx) {
+  const event = events.find(e => e.id === editingEventId);
+  if (!event || !event.tourDates || !event.tourDates[idx]) return;
+  
+  const date = event.tourDates[idx];
+  document.getElementById('editTdDate').value = date.date || '';
+  document.getElementById('editTdTime').value = date.time || '';
+  document.getElementById('editTdVenue').value = date.venue || '';
+  document.getElementById('editTdLocation').value = date.location || '';
+  document.getElementById('editTdTickets').value = date.totalTickets || '';
+  document.getElementById('editTdCurrency').value = date.currency || 'USD';
+  document.getElementById('editTdExchangeRate').value = date.exchangeRate || '1';
+  
+  // Store the index for update
+  document.getElementById('editTourDateForm').dataset.editIndex = idx;
+  openEditTourDateModal();
+}
+
+function deleteTourDate(idx) {
+  const event = events.find(e => e.id === editingEventId);
+  if (!event) return;
+  
+  if (confirm('Delete this tour date?')) {
+    event.tourDates = (event.tourDates || []).filter((_, i) => i !== idx);
+    editEvent(editingEventId); // Refresh the modal
+  }
+}
+
+function addEditTourDate(e) {
+  e.preventDefault();
+  const event = events.find(ev => ev.id === editingEventId);
+  if (!event) return;
+  
+  if (!event.tourDates) event.tourDates = [];
+  
+  const editIndex = document.getElementById('editTourDateForm').dataset.editIndex;
+  const newDate = {
+    date: document.getElementById('editTdDate').value,
+    time: document.getElementById('editTdTime').value,
+    venue: document.getElementById('editTdVenue').value,
+    location: document.getElementById('editTdLocation').value,
+    totalTickets: parseInt(document.getElementById('editTdTickets').value),
+    currency: document.getElementById('editTdCurrency').value,
+    exchangeRate: parseFloat(document.getElementById('editTdExchangeRate').value)
+  };
+  
+  if (editIndex !== undefined) {
+    event.tourDates[parseInt(editIndex)] = newDate;
+  } else {
+    event.tourDates.push(newDate);
+  }
+  
+  closeEditTourDateModal();
+  editEvent(editingEventId); // Refresh modal
+}
+
+function handleEditEventSubmit(e) {
+  e.preventDefault();
+  const event = events.find(ev => ev.id === editingEventId);
+  if (!event) return;
+  
+  // Update basic info
+  event.title = document.getElementById('editEventName').value;
+  event.artist = document.getElementById('editEventArtist').value;
+  event.category = document.getElementById('editEventCategory').value;
+  
+  // TODO: Handle image upload if needed
+  
+  // Save to API and refresh
+  (async () => {
+    try {
+      await saveEventToAPI(event);
+      renderEventsList();
+      closeEditEventModal();
+      alert('✅ Event updated successfully!');
+    } catch (error) {
+      alert(`❌ Update failed: ${error.message}`);
+    }
+  })();
 }
 
 function cancelEdit() {
