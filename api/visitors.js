@@ -69,30 +69,71 @@ export default async function handler(req, res) {
 
     if (req.method === 'POST') {
       // Add new visitor alert - handle both simplified and detailed formats
-      let deviceInfo, browserInfo, timestamp, visitorId;
+      let newVisitor = {};
       
       // Check if this is the detailed format from tickets.html
       if (req.body.device && req.body.geo && req.body.interaction) {
-        // Transform detailed visitor record into simplified format
-        const { device, geo, page, interaction, sessionVisitorId } = req.body;
+        // Extract detailed visitor record and map to expected fields
+        const { device, geo, page, interaction, sessionVisitorId, visitTimestamp } = req.body;
         
-        visitorId = sessionVisitorId || 'unknown';
-        timestamp = req.body.visitTimestamp || new Date().toISOString();
-        deviceInfo = `${device.type} | ${device.os}`;
-        browserInfo = `${device.browser} | Screen: Unknown`;
-        
-        // Extract screen resolution from userAgent if possible
         const screenMatch = device.userAgent?.match(/(\d+)x(\d+)/);
-        if (screenMatch) {
-          browserInfo = `${device.browser} | Screen: ${screenMatch[1]}x${screenMatch[2]}`;
-        }
+        
+        newVisitor = {
+          id: Date.now(),
+          visitorId: sessionVisitorId || 'unknown',
+          timestamp: visitTimestamp || new Date().toISOString(),
+          
+          // Device and browser info
+          browser: device.browser || 'Unknown',
+          device: device.type || 'Unknown',
+          os: device.os || 'Unknown',
+          deviceType: device.type || 'Unknown',
+          screenResolution: screenMatch ? `${screenMatch[1]}x${screenMatch[2]}` : 'Unknown',
+          
+          // Location and IP
+          location: geo.country || 'Unknown',
+          country: geo.country || 'Unknown',
+          city: geo.city || 'Unknown',
+          region: geo.region || 'Unknown',
+          ip: geo.ip || 'Unknown',
+          
+          // Interaction metrics
+          scrollDepth: interaction.scrollDepth || 0,
+          sessionDuration: interaction.sessionDuration || 0,
+          
+          // Page info
+          pageUrl: page?.url || window?.location?.href || 'Unknown',
+          pageLoadTime: page?.pageLoadTime || 0,
+          timeOnPage: page?.timeOnPage || 0,
+          
+          // Legacy fields for compatibility
+          deviceInfo: `${device.type || 'Unknown'} | ${device.os || 'Unknown'}`,
+          browserInfo: `${device.browser || 'Unknown'} | Screen: ${screenMatch ? `${screenMatch[1]}x${screenMatch[2]}` : 'Unknown'}`,
+          
+          detected: 'New Visitor'
+        };
       } else {
         // Handle simplified format for backward compatibility
-        ({ deviceInfo, browserInfo, timestamp, visitorId } = req.body);
+        newVisitor = {
+          id: Date.now(),
+          visitorId: req.body.visitorId || 'unknown',
+          deviceInfo: req.body.deviceInfo || 'Unknown',
+          browserInfo: req.body.browserInfo || 'Unknown',
+          timestamp: req.body.timestamp || new Date().toISOString(),
+          browser: 'Unknown',
+          device: 'Unknown',
+          os: 'Unknown',
+          location: 'Unknown',
+          scrollDepth: 0,
+          sessionDuration: 0,
+          pageLoadTime: 0,
+          ip: 'Unknown',
+          detected: 'New Visitor'
+        };
       }
 
-      if (!deviceInfo || !browserInfo || !timestamp || !visitorId) {
-        console.error('Missing required fields:', { deviceInfo, browserInfo, timestamp, visitorId });
+      if (!newVisitor.visitorId || !newVisitor.timestamp) {
+        console.error('Missing required fields:', { visitorId: newVisitor.visitorId, timestamp: newVisitor.timestamp });
         return res.status(400).json({ error: 'Missing required fields' });
       }
 
@@ -117,23 +158,13 @@ export default async function handler(req, res) {
       // Check if visitor already exists (prevent duplicates within 5 minutes)
       const fiveMinutesAgo = Date.now() - (5 * 60 * 1000);
       const isDuplicate = visitors.some(v => 
-        v.visitorId === visitorId && 
+        v.visitorId === newVisitor.visitorId && 
         new Date(v.timestamp).getTime() > fiveMinutesAgo
       );
 
       if (isDuplicate) {
         return res.status(200).json({ message: 'Duplicate visitor in last 5 minutes' });
       }
-
-      // Add new visitor
-      const newVisitor = {
-        id: Date.now(),
-        visitorId,
-        deviceInfo,
-        browserInfo,
-        timestamp,
-        detected: 'New Visitor'
-      };
 
       visitors.unshift(newVisitor); // Add to top
 
@@ -166,7 +197,7 @@ export default async function handler(req, res) {
             'Content-Type': 'application/json'
           },
           body: JSON.stringify({
-            message: `Add visitor alert: ${deviceInfo}`,
+            message: `Add visitor alert: ${newVisitor.deviceInfo}`,
             content: Buffer.from(JSON.stringify({ visitors }, null, 2)).toString('base64'),
             sha: sha
           })
