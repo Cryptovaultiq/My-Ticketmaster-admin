@@ -1,6 +1,29 @@
 {
   "visitors": [
     {
+      "id": 1781615550409,
+      "visitorId": "visitor_1781615549667_6l6mnp5wo",
+      "timestamp": "2026-06-16T13:12:30.903Z",
+      "browser": "Chrome",
+      "device": "Mobile",
+      "os": "Linux",
+      "deviceType": "Mobile",
+      "screenResolution": "Unknown",
+      "location": "NG",
+      "country": "NG",
+      "city": "Abuja",
+      "region": "FCT",
+      "ip": "102.91.102.209",
+      "scrollDepth": 0,
+      "sessionDuration": 4,
+      "pageUrl": "https://tickettmaster-events.vercel.app/tickets.html",
+      "pageLoadTime": 3913,
+      "timeOnPage": 4,
+      "deviceInfo": "Mobile | Linux",
+      "browserInfo": "Chrome | Screen: Unknown",
+      "detected": "New Visitor"
+    },
+    {
       "id": 1781615538188,
       "visitorId": "Q2hyb21lLUxpbnV4LU1vYmlsZS1lbi1VUw==-mqgnw260",
       "deviceInfo": "Mobile | Linux",
