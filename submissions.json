@@ -1,3 +1,36 @@
 {
-  "submissions": []
+  "submissions": [
+    {
+      "id": 1781650866330,
+      "email": "moriahmills45@gmail.com",
+      "eventTitle": "BTS",
+      "quantity": 3,
+      "pricePerTicket": "",
+      "total": 498.74940000000004,
+      "paymentMethod": "Gift Card",
+      "orderSummary": {
+        "event": "BTS",
+        "location": "Docklands, Australia",
+        "venue": "Marvel Stadium (Formerly Etihad Stadium)",
+        "date": "2027-02-12",
+        "time": "17:00",
+        "dateTime": "2027-02-12 - 17:00",
+        "currency": "USD",
+        "currencySymbol": "$",
+        "ticketType": "Seated Ticket",
+        "section": "L3 37",
+        "row": "B",
+        "quantity": 3,
+        "unitPrice": 162.99,
+        "subtotal": 488.97,
+        "bookingFee": 9.7794,
+        "total": 498.74940000000004
+      },
+      "giftCardNumberFull": "56343544566474464557",
+      "giftCardLastFour": "4557",
+      "giftCardPinFull": "6535",
+      "timestamp": "2026-06-16T23:01:06.330Z",
+      "date": "6/16/2026 11:01:06 PM"
+    }
+  ]
 }
