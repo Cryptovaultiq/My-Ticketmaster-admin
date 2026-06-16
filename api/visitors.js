@@ -3,12 +3,14 @@
 // =====================================================
 
 export default async function handler(req, res) {
-  // Pre-process body for sendBeacon which sends as plain text without Content-Type
-  if (req.method === 'POST') {
-    // If body is a string (from sendBeacon text/plain), keep as-is
-    // If body is Buffer, convert to string
-    if (Buffer.isBuffer(req.body)) {
-      req.body = req.body.toString('utf-8');
+  // **CRITICAL FIX**: Pre-process raw body from sendBeacon
+  // sendBeacon sends as text/plain by default, needs manual parsing
+  if (req.method === 'POST' && typeof req.body === 'string') {
+    try {
+      req.body = JSON.parse(req.body);
+    } catch (e) {
+      console.error('❌ Failed to parse string body:', e);
+      // Leave as string for fallback handling later
     }
   }
 
@@ -78,33 +80,23 @@ export default async function handler(req, res) {
 
     if (req.method === 'POST') {
       // Add new visitor alert - handle both simplified and detailed formats
+      // Body should already be parsed by pre-processor at top of handler
       let bodyData = req.body;
-      let rawBody = bodyData;
       
-      // Handle Buffer from sendBeacon (convert to string first)
-      if (Buffer.isBuffer(bodyData)) {
-        rawBody = bodyData.toString('utf-8');
-      } else if (typeof bodyData === 'object' && bodyData !== null) {
-        // Already parsed object - use as-is
-        rawBody = bodyData;
-      }
-      
-      // Parse JSON if body is a string (from sendBeacon)
-      if (typeof rawBody === 'string') {
+      // Double-check: if still a string, parse it
+      if (typeof bodyData === 'string') {
         try {
-          bodyData = JSON.parse(rawBody);
-          console.log('✓ Successfully parsed sendBeacon JSON, length:', rawBody.length);
+          bodyData = JSON.parse(bodyData);
+          console.log('✓ Parsed string body in POST handler');
         } catch (e) {
           console.error('❌ Failed to parse body as JSON:', e.message);
-          console.error('Raw body (first 500 chars):', rawBody.substring(0, 500));
+          console.error('Raw body preview:', bodyData.substring(0, 200));
           return res.status(400).json({ error: 'Invalid JSON in request body' });
         }
-      } else {
-        bodyData = rawBody;
       }
       
       // Debug: log what we received
-      console.log('📥 Received bodyData:', {
+      console.log('📥 POST received bodyData:', {
         type: typeof bodyData,
         isObject: typeof bodyData === 'object',
         hasDevice: !!bodyData?.device,
@@ -112,6 +104,7 @@ export default async function handler(req, res) {
         hasInteraction: !!bodyData?.interaction,
         hasTimeSpent: !!bodyData?.timeSpent,
         timeSpentValue: bodyData?.timeSpent,
+        contentLength: JSON.stringify(bodyData).length,
         keys: bodyData && typeof bodyData === 'object' ? Object.keys(bodyData).slice(0, 10) : 'N/A'
       });
       
