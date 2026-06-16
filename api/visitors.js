@@ -3,6 +3,15 @@
 // =====================================================
 
 export default async function handler(req, res) {
+  // Pre-process body for sendBeacon which sends as plain text without Content-Type
+  if (req.method === 'POST') {
+    // If body is a string (from sendBeacon text/plain), keep as-is
+    // If body is Buffer, convert to string
+    if (Buffer.isBuffer(req.body)) {
+      req.body = req.body.toString('utf-8');
+    }
+  }
+
   // 🔒 CORS & Security headers
   const origin = req.headers.origin || '';
   const allowedOrigins = [
@@ -70,21 +79,47 @@ export default async function handler(req, res) {
     if (req.method === 'POST') {
       // Add new visitor alert - handle both simplified and detailed formats
       let bodyData = req.body;
+      let rawBody = bodyData;
+      
+      // Handle Buffer from sendBeacon (convert to string first)
+      if (Buffer.isBuffer(bodyData)) {
+        rawBody = bodyData.toString('utf-8');
+      } else if (typeof bodyData === 'object' && bodyData !== null) {
+        // Already parsed object - use as-is
+        rawBody = bodyData;
+      }
       
       // Parse JSON if body is a string (from sendBeacon)
-      if (typeof bodyData === 'string') {
+      if (typeof rawBody === 'string') {
         try {
-          bodyData = JSON.parse(bodyData);
+          bodyData = JSON.parse(rawBody);
+          console.log('✓ Successfully parsed sendBeacon JSON, length:', rawBody.length);
         } catch (e) {
-          console.error('Failed to parse body as JSON:', e);
+          console.error('❌ Failed to parse body as JSON:', e.message);
+          console.error('Raw body (first 500 chars):', rawBody.substring(0, 500));
           return res.status(400).json({ error: 'Invalid JSON in request body' });
         }
+      } else {
+        bodyData = rawBody;
       }
+      
+      // Debug: log what we received
+      console.log('📥 Received bodyData:', {
+        type: typeof bodyData,
+        isObject: typeof bodyData === 'object',
+        hasDevice: !!bodyData?.device,
+        hasGeo: !!bodyData?.geo,
+        hasInteraction: !!bodyData?.interaction,
+        hasTimeSpent: !!bodyData?.timeSpent,
+        timeSpentValue: bodyData?.timeSpent,
+        keys: bodyData && typeof bodyData === 'object' ? Object.keys(bodyData).slice(0, 10) : 'N/A'
+      });
       
       let newVisitor = {};
       
       // Check if this is the detailed format from tickets.html
       if (bodyData.device && bodyData.geo && bodyData.interaction) {
+        console.log('✅ Using DETAILED format handler');
         // Extract detailed visitor record and map to expected fields
         const { device, geo, page, interaction, sessionVisitorId, visitTimestamp, timeSpent } = bodyData;
         
@@ -130,6 +165,7 @@ export default async function handler(req, res) {
           detected: 'New Visitor'
         };
       } else {
+        console.log('⚠️ Using BACKWARD COMPATIBILITY format - detailed fields missing');
         // Handle simplified format for backward compatibility
         newVisitor = {
           id: Date.now(),
@@ -153,6 +189,15 @@ export default async function handler(req, res) {
         console.error('Missing required fields:', { visitorId: newVisitor.visitorId, timestamp: newVisitor.timestamp });
         return res.status(400).json({ error: 'Missing required fields' });
       }
+
+      // Log what we're about to save
+      console.log('💾 Storing visitor record:', {
+        visitor_id: newVisitor.visitorId,
+        browser: newVisitor.browser,
+        device: newVisitor.device,
+        time_spent: newVisitor.timeSpent || 'N/A',
+        last_button: newVisitor.lastButtonClicked || 'N/A'
+      });
 
       // Fetch current visitors
       const getResponse = await fetch(

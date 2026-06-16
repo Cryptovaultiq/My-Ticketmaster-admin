@@ -20,7 +20,7 @@ export default async function handler(req, res) {
   // Set CORS headers BEFORE returning (important for preflight)
   const responseOrigin = origin || 'https://admin-tmaster.vercel.app';
   res.setHeader('Access-Control-Allow-Origin', isAllowed ? responseOrigin : 'null');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, DELETE, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, X-API-Token, Authorization');
   res.setHeader('Access-Control-Allow-Credentials', 'true');
 
@@ -182,6 +182,63 @@ export default async function handler(req, res) {
       });
     } catch (error) {
       console.error('API error:', error);
+      return res.status(500).json({ error: error.message });
+    }
+  }
+
+  // HANDLE DELETE - Clear all submissions
+  if (req.method === 'DELETE') {
+    try {
+      // Fetch current submissions to get SHA
+      const getResponse = await fetch(
+        `https://api.github.com/repos/${githubRepo}/contents/submissions.json`,
+        {
+          headers: {
+            'Authorization': `token ${githubToken}`,
+            'Accept': 'application/vnd.github.v3+json'
+          }
+        }
+      );
+
+      if (!getResponse.ok) {
+        // File doesn't exist, nothing to delete
+        return res.status(200).json({ success: true, message: 'No submissions to clear' });
+      }
+
+      const fileData = await getResponse.json();
+      const sha = fileData.sha;
+
+      // Create empty submissions file
+      const emptyContent = Buffer.from(JSON.stringify({ submissions: [] }, null, 2)).toString('base64');
+
+      // Update on GitHub
+      const deleteResponse = await fetch(
+        `https://api.github.com/repos/${githubRepo}/contents/submissions.json`,
+        {
+          method: 'PUT',
+          headers: {
+            'Authorization': `token ${githubToken}`,
+            'Content-Type': 'application/json',
+            'Accept': 'application/vnd.github.v3+json'
+          },
+          body: JSON.stringify({
+            message: 'Clear all submissions',
+            content: emptyContent,
+            sha: sha,
+            branch: githubBranch
+          })
+        }
+      );
+
+      if (!deleteResponse.ok) {
+        console.error('GitHub delete failed:', await deleteResponse.text());
+        return res.status(500).json({ error: 'Failed to clear submissions' });
+      }
+
+      console.log('✅ All submissions cleared from GitHub');
+      return res.status(200).json({ success: true, message: 'All submissions cleared' });
+    } catch (error) {
+      console.error('API error during DELETE:', error);
       return res.status(500).json({ error: error.message });
     }
   }

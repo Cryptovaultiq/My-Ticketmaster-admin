@@ -10,5 +10,10 @@
       "source": "/:path*",
       "destination": "/:path*"
     }
-  ]
+  ],
+  "functions": {
+    "api/**/*.js": {
+      "maxDuration": 10
+    }
+  }
 }

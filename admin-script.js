@@ -1063,6 +1063,30 @@ async function clearAllVisitors() {
   }
 }
 
+async function clearAllSubmissions() {
+  if (!confirm('⚠️ Delete ALL customer submissions? This cannot be undone.')) return;
+
+  try {
+    submissions = [];
+    
+    // Clear from API
+    const response = await fetch(`${API_BASE}/submissions`, {
+      method: 'DELETE',
+      headers: { 'X-API-Token': API_TOKEN }
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.error || 'Failed to clear submissions');
+    }
+
+    renderSubmissions();
+    showToast('✅ All submission records cleared', 'success');
+  } catch (error) {
+    showToast(`❌ Error: ${error.message}`, 'error');
+  }
+}
+
 // ==================== SELLER SETTINGS ====================
 
 async function handleSellerFormSubmit(e) {
