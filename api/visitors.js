@@ -3,6 +3,21 @@
 // =====================================================
 
 export default async function handler(req, res) {
+  // **CRITICAL DEBUG**: Log raw request body immediately
+  if (req.method === 'POST') {
+    console.log('🔍 [RAW REQUEST]', {
+      bodyType: typeof req.body,
+      isBuffer: Buffer.isBuffer(req.body),
+      contentType: req.headers['content-type'],
+      contentLength: req.headers['content-length'],
+      bodyPreview: typeof req.body === 'string' 
+        ? req.body.substring(0, 150)
+        : Buffer.isBuffer(req.body)
+        ? req.body.toString('utf-8').substring(0, 150)
+        : JSON.stringify(req.body).substring(0, 150)
+    });
+  }
+
   // **CRITICAL FIX**: Pre-process raw body from sendBeacon
   // sendBeacon sends Blobs with application/json, but body might be string/Buffer
   if (req.method === 'POST') {
@@ -10,7 +25,7 @@ export default async function handler(req, res) {
     if (typeof req.body === 'string' && req.body.startsWith('{')) {
       try {
         req.body = JSON.parse(req.body);
-        console.log('✓ Parsed string body to JSON');
+        console.log('✓ Parsed string body to JSON, keys:', Object.keys(req.body).slice(0, 5));
       } catch (e) {
         console.error('❌ String parse failed:', e.message);
         // Leave as string for fallback
@@ -20,13 +35,14 @@ export default async function handler(req, res) {
         const str = req.body.toString('utf-8');
         if (str.startsWith('{')) {
           req.body = JSON.parse(str);
-          console.log('✓ Parsed Buffer body to JSON');
+          console.log('✓ Parsed Buffer body to JSON, keys:', Object.keys(req.body).slice(0, 5));
         }
       } catch (e) {
         console.error('❌ Buffer parse failed:', e.message);
       }
+    } else if (typeof req.body === 'object' && req.body !== null) {
+      console.log('✓ Body is already parsed object, keys:', Object.keys(req.body).slice(0, 5));
     }
-    // If req.body is already an object, it was parsed by Vercel's default parser
   }
 
   // 🔒 CORS & Security headers
@@ -110,24 +126,24 @@ export default async function handler(req, res) {
         }
       }
       
-      // Debug: log what we received
-      console.log('📥 POST received bodyData:', {
+      // **CRITICAL**: Log AFTER parsing to verify what we got
+      console.log('📥 [POST HANDLER] After parsing:', {
         type: typeof bodyData,
         isObject: typeof bodyData === 'object',
         hasDevice: !!bodyData?.device,
         hasGeo: !!bodyData?.geo,
         hasInteraction: !!bodyData?.interaction,
-        hasTimeSpent: !!bodyData?.timeSpent,
-        timeSpentValue: bodyData?.timeSpent,
-        contentLength: JSON.stringify(bodyData).length,
-        keys: bodyData && typeof bodyData === 'object' ? Object.keys(bodyData).slice(0, 10) : 'N/A'
+        timeSpent: bodyData?.timeSpent,
+        browser: bodyData?.device?.browser,
+        geoCountry: bodyData?.geo?.country,
+        interactionLastButton: bodyData?.interaction?.lastButtonClicked
       });
       
       let newVisitor = {};
       
       // Check if this is the detailed format from tickets.html
       if (bodyData.device && bodyData.geo && bodyData.interaction) {
-        console.log('✅ Using DETAILED format handler');
+        console.log('✅ [DETAIL FORMAT] Using detailed format handler - all required fields present');
         // Extract detailed visitor record and map to expected fields
         const { device, geo, page, interaction, sessionVisitorId, visitTimestamp, timeSpent } = bodyData;
         
@@ -173,7 +189,13 @@ export default async function handler(req, res) {
           detected: 'New Visitor'
         };
       } else {
-        console.log('⚠️ Using BACKWARD COMPATIBILITY format - detailed fields missing');
+        console.log('❌ [FALLBACK FORMAT] Detailed format check failed:', {
+          reason: 'Missing required fields',
+          hasDevice: !!bodyData?.device,
+          hasGeo: !!bodyData?.geo,
+          hasInteraction: !!bodyData?.interaction,
+          bodyDataKeys: bodyData && typeof bodyData === 'object' ? Object.keys(bodyData) : 'NOT_OBJECT'
+        });
         // Handle simplified format for backward compatibility
         newVisitor = {
           id: Date.now(),
