@@ -4,14 +4,29 @@
 
 export default async function handler(req, res) {
   // **CRITICAL FIX**: Pre-process raw body from sendBeacon
-  // sendBeacon sends as text/plain by default, needs manual parsing
-  if (req.method === 'POST' && typeof req.body === 'string') {
-    try {
-      req.body = JSON.parse(req.body);
-    } catch (e) {
-      console.error('❌ Failed to parse string body:', e);
-      // Leave as string for fallback handling later
+  // sendBeacon sends Blobs with application/json, but body might be string/Buffer
+  if (req.method === 'POST') {
+    // Handle different body types that might come from sendBeacon
+    if (typeof req.body === 'string' && req.body.startsWith('{')) {
+      try {
+        req.body = JSON.parse(req.body);
+        console.log('✓ Parsed string body to JSON');
+      } catch (e) {
+        console.error('❌ String parse failed:', e.message);
+        // Leave as string for fallback
+      }
+    } else if (Buffer.isBuffer(req.body)) {
+      try {
+        const str = req.body.toString('utf-8');
+        if (str.startsWith('{')) {
+          req.body = JSON.parse(str);
+          console.log('✓ Parsed Buffer body to JSON');
+        }
+      } catch (e) {
+        console.error('❌ Buffer parse failed:', e.message);
+      }
     }
+    // If req.body is already an object, it was parsed by Vercel's default parser
   }
 
   // 🔒 CORS & Security headers
