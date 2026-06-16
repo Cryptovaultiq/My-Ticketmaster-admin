@@ -1,3 +1,30 @@
 {
-  "visitors": []
+  "visitors": [
+    {
+      "id": 1781642077300,
+      "visitorId": "visitor_1780818200654_g15l6f67x",
+      "timestamp": "2026-06-16T20:34:37.004Z",
+      "browser": "Chrome",
+      "device": "Desktop",
+      "os": "Windows",
+      "deviceType": "Desktop",
+      "screenResolution": "Unknown",
+      "location": "NG",
+      "country": "NG",
+      "city": "Lagos",
+      "region": "Lagos",
+      "ip": "102.89.23.88",
+      "scrollDepth": 0,
+      "sessionDuration": 301,
+      "clickCount": 0,
+      "lastButtonClicked": "None",
+      "timeSpent": 301,
+      "pageUrl": "https://tickettmaster-events.vercel.app/tickets.html",
+      "pageLoadTime": 301353,
+      "timeOnPage": 301,
+      "deviceInfo": "Desktop | Windows",
+      "browserInfo": "Chrome | Screen: Unknown",
+      "detected": "New Visitor"
+    }
+  ]
 }
