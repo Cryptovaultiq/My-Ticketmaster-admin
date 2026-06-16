@@ -127,9 +127,10 @@ export default async function handler(req, res) {
       }
       
       // **CRITICAL**: Log AFTER parsing to verify what we got
-      console.log('📥 [POST HANDLER] After parsing:', {
+      console.log('📥 [POST HANDLER] After parsing - FULL DUMP:', {
         type: typeof bodyData,
         isObject: typeof bodyData === 'object',
+        allKeys: bodyData && typeof bodyData === 'object' ? Object.keys(bodyData) : 'NOT_OBJECT',
         hasDevice: !!bodyData?.device,
         hasGeo: !!bodyData?.geo,
         hasInteraction: !!bodyData?.interaction,
@@ -140,6 +141,19 @@ export default async function handler(req, res) {
       });
       
       let newVisitor = {};
+      
+      // **EXTREME DEBUG**: Check each field individually before format decision
+      console.log('🔎 [EXTREME DEBUG - FORMAT CHECK]', {
+        hasDevice: !!bodyData?.device,
+        hasGeo: !!bodyData?.geo,
+        hasInteraction: !!bodyData?.interaction,
+        deviceType: typeof bodyData?.device,
+        geoType: typeof bodyData?.geo,
+        interactionType: typeof bodyData?.interaction,
+        deviceKeys: bodyData?.device ? Object.keys(bodyData.device) : 'N/A',
+        geoKeys: bodyData?.geo ? Object.keys(bodyData.geo) : 'N/A',
+        interactionKeys: bodyData?.interaction ? Object.keys(bodyData.interaction) : 'N/A'
+      });
       
       // Check if this is the detailed format from tickets.html
       if (bodyData.device && bodyData.geo && bodyData.interaction) {
