@@ -877,59 +877,101 @@ function renderVisitorsTable() {
   noVisitors.style.display = 'none';
 
   // Sort by most recent first
-  const sortedVisitors = [...visitors].sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+  const sortedVisitors = [...visitors].sort((a, b) => new Date(b.timestamp || b.visitTimestamp) - new Date(a.timestamp || a.visitTimestamp));
 
   visitorsList.innerHTML = sortedVisitors.map((v, idx) => {
-    // Parse deviceInfo "Desktop | Windows" into separate values
-    const [deviceType, os] = (v.deviceInfo || 'Unknown | Unknown').split(' | ').map(s => s.trim());
+    // Handle both old format (string fields) and new format (object fields)
+    let deviceType, browser, os, screen;
+    let timeSpent, lastButton, scrollDepth, country, ip;
     
-    // Parse browserInfo "Chrome | Screen: 1280x720" into separate values
-    const browserParts = (v.browserInfo || 'Unknown | Unknown').split(' | ');
-    const browser = browserParts[0]?.trim() || 'Unknown';
-    const screen = browserParts[1]?.trim() || 'Unknown';
+    // NEW FORMAT (from enhanced tracking)
+    if (v.device && typeof v.device === 'object') {
+      deviceType = v.device.type || 'Unknown';
+      browser = v.device.browser || 'Unknown';
+      os = v.device.os || 'Unknown';
+    } 
+    // OLD FORMAT (legacy)
+    else {
+      const [dt, o] = (v.deviceInfo || 'Unknown | Unknown').split(' | ').map(s => s.trim());
+      deviceType = dt;
+      os = o;
+      const browserParts = (v.browserInfo || 'Unknown | Unknown').split(' | ');
+      browser = browserParts[0]?.trim() || 'Unknown';
+      screen = browserParts[1]?.trim() || 'Unknown';
+    }
     
-    const timestamp = formatDate(v.timestamp);
-    const detectedType = v.detected || 'Returning Visitor';
+    // Extract NEW tracking fields
+    if (v.interaction) {
+      scrollDepth = v.interaction.scrollDepth || 0;
+      timeSpent = v.interaction.sessionDuration || 0;
+      lastButton = v.interaction.lastButtonClicked || 'None';
+    } else {
+      timeSpent = v.timeSpent || 0;
+      lastButton = v.lastButtonClicked || 'None';
+      scrollDepth = v.scrollDepth || 0;
+    }
+    
+    // Extract location and IP
+    if (v.geo && typeof v.geo === 'object') {
+      country = v.geo.country || 'Unknown';
+      ip = v.geo.ip || 'Unknown';
+    } else {
+      country = v.country || v.location || 'Unknown';
+      ip = v.ip || 'Unknown';
+    }
+    
+    const timestamp = formatDate(v.timestamp || v.visitTimestamp);
+    const detectedType = v.detected || 'Visitor';
+    
+    // Format time spent
+    const formatTimeSpent = (seconds) => {
+      if (!seconds) return '0s';
+      if (seconds < 60) return `${seconds}s`;
+      const minutes = Math.floor(seconds / 60);
+      if (minutes < 60) return `${minutes}m`;
+      const hours = Math.floor(minutes / 60);
+      return `${hours}h ${minutes % 60}m`;
+    };
     
     return `
       <div class="visitor-card">
         <div class="visitor-card-header">
           <div class="visitor-info-primary">
             <div class="visitor-device">🖥️ ${browser} on ${deviceType}</div>
-            <div class="visitor-location">🌍 ${os}</div>
+            <div class="visitor-location">🌍 ${country}</div>
           </div>
           <div class="visitor-time">${timestamp}</div>
         </div>
         <div class="visitor-metrics">
           <div class="metric">
-            <span class="metric-label">📊 Device Type:</span>
-            <span class="metric-value">${deviceType}</span>
+            <span class="metric-label">⏱️ Time Spent:</span>
+            <span class="metric-value">${formatTimeSpent(timeSpent)}</span>
           </div>
           <div class="metric">
-            <span class="metric-label">🖥️ Browser:</span>
-            <span class="metric-value">${browser}</span>
+            <span class="metric-label">📊 Scroll Depth:</span>
+            <span class="metric-value">${scrollDepth}%</span>
+          </div>
+          <div class="metric">
+            <span class="metric-label">🖱️ Last Button Clicked:</span>
+            <span class="metric-value" style="font-size: 12px; word-break: break-word;">${lastButton}</span>
           </div>
           <div class="metric">
             <span class="metric-label">💻 OS:</span>
             <span class="metric-value">${os}</span>
           </div>
-          <div class="metric">
-            <span class="metric-label">📱 Screen:</span>
-            <span class="metric-value">${screen}</span>
-          </div>
         </div>
         <div class="visitor-details-row">
           <div class="detail-item">
+            <span class="detail-label">🌐 IP:</span>
+            <code class="detail-value">${ip}</code>
+          </div>
+          <div class="detail-item">
             <span class="detail-label">🔑 Visitor ID:</span>
-            <code class="detail-value">${v.visitorId ? v.visitorId.substring(0, 12) + '...' : 'N/A'}</code>
+            <code class="detail-value">${v.visitorId ? v.visitorId.substring(0, 12) + '...' : v.sessionVisitorId ? v.sessionVisitorId.substring(0, 12) + '...' : 'N/A'}</code>
           </div>
           <div class="detail-item">
             <span class="detail-label">📌 Status:</span>
             <code class="detail-value">${detectedType}</code>
-          </div>
-          <div class="detail-item">
-            <span class="detail-label">🔑 ID:</span>
-            <code class="detail-value">${v.id || 'N/A'}</code>
           </div>
         </div>
         <button class="btn btn-primary btn-sm" onclick="viewVisitorDetail(${idx})" style="width: 100%; margin-top: 12px;">View Full Details</button>
