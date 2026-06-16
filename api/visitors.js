@@ -100,6 +100,11 @@ export default async function handler(req, res) {
           // Interaction metrics
           scrollDepth: interaction.scrollDepth || 0,
           sessionDuration: interaction.sessionDuration || 0,
+          clickCount: interaction.clickCount || 0,
+          lastButtonClicked: interaction.lastButtonClicked || 'None',
+          
+          // Time spent
+          timeSpent: req.body.timeSpent || interaction.sessionDuration || 0,
           
           // Page info
           pageUrl: page?.url || window?.location?.href || 'Unknown',
