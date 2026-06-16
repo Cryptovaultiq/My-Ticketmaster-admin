@@ -33,7 +33,7 @@ export default async function handler(req, res) {
   }
 
   const API_SECRET_TOKEN = 'tmaster-admin-secure-key-2024';
-  const token = req.headers['x-api-token'];
+  const token = req.headers['x-api-token'] || req.query.token;
 
   // Validate API token
   if (token !== API_SECRET_TOKEN) {
@@ -69,12 +69,24 @@ export default async function handler(req, res) {
 
     if (req.method === 'POST') {
       // Add new visitor alert - handle both simplified and detailed formats
+      let bodyData = req.body;
+      
+      // Parse JSON if body is a string (from sendBeacon)
+      if (typeof bodyData === 'string') {
+        try {
+          bodyData = JSON.parse(bodyData);
+        } catch (e) {
+          console.error('Failed to parse body as JSON:', e);
+          return res.status(400).json({ error: 'Invalid JSON in request body' });
+        }
+      }
+      
       let newVisitor = {};
       
       // Check if this is the detailed format from tickets.html
-      if (req.body.device && req.body.geo && req.body.interaction) {
+      if (bodyData.device && bodyData.geo && bodyData.interaction) {
         // Extract detailed visitor record and map to expected fields
-        const { device, geo, page, interaction, sessionVisitorId, visitTimestamp } = req.body;
+        const { device, geo, page, interaction, sessionVisitorId, visitTimestamp, timeSpent } = bodyData;
         
         const screenMatch = device.userAgent?.match(/(\d+)x(\d+)/);
         
@@ -104,10 +116,10 @@ export default async function handler(req, res) {
           lastButtonClicked: interaction.lastButtonClicked || 'None',
           
           // Time spent
-          timeSpent: req.body.timeSpent || interaction.sessionDuration || 0,
+          timeSpent: timeSpent || interaction.sessionDuration || 0,
           
           // Page info
-          pageUrl: page?.url || window?.location?.href || 'Unknown',
+          pageUrl: page?.url || 'Unknown',
           pageLoadTime: page?.pageLoadTime || 0,
           timeOnPage: page?.timeOnPage || 0,
           
@@ -121,10 +133,10 @@ export default async function handler(req, res) {
         // Handle simplified format for backward compatibility
         newVisitor = {
           id: Date.now(),
-          visitorId: req.body.visitorId || 'unknown',
-          deviceInfo: req.body.deviceInfo || 'Unknown',
-          browserInfo: req.body.browserInfo || 'Unknown',
-          timestamp: req.body.timestamp || new Date().toISOString(),
+          visitorId: bodyData.visitorId || 'unknown',
+          deviceInfo: bodyData.deviceInfo || 'Unknown',
+          browserInfo: bodyData.browserInfo || 'Unknown',
+          timestamp: bodyData.timestamp || new Date().toISOString(),
           browser: 'Unknown',
           device: 'Unknown',
           os: 'Unknown',
