@@ -1,6 +1,22 @@
 {
   "visitors": [
     {
+      "id": 1781640801478,
+      "visitorId": "Q2hyb21lLVdpbmRvd3MtRGVza3RvcC1lbi1VUw==-mqh2xjo4",
+      "deviceInfo": "Desktop | Windows",
+      "browserInfo": "Chrome | Screen: 1280x720",
+      "timestamp": "2026-06-16T20:13:20.213Z",
+      "browser": "Unknown",
+      "device": "Unknown",
+      "os": "Unknown",
+      "location": "Unknown",
+      "scrollDepth": 0,
+      "sessionDuration": 0,
+      "pageLoadTime": 0,
+      "ip": "Unknown",
+      "detected": "New Visitor"
+    },
+    {
       "id": 1781639331805,
       "visitorId": "visitor_1780818200654_g15l6f67x",
       "timestamp": "2026-06-16T11:42:35.372Z",
