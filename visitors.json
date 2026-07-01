@@ -1,20 +1,3 @@
 {
-  "visitors": [
-    {
-      "id": 1782896094254,
-      "visitorId": "Q2hyb21lLVdpbmRvd3MtRGVza3RvcC1lbi1VUw==-mr1uatko",
-      "deviceInfo": "Desktop | Windows",
-      "browserInfo": "Chrome | Screen: 1280x800",
-      "timestamp": "2026-07-01T08:54:52.746Z",
-      "browser": "Unknown",
-      "device": "Unknown",
-      "os": "Unknown",
-      "location": "Unknown",
-      "scrollDepth": 0,
-      "sessionDuration": 0,
-      "pageLoadTime": 0,
-      "ip": "Unknown",
-      "detected": "New Visitor"
-    }
-  ]
+  "visitors": []
 }
