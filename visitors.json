@@ -1,36 +1,3 @@
 {
-  "visitors": [
-    {
-      "id": 1782415629496,
-      "visitorId": "Q2hyb21lLUxpbnV4LURlc2t0b3AtZW4tVVNAcG9zaXg=-mqtw8sc7",
-      "deviceInfo": "Desktop | Linux",
-      "browserInfo": "Chrome | Screen: 1920x1080",
-      "timestamp": "2026-06-25T19:27:07.639Z",
-      "browser": "Unknown",
-      "device": "Unknown",
-      "os": "Unknown",
-      "location": "Unknown",
-      "scrollDepth": 0,
-      "sessionDuration": 0,
-      "pageLoadTime": 0,
-      "ip": "Unknown",
-      "detected": "New Visitor"
-    },
-    {
-      "id": 1781650717910,
-      "visitorId": "Q2hyb21lLVdpbmRvd3MtRGVza3RvcC1lbi1VUw==-mqh8u3oh",
-      "deviceInfo": "Desktop | Windows",
-      "browserInfo": "Chrome | Screen: 1280x800",
-      "timestamp": "2026-06-16T22:58:37.218Z",
-      "browser": "Unknown",
-      "device": "Unknown",
-      "os": "Unknown",
-      "location": "Unknown",
-      "scrollDepth": 0,
-      "sessionDuration": 0,
-      "pageLoadTime": 0,
-      "ip": "Unknown",
-      "detected": "New Visitor"
-    }
-  ]
+  "visitors": []
 }
