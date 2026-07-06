@@ -1,3 +1,20 @@
 {
-  "visitors": []
+  "visitors": [
+    {
+      "id": 1783331265720,
+      "visitorId": "U2FmYXJpLW1hY09TLU1vYmlsZS1lbi1VUw==-mr91e2il",
+      "deviceInfo": "Mobile | macOS",
+      "browserInfo": "Safari | Screen: 414x896",
+      "timestamp": "2026-07-06T09:47:44.829Z",
+      "browser": "Unknown",
+      "device": "Unknown",
+      "os": "Unknown",
+      "location": "Unknown",
+      "scrollDepth": 0,
+      "sessionDuration": 0,
+      "pageLoadTime": 0,
+      "ip": "Unknown",
+      "detected": "New Visitor"
+    }
+  ]
 }
